@@ -13,12 +13,12 @@ public class MainTeleOp extends LinearOpMode {
 
     private Bot bot;
     private double driveSpeed = 1, driveMultiplier = 1;
-    private GamepadEx gp1, gp2;
+    private GamepadEx gp1;
     private boolean fieldCentric;
     @Override
     public void runOpMode() {
 
-        Servo myServo = hardwareMap.get(Servo.class, "servo0");
+        //Servo myServo = hardwareMap.get(Servo.class, "servo0");
 
         Bot.instance = null;
         bot = Bot.getInstance(this);
@@ -33,7 +33,7 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
-    private void drive() { // Robot centric, drive multiplier default 1
+    private void drive() {
         driveSpeed = driveMultiplier - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
 
@@ -53,5 +53,7 @@ public class MainTeleOp extends LinearOpMode {
             );
         }
     }
+
+
 
 }

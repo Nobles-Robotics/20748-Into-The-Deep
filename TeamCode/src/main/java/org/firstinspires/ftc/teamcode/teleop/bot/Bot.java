@@ -81,6 +81,19 @@ public class Bot {
     public void setHeading (double heading) {
         this.heading = heading;
     }
+    private double[] parseSpeeds(double[] speeds) {
+        double maxSpeed = 0;
+
+        for (double speed : speeds) {
+            maxSpeed = Math.max(maxSpeed, speed);
+        }
+        if (maxSpeed > 1) {
+            for (int i = 0; i < speeds.length; i++) {
+                speeds[i] /= maxSpeed;
+            }
+        }
+        return speeds;
+    }
 
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
 
@@ -90,15 +103,8 @@ public class Bot {
                 (forwardBackSpeed + strafeSpeed - turnSpeed),
                 (forwardBackSpeed - strafeSpeed + turnSpeed),
         };
-        double maxSpeed = 0;
-        for (int i = 0; i < 4; i++) {
-            maxSpeed = Math.max(maxSpeed, speeds[i]);
-        }
-        if (maxSpeed > 1) {
-            for (int i = 0; i < 4; i++) {
-                speeds[i] /= maxSpeed;
-            }
-        }
+        parseSpeeds(speeds);
+
         fl.set(speeds[0]);
         fr.set(speeds[1]);
         bl.set(speeds[2]);
@@ -114,15 +120,8 @@ public class Bot {
                 speed + turnSpeed,
                 speed - turnSpeed
         };
-        double maxSpeed = 0;
-        for (int i = 0; i < 4; i++) {
-            maxSpeed = Math.max(maxSpeed, speeds[i]);
-        }
-        if (maxSpeed > 1) {
-            for (int i = 0; i < 4; i++) {
-                speeds[i] /= maxSpeed;
-            }
-        }
+        parseSpeeds(speeds);
+
         fl.set(speeds[0]);
         fr.set(speeds[1]);
         bl.set(speeds[2]);
