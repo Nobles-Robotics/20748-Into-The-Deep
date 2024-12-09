@@ -14,7 +14,7 @@ public class MainTeleOp extends LinearOpMode {
     private Bot bot;
     private double driveSpeed = 1, driveMultiplier = 1;
     private GamepadEx gp1;
-    private boolean fieldCentric;
+    private boolean fieldCentric = false;
     @Override
     public void runOpMode() {
 
@@ -53,7 +53,4 @@ public class MainTeleOp extends LinearOpMode {
             );
         }
     }
-
-
-
 }
