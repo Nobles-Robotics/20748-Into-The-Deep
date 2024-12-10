@@ -1,10 +1,10 @@
 ## IMPORTANT
 
 #Motor Configuration (drive)
-0 - A = motorFL
-1 - B = motorFR
-2 - C = motorBL
-3 - D = motorBR
+* 0 - A = motorFL
+* 1 - B = motorFR
+* 2 - C = motorBL
+* 3 - D = motorBR
 
 ## NOTICE
 
