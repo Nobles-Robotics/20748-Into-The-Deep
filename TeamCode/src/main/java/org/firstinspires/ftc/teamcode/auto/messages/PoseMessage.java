@@ -1,5 +1,4 @@
-package org.firstinspires.ftc.teamcode.messages;
-
+package org.firstinspires.ftc.teamcode.auto.messages;
 import com.acmerobotics.roadrunner.Pose2d;
 
 public final class PoseMessage {
