@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 
 @TeleOp(name = "MainTeleOp")
@@ -14,16 +13,15 @@ public class MainTeleOp extends LinearOpMode {
     private Bot bot;
     private double driveSpeed = 1, driveMultiplier = 1;
     private GamepadEx gp1;
-    private boolean fieldCentric = false;
+    private final boolean fieldCentric = false;
+
     @Override
     public void runOpMode() {
-
-        //Servo myServo = hardwareMap.get(Servo.class, "servo0");
 
         Bot.instance = null;
         bot = Bot.getInstance(this);
         gp1 = new GamepadEx(gamepad1);
-        bot.initializeMotors();
+        bot.initializeDrive();
         bot.stopMotors();
 
         waitForStart();

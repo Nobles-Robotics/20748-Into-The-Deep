@@ -42,7 +42,7 @@ public class Bot {
         drive = new MecanumDrive(fl, fr, bl, br);
     }
 
-    public void initializeMotors() {
+    public void initializeDrive() {
         fl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
