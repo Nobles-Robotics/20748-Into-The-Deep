@@ -1,3 +1,11 @@
+## IMPORTANT
+
+#Motor Configuration (drive)
+* 0 - A = motorFL
+* 1 - B = motorFR
+* 2 - C = motorBL
+* 3 - D = motorBR
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
