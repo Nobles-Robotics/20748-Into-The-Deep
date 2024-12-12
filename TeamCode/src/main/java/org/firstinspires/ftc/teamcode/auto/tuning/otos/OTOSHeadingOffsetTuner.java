@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.tuning.otos;
+package org.firstinspires.ftc.teamcode.auto.tuning.otos;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
+import org.firstinspires.ftc.teamcode.auto.SparkFunOTOSDrive;
 @TeleOp
 public class OTOSHeadingOffsetTuner extends LinearOpMode {
 

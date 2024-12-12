@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.teleop.teleop;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
+import org.firstinspires.ftc.teamcode.teleop.teleop.bot.Bot;
 
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode {

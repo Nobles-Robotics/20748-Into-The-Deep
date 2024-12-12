@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.bot;
+package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
