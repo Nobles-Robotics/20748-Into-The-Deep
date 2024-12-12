@@ -13,7 +13,7 @@ public class MainTeleOp extends LinearOpMode {
     private Bot bot;
     private double driveSpeed = 1, driveMultiplier = 1;
     private GamepadEx gp1;
-    private final boolean fieldCentric = false;
+    private boolean fieldCentric;
 
     @Override
     public void runOpMode() {
@@ -42,6 +42,7 @@ public class MainTeleOp extends LinearOpMode {
                     driveVector.getY() * driveSpeed,
                     turnVector.getX() * driveSpeed
             );
+            telemetry.addLine("test");
         } else {
             Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                     turnVector = new Vector2d(gp1.getRightX(), 0);
