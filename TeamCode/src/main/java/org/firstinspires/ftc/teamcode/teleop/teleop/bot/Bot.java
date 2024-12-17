@@ -16,6 +16,7 @@ public class Bot {
     private MecanumDrive drive;
     private double heading = 0.0;
 
+
     public static Bot getInstance() {
         if (instance == null) {
             throw new IllegalStateException("tried to getInstance of Bot when uninitialized!");
@@ -58,16 +59,16 @@ public class Bot {
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
 
-        IMU imu = opMode.hardwareMap.get(IMU.class, "imu");
+        //IMU imu = opMode.hardwareMap.get(IMU.class, "imu");
 
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        //IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+        //        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+        //        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
 
-        imu.initialize(parameters);
+        //imu.initialize(parameters);
     }
 
-    public void stopMotors() {
+    public void stopDriveMotors() {
         fl.set(0.0);
         fr.set(0.0);
         bl.set(0.0);

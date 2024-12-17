@@ -6,11 +6,13 @@ import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.teleop.teleop.bot.Bot;
+import org.firstinspires.ftc.teamcode.teleop.teleop.bot.Slides;
 
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends LinearOpMode {
 
     private Bot bot;
+    private Slides slides;
     private double driveSpeed = 1, driveMultiplier = 1;
     private GamepadEx gp1;
     private boolean fieldCentric;
@@ -22,11 +24,22 @@ public class MainTeleOp extends LinearOpMode {
         bot = Bot.getInstance(this);
         gp1 = new GamepadEx(gamepad1);
         bot.initializeDrive();
-        bot.stopMotors();
+        bot.stopDriveMotors();
+        Slides slides = new Slides(this);
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+
+            if (gp1.getButton(GamepadKeys.Button.A)) {
+                slides.runToMM(1000);
+            }
+            if (gp1.getButton(GamepadKeys.Button.B)) {
+                slides.runToMM(0);
+            }
+            telemetry.addData("Slides Position (mm)", slides.getmmPosition());
+            telemetry.addData("Slides IK Position (mm)", slides.getIKmmPosition());
+            telemetry.update();
             drive();
         }
     }
@@ -42,7 +55,6 @@ public class MainTeleOp extends LinearOpMode {
                     driveVector.getY() * driveSpeed,
                     turnVector.getX() * driveSpeed
             );
-            telemetry.addLine("test");
         } else {
             Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                     turnVector = new Vector2d(gp1.getRightX(), 0);
