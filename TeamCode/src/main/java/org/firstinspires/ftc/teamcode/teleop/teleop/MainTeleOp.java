@@ -20,12 +20,17 @@ public class MainTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Bot.instance = null;
         bot = Bot.getInstance(this);
+        slides = Slides.getInstance(this);
+
         gp1 = new GamepadEx(gamepad1);
+
         bot.initializeDrive();
         bot.stopDriveMotors();
-        Slides slides = new Slides(this);
+
+        slides.initializeSlides();
+        slides.stopSlideMotors();
+
 
         waitForStart();
 
@@ -37,8 +42,8 @@ public class MainTeleOp extends LinearOpMode {
             if (gp1.getButton(GamepadKeys.Button.B)) {
                 slides.runToMM(0);
             }
-            telemetry.addData("Slides Position (mm)", slides.getmmPosition());
-            telemetry.addData("Slides IK Position (mm)", slides.getIKmmPosition());
+            telemetry.addData("Slides Position (mm)", slides.getMMPosition());
+            telemetry.addData("Slides IK Position (mm)", slides.getIKMMPosition());
             telemetry.update();
             drive();
         }

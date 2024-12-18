@@ -59,6 +59,7 @@ public class Bot {
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
 
+        //TODO: Fix IMU - Can not not be found at initialization after adding Expansion Hub
         //IMU imu = opMode.hardwareMap.get(IMU.class, "imu");
 
         //IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
