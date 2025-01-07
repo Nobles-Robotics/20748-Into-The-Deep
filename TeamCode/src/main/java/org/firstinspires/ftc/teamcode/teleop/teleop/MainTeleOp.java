@@ -26,11 +26,7 @@ public class MainTeleOp extends LinearOpMode {
         gp1 = new GamepadEx(gamepad1);
         gp2 = new GamepadEx(gamepad2);
 
-        bot.initializeDrive();
-        bot.stopDriveMotors();
-
-        slides.initializeSlides();
-        slides.stopSlideMotors();
+        bot.initializeBot();
 
         gp1.readButtons();
         gp2.readButtons();

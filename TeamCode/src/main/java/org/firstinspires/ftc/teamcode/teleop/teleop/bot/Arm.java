@@ -4,11 +4,9 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Arm {
 
@@ -17,6 +15,7 @@ public class Arm {
     public OpMode opMode;
     public final ServoEx servoWrist;
     public final CRServo servoArm;
+    public final MotorEx motorArmE, motorArmR;
     private PIDFController controller;
     double p,i,d,f;
     public static Arm getInstance() {
@@ -39,6 +38,8 @@ public class Arm {
                 opMode.hardwareMap, "servoWrist", 0, 0,
                 AngleUnit.DEGREES
         );
+        motorArmE = new MotorEx(opMode.hardwareMap, "motorArmE");
+        motorArmR = new MotorEx(opMode.hardwareMap, "motorArmR");
     }
 
     public void initializeArm() {

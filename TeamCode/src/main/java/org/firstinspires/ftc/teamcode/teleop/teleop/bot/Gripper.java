@@ -3,11 +3,8 @@ package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Gripper {
 
@@ -46,6 +43,5 @@ public class Gripper {
     public void initializeGripper() {
         servoGripperL.setInverted(false);
         servoGripperR.setInverted(false);
-
     }
 }
