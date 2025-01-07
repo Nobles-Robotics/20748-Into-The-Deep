@@ -25,7 +25,9 @@ public class Bot {
     /*
     public void idle(){
         Thread thread = new Thread(() -> {
-
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) {}
         });
         thread.start();
     }
@@ -33,7 +35,9 @@ public class Bot {
 
     public void idle(){
         Thread thread = new Thread(() -> {
-
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ignored) {}
         });
         thread.start();
     }
