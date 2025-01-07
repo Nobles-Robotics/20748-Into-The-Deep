@@ -41,6 +41,57 @@ public class Bot {
         });
         thread.start();
     }
+
+    public void highBucket(){
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(100);
+                state = State.HIGH_BUCKET;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void highRung(){
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(100);
+                state = State.HIGH_RUNG;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void wallIntake(){
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(100);
+                state = State.WALL_INTAKE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void armIntake(){
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(100);
+                state = State.ARM_INTAKE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
+    public void gripperIntake(){
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(100);
+                state = State.GRIPPER_INTAKE;
+            } catch (InterruptedException ignored) {}
+        });
+        thread.start();
+    }
+
     public static Bot getInstance() {
         if (instance == null) {
             throw new IllegalStateException("tried to getInstance of Bot when uninitialized!");
