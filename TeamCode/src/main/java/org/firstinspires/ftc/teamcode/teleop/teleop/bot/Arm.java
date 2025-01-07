@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,7 +15,8 @@ public class Arm {
     public static Bot instance;
     public static Arm armInstance;
     public OpMode opMode;
-    public final ServoEx servoArm, servoWrist;
+    public final ServoEx servoWrist;
+    public final CRServo servoArm;
     private PIDFController controller;
     double p,i,d,f;
     public static Arm getInstance() {
@@ -32,11 +34,7 @@ public class Arm {
     }
     public Arm(OpMode opMode) {
         this.opMode = opMode;
-
-        servoArm = new SimpleServo(
-                opMode.hardwareMap, "servoArm", 0, 0,
-                AngleUnit.DEGREES
-        );
+        servoArm = new CRServo(opMode.hardwareMap, "servoArm");
         servoWrist = new SimpleServo(
                 opMode.hardwareMap, "servoWrist", 0, 0,
                 AngleUnit.DEGREES
@@ -48,6 +46,4 @@ public class Arm {
         servoWrist.setInverted(false);
     }
 
-    public void stopArm() {
-    }
 }
