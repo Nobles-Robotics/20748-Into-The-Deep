@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Slides {
-
     public static Bot instance;
     public static Slides slideInstance;
     public OpMode opMode;

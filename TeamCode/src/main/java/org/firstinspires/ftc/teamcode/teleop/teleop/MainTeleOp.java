@@ -14,7 +14,7 @@ public class MainTeleOp extends LinearOpMode {
     private Bot bot;
     private Slides slides;
     private double driveSpeed = 1, driveMultiplier = 1;
-    private GamepadEx gp1;
+    private GamepadEx gp1, gp2;
     private boolean fieldCentric;
 
     @Override
@@ -24,6 +24,7 @@ public class MainTeleOp extends LinearOpMode {
         slides = Slides.getInstance(this);
 
         gp1 = new GamepadEx(gamepad1);
+        gp2 = new GamepadEx(gamepad2);
 
         bot.initializeDrive();
         bot.stopDriveMotors();
@@ -31,6 +32,8 @@ public class MainTeleOp extends LinearOpMode {
         slides.initializeSlides();
         slides.stopSlideMotors();
 
+        gp1.readButtons();
+        gp2.readButtons();
 
         waitForStart();
 
