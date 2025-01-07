@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
@@ -11,7 +12,7 @@ public class Slides {
     public static Slides slideInstance;
     public OpMode opMode;
     public boolean slideStop = false;
-    public final MotorEx slide0;
+    public final MotorEx motorSlideEL, motorSlideRL, motorSlideER, motorSlideRR;
     private PIDFController controller;
     double p,i,d,f;
     public static Slides getInstance() {
@@ -30,13 +31,19 @@ public class Slides {
     public Slides(OpMode opMode) {
         this.opMode = opMode;
 
-        slide0 = new MotorEx(opMode.hardwareMap, "motorSlide0");
+        motorSlideEL = new MotorEx(opMode.hardwareMap, "motorSlideEL");
+        motorSlideRL = new MotorEx(opMode.hardwareMap, "motorSlideRL");
+        motorSlideER = new MotorEx(opMode.hardwareMap, "motorSlideER");
+        motorSlideRR = new MotorEx(opMode.hardwareMap, "motorSlideRR");
+
+        //motors on Right = Leader | left = Follower
+        MotorGroup SlideE = new MotorGroup(motorSlideER, motorSlideEL);
+        MotorGroup SlideR = new MotorGroup(motorSlideRR, motorSlideRL);
+
     }
 
     public void initializeSlides() {
-        slide0.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slide0.setInverted(false);
-        slide0.setRunMode(Motor.RunMode.RawPower);
+
     }
 
     public void stopSlideMotors() {
