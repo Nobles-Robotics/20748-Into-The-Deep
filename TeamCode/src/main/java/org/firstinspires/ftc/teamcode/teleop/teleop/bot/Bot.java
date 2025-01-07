@@ -6,7 +6,7 @@ public class Bot {
 
     public static Bot instance;
     public OpMode opMode;
-    private double heading = 0.0;
+    public State state = State.IDLE;
 
     public Slides slides;
     public Gripper gripper;
@@ -66,6 +66,15 @@ public class Bot {
         slides.initializeSlides();
         arm.initializeArm();
         gripper.initializeGripper();
+        state = State.IDLE;
+    }
+
+
+    public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed){
+        drive.driveFieldCentric(strafeSpeed, forwardBackSpeed, turnSpeed);
+    }
+    public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed){
+        drive.driveRobotCentric(strafeSpeed, forwardBackSpeed, turnSpeed);
     }
 }
 

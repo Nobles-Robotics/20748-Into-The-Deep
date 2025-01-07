@@ -21,19 +21,18 @@ public class MainTeleOp extends LinearOpMode {
     public void runOpMode() {
 
         bot = Bot.getInstance(this);
-        slides = Slides.getInstance(this);
 
         gp1 = new GamepadEx(gamepad1);
         gp2 = new GamepadEx(gamepad2);
 
         bot.initializeBot();
 
-        gp1.readButtons();
-        gp2.readButtons();
-
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+
+            gp1.readButtons();
+            gp2.readButtons();
 
             if (gp1.getButton(GamepadKeys.Button.A)) {
                 slides.runToMM(1000);
