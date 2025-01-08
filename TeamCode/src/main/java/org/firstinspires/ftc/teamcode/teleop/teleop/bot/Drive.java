@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class Drive {
@@ -54,14 +56,13 @@ public class Drive {
         bl.setRunMode(Motor.RunMode.RawPower);
         br.setRunMode(Motor.RunMode.RawPower);
 
-        //TODO: Fix IMU - Can not not be found at initialization after adding Expansion Hub
-        //IMU imu = opMode.hardwareMap.get(IMU.class, "imu");
+        IMU imu = opMode.hardwareMap.get(IMU.class, "imu");
 
-        //IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        //        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-        //        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
 
-        //imu.initialize(parameters);
+        imu.initialize(parameters);
 
         stopDriveMotors();
     }

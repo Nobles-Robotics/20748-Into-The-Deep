@@ -124,7 +124,6 @@ public class Bot {
         state = State.IDLE;
     }
 
-
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed){
         drive.driveFieldCentric(strafeSpeed, forwardBackSpeed, turnSpeed);
     }
