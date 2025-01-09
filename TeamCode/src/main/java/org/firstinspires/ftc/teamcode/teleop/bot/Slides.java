@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
+package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
