@@ -1,4 +1,8 @@
-package org.firstinspires.ftc.teamcode.teleop.teleop.bot;
+
+/*
+THIS FILE CONTAINS COLLECTION OF OLD CODE TO BE REPLACED
+ */
+package org.firstinspires.ftc.teamcode.teleop.Old;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
