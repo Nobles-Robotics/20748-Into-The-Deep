@@ -1,7 +1,7 @@
 /*
 THIS FILE AIMS AS A BASIS FOR ALL SUBSYSTEMS
  */
-
+/*
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
@@ -90,3 +90,5 @@ public class JavaSubsystem implements Subsystem {
                 });
     }
 }
+*/
+

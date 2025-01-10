@@ -16,6 +16,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
@@ -28,9 +30,6 @@ import dev.frozenmilk.mercurial.subsystems.SubsystemObjectCell;
 import dev.frozenmilk.util.cell.RefCell;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.teamcode.auto.MecanumDrive;
-
-import static org.firstinspires.ftc.teamcode.teleop.bot.JavaSubsystem.getMotor;
-
 public class Drive implements Subsystem {
 
     public static final Drive INSTANCE = new Drive();
@@ -62,6 +61,9 @@ public class Drive implements Subsystem {
     private final SubsystemObjectCell<MotorEx> fr = subsystemCell(() -> FeatureRegistrar.getActiveOpMode().hardwareMap.get(MotorEx.class, "motorFR"));
     private final SubsystemObjectCell<MotorEx> bl = subsystemCell(() -> FeatureRegistrar.getActiveOpMode().hardwareMap.get(MotorEx.class, "motorBL"));
     private final SubsystemObjectCell<MotorEx> br = subsystemCell(() -> FeatureRegistrar.getActiveOpMode().hardwareMap.get(MotorEx.class, "motorBR"));
+    private final SubsystemObjectCell<IMU> imu = subsystemCell(() -> FeatureRegistrar.getActiveOpMode().hardwareMap.get(IMU.class, "imu"));
+
+
     public static MotorEx getFL() {
         return INSTANCE.fl.get();
     }
@@ -74,16 +76,21 @@ public class Drive implements Subsystem {
     public static MotorEx getBR() {
         return INSTANCE.br.get();
     }
+    public static IMU getIMU(){
+        return INSTANCE.imu.get();
+    }
 
-    //Declares default command + Initializes the Subsystem
+    private final boolean fieldCentric = false;
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        setDefaultCommand(drive());
+        setDefaultCommand(drive(fieldCentric));
+        initializeDrive();
+        stopDriveMotors();
     }
 
     @Override
     public void postUserLoopHook(@NonNull Wrapper opMode) {
-        drive();
+        drive(fieldCentric);
     }
 
     @Override
@@ -92,16 +99,25 @@ public class Drive implements Subsystem {
     @Override
     public void cleanup(@NonNull Wrapper opMode) {}
     @NonNull
-    public static Lambda drive() {
+    public static Lambda drive(boolean fieldCentric) {
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
                 .setExecute(() -> {
-                    double driveSpeed = 1;
-                    double rightX = Mercurial.gamepad1().leftStickX().state();
-                    double rightY = Mercurial.gamepad1().leftStickY().state();
-                    Vector2d driveVector = new Vector2d(-rightX, -rightY),
-                            turnVector = new Vector2d(-rightX, 0);
-                    driveFieldCentric(driveVector.getX() * driveSpeed, driveVector.getY() * driveSpeed, turnVector.getX() * driveSpeed);
+                    if (fieldCentric){
+                        double driveSpeed = 1;
+                        double rightX = Mercurial.gamepad1().leftStickX().state();
+                        double rightY = Mercurial.gamepad1().leftStickY().state();
+                        Vector2d driveVector = new Vector2d(-rightX, -rightY),
+                                turnVector = new Vector2d(-rightX, 0);
+                        driveFieldCentric(driveVector.getX() * driveSpeed, driveVector.getY() * driveSpeed, turnVector.getX() * driveSpeed);
+                    } else {
+                        double driveSpeed = 1;
+                        double rightX = Mercurial.gamepad1().leftStickX().state();
+                        double rightY = Mercurial.gamepad1().leftStickY().state();
+                        Vector2d driveVector = new Vector2d(rightX, -rightY),
+                                turnVector = new Vector2d(rightX, 0);
+                        driveRobotCentric(driveVector.getX() * driveSpeed, driveVector.getY() * driveSpeed, turnVector.getX() * driveSpeed);
+                    }
                 });
     }
 
@@ -152,5 +168,33 @@ public class Drive implements Subsystem {
         getFR().set(speeds[1]);
         getBL().set(speeds[2]);
         getBR().set(speeds[3]);
+    }
+    public void initializeDrive() {
+        getFL().setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        getFR().setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        getBL().setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        getBR().setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        getFL().setInverted(false);
+        getFR().setInverted(true);
+        getBL().setInverted(false);
+        getBR().setInverted(true);
+
+        getFL().setRunMode(Motor.RunMode.RawPower);
+        getFR().setRunMode(Motor.RunMode.RawPower);
+        getBL().setRunMode(Motor.RunMode.RawPower);
+        getBR().setRunMode(Motor.RunMode.RawPower);
+
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+
+        getIMU().initialize(parameters);
+    }
+    public void stopDriveMotors() {
+        getFL().set(0.0);
+        getFR().set(0.0);
+        getBL().set(0.0);
+        getBR().set(0.0);
     }
 }

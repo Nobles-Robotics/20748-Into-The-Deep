@@ -15,8 +15,6 @@ import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
 
-    private Bot bot;
-
 
     public MainTeleOp() {
         FeatureRegistrar.checkFeatures();
@@ -25,10 +23,6 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
-        bot = Bot.getInstance(this);
-
-
-        bot.initializeBot();
     }
     @Override
     public void init_loop() {

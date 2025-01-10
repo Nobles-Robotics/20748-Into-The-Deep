@@ -11,7 +11,7 @@ public class Bot {
     public OpMode opMode;
     public State state = State.IDLE;
 
-    public Slides slides;
+    //public Slides slides;
     public Gripper gripper;
     public Arm arm;
     public Drive drive;
@@ -115,13 +115,13 @@ public class Bot {
 
         drive = new Drive(opMode);
         gripper = new Gripper(opMode);
-        slides = new Slides(opMode);
+        //slides = new Slides(opMode);
         arm = new Arm(opMode);
     }
 
     public void initializeBot() {
         drive.initializeDrive();
-        slides.initializeSlides();
+        //slides.initializeSlides();
         arm.initializeArm();
         gripper.initializeGripper();
         state = State.IDLE;
