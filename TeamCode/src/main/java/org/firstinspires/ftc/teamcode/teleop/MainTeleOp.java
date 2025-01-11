@@ -42,27 +42,6 @@ public class MainTeleOp extends OpMode {
     public void stop() {
         // the rest is as normal
     }
-
-    /*private void drive() {
-        driveSpeed = driveMultiplier - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
-        driveSpeed = Math.max(0, driveSpeed);
-
-        if (fieldCentric) {
-            Vector2d driveVector = new Vector2d(-gp1.getLeftX(), -gp1.getLeftY()),
-                    turnVector = new Vector2d(-gp1.getRightX(), 0);
-            bot.driveFieldCentric(driveVector.getX() * driveSpeed,
-                    driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed
-            );
-        } else {
-            Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
-                    turnVector = new Vector2d(gp1.getRightX(), 0);
-            bot.driveRobotCentric(driveVector.getX() * driveSpeed,
-                    driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed
-            );
-        }
-    }*/
 }
 
 

@@ -1,6 +1,4 @@
-
 package org.firstinspires.ftc.teamcode.teleop.bot;
-
 import androidx.annotation.NonNull;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
@@ -28,30 +26,30 @@ public class Slides implements Subsystem {
 
     private Slides() { }
     private MotorEx slideEL, slideER, slideRL, slideRR;
-    private MotorGroup slideL, slideR;
-    private PIDFController controller;
-    private final double
-            p=0,
-            i=0,
-            d=0,
-            f=0;
-    private double
-            maxV = 0,
-            maxA = 0;
-    private MotionProfiler profiler;
+    private static MotorGroup slideE;
+    private MotorGroup slideR;
+    private static PIDFController controller;
+    private final double p = 0.01, i = 0, d = 0.001, f = 0;
+    private double maxV = 1000, maxA = 500;
+    private static MotionProfiler profiler;
     private static int target;
+    private static double startTime;
+    private static double tolerance = 0.1;
+
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
     @Inherited
-    public @interface Attach{}
+    public @interface Attach {}
+
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
+
     @NonNull
     @Override
     public Dependency<?> getDependency() { return dependency; }
     @Override
     public void setDependency(@NonNull Dependency<?> dependency) { this.dependency = dependency; }
-
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
@@ -60,51 +58,74 @@ public class Slides implements Subsystem {
         slideEL = new MotorEx(hwmap, "motorSlideEL");
         slideRR = new MotorEx(hwmap, "motorSlideRR");
         slideRL = new MotorEx(hwmap, "motorSlideRL");
-        slideL = new MotorGroup(slideEL, slideRL);
+        slideE = new MotorGroup(slideEL, slideRL);
         slideR = new MotorGroup(slideER, slideRR);
         initializeSlides();
         controller = new PIDFController(p, i, d, f);
         controller.setTolerance(0.1);
-        controller.setSetPoint(0);
-
         profiler = new MotionProfiler(maxV, maxA);
+        setDefaultCommand(update());
     }
 
     @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {}
+    public void postUserLoopHook(@NonNull Wrapper opMode) {
+        update();
+    }
 
     @Override
     public void postUserStopHook(@NonNull Wrapper opMode) {}
-
     @Override
     public void cleanup(@NonNull Wrapper opMode) {}
 
-    public void initializeSlides(){
-
-        slideL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+    public void initializeSlides() {
+        slideE.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-
-        slideL.setInverted(false);
+        slideE.setInverted(false);
         slideR.setInverted(false);
-
-        slideL.setRunMode(Motor.RunMode.RawPower);
+        slideE.setRunMode(Motor.RunMode.RawPower);
         slideR.setRunMode(Motor.RunMode.RawPower);
     }
 
     @NonNull
-    public static Lambda runTo() {
-        return new Lambda("simple")
+    public static Lambda update() {
+        return new Lambda("update")
                 .addRequirements(INSTANCE)
-                .setInit(() -> {
-
-                });
+                .setExecute(Slides::updatePIDF);
     }
 
-    public void resetProfiler() {
-        profiler = new MotionProfiler(maxV, maxA);
+    @NonNull
+    public static Lambda goTo(int to){
+        return new Lambda("set pid target")
+                .setExecute(() -> setTarget(to))
+                .setFinish(Slides::atTarget);
     }
-    public static void setTarget(int runTo){ target = runTo; }
 
-    public static int getTarget(){ return target; }
+    public void resetProfiler(double currentPos) {
+        profiler.initialize(currentPos, target);
+        startTime = System.currentTimeMillis() / 1000.0;
+    }
+
+    public static void setTarget(int runTo) {
+        target = runTo;
+        INSTANCE.resetProfiler(slideE.getCurrentPosition());
+    }
+
+    public static int getTarget() {
+        return target;
+    }
+
+    private static void updatePIDF() {
+        double currentTime = (System.currentTimeMillis() / 1000.0) - startTime;
+        double desiredPos = profiler.pos(currentTime);
+        double currentPos = slideE.getCurrentPosition();
+
+        controller.setSetPoint(desiredPos);
+        double power = controller.calculate(currentPos);
+
+        slideE.set(power);
+    }
+
+    public static boolean atTarget() {
+        return (slideE.getCurrentPosition() >= (getTarget() - tolerance) || slideE.getCurrentPosition() <= (getTarget() + tolerance));
+    }
 }
-
