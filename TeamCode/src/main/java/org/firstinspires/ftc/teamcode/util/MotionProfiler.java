@@ -62,7 +62,7 @@ public class MotionProfiler {
         return startPos + accelerationDistance + cruiseDistance + maxV * deaccelerationTime - 0.5 * tempA * deaccelerationTime * deaccelerationTime;
     }
 
-    public double velocity() {
+    public double velocity(double timeElapsed) {
         if (timeElapsed > entiredT){ return 0;}
         if (timeElapsed < accelerationdT){ return tempA * timeElapsed; }
         if (timeElapsed < deaccelerationdT){ return maxV; }
@@ -70,7 +70,7 @@ public class MotionProfiler {
         return maxV - deaccelerationTime;
     }
 
-    public double acceleration() {
+    public double acceleration(double timeElapsed) {
         if (timeElapsed > entiredT){ return 0; }
         if (timeElapsed < accelerationdT){ return tempA; }
         if (timeElapsed < deaccelerationTime){ return 0; }
@@ -79,6 +79,8 @@ public class MotionProfiler {
 
     public boolean isDone() { return isDone; }
     public boolean isOver() { return isOver; }
+
+    public long getEntiredT() { return Double.doubleToLongBits(entiredT); }
 }
 
 
