@@ -26,7 +26,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
-        Mercurial.gamepad1().a().onTrue(Slides.goTo(3500));
+        Mercurial.gamepad1().a().onTrue(Slides.runTo(3500));
     }
     @Override
     public void init_loop() {

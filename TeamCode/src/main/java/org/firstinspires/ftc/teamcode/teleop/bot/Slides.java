@@ -98,8 +98,8 @@ public class Slides implements Subsystem {
     }
 
     @NonNull
-    public static Lambda goTo(int to){
-        return new Lambda("set pid target")
+    public static Lambda runTo(int to){
+        return new Lambda("runTo")
                 .setExecute(() -> setTarget(to))
                 .setFinish(Slides::atTarget);
     }
