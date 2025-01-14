@@ -28,7 +28,7 @@ public class Slides implements Subsystem {
     private Slides() { }
     private MotorEx slideEL, slideER, slideRL, slideRR;
     private static MotorGroup slideE;
-    private MotorGroup slideR;
+    private static MotorGroup slideR;
     private static PIDFController controller;
     private final double p = 0.01, i = 0, d = 0.001, f = 0;
     private double maxV = 10000, maxA = 5000;
@@ -124,7 +124,14 @@ public class Slides implements Subsystem {
             controller.setSetPoint(profiler.pos(currentTime));
             power = controller.calculate(slideE.getCurrentPosition());
         }
-        slideE.set(power);
+
+        if (power >= 0){
+            slideE.set(power);
+            slideR.set(-power);
+        } else {
+            slideE.set(-power);
+            slideR.set(power);
+        }
     }
 
     public static boolean atTarget() {
@@ -135,9 +142,8 @@ public class Slides implements Subsystem {
     }
 
     public static void setTarget(int runTo) {
-        target = runTo;
         INSTANCE.resetProfiler();
-        profiler.initialize(slideE.getCurrentPosition(), target);
+        profiler.initialize(slideE.getCurrentPosition(), runTo);
         Timer = new Timing.Timer(profiler.getEntiredT());
     }
 
