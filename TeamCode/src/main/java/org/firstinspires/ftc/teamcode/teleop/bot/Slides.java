@@ -14,19 +14,22 @@ import java.lang.annotation.Target;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
 import com.arcrobotics.ftclib.util.Timing;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Slides implements Subsystem {
     public static final Slides INSTANCE = new Slides();
 
     private Slides() { }
-    private MotorEx slideEL, slideER, slideRL, slideRR;
+    private static MotorEx slideEL, slideER, slideRL, slideRR;
+    private static Telemetry telemetry;
     private static MotorGroup slideE;
     private static MotorGroup slideR;
     private static PIDFController controller;
@@ -57,6 +60,7 @@ public class Slides implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
+        telemetry = opMode.getOpMode().telemetry;
         slideER = new MotorEx(hwmap, "motorSlideER");
         slideEL = new MotorEx(hwmap, "motorSlideEL");
         slideRR = new MotorEx(hwmap, "motorSlideRR");
@@ -68,11 +72,11 @@ public class Slides implements Subsystem {
         controller.setTolerance(tolerance);
         profiler = new MotionProfiler(maxV, maxA);
         setDefaultCommand(update());
+        setTarget(0);
     }
 
     @Override
     public void postUserLoopHook(@NonNull Wrapper opMode) {
-        update();
     }
 
     @Override
@@ -106,7 +110,10 @@ public class Slides implements Subsystem {
 
     private static void updatePIDF() {
         double power = 0;
-        double currentTime = Timer.elapsedTime();
+        double currentTime = 0;
+        if (Timer.isTimerOn()){
+            currentTime = Timer.elapsedTime();
+        }
 
         //If we want to implement the ElevatorFeedForward in ftclib (https://docs.ftclib.org/ftclib/features/controllers#elevatorfeedforward)
         double desiredPos = profiler.pos(currentTime);
@@ -118,13 +125,14 @@ public class Slides implements Subsystem {
                 INSTANCE.resetProfiler();
             } else {
                 controller.setSetPoint(getTarget());
-                power = controller.calculate(slideE.getCurrentPosition());
+                power = controller.calculate(slideER.getCurrentPosition());
             }
         } else {
             controller.setSetPoint(profiler.pos(currentTime));
-            power = controller.calculate(slideE.getCurrentPosition());
+            power = controller.calculate(slideER.getCurrentPosition());
         }
-
+        telemetry.addData("Power", power);
+        telemetry.update();
         if (power >= 0){
             slideE.set(power);
             slideR.set(-power);
@@ -135,7 +143,7 @@ public class Slides implements Subsystem {
     }
 
     public static boolean atTarget() {
-        return (slideE.getCurrentPosition() >= (getTarget() - tolerance) || slideE.getCurrentPosition() <= (getTarget() + tolerance));
+        return (slideER.getCurrentPosition() >= (getTarget() - tolerance) || slideER.getCurrentPosition() <= (getTarget() + tolerance));
     }
     public void resetProfiler() {
         profiler = new MotionProfiler(maxV, maxA);
@@ -143,7 +151,7 @@ public class Slides implements Subsystem {
 
     public static void setTarget(int runTo) {
         INSTANCE.resetProfiler();
-        profiler.initialize(slideE.getCurrentPosition(), runTo);
+        profiler.initialize(slideER.getCurrentPosition(), runTo);
         Timer = new Timing.Timer(profiler.getEntiredT());
     }
 
