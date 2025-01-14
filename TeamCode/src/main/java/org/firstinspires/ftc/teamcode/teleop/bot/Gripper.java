@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import java.lang.annotation.ElementType;
@@ -25,6 +27,7 @@ public class Gripper implements Subsystem {
     public static final Gripper INSTANCE = new Gripper();
 
     private Gripper() { }
+    private SimpleServo gripperL, gripperR;
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -49,6 +52,8 @@ public class Gripper implements Subsystem {
     //Declares default command + Initializes the Subsystem
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
+        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, "gripperL", 0, 300);
+        gripperR = new SimpleServo(opMode.getOpMode().hardwareMap, "gripperR", 0, 300);
     }
 
     @Override
@@ -59,4 +64,26 @@ public class Gripper implements Subsystem {
 
     @Override
     public void cleanup(@NonNull Wrapper opMode) {}
+
+    @NonNull
+    public static Lambda open() {
+        return new Lambda("open")
+                .addRequirements(INSTANCE)
+                .setInit(() -> {
+                    INSTANCE.gripperL.setPosition(0);
+                    INSTANCE.gripperR.setPosition(1.0);
+                })
+                .setEnd((interupted) -> {
+                    close().execute();
+                });
+    }
+    @NonNull
+    public static Lambda close() {
+        return new Lambda("close")
+                .addRequirements(INSTANCE)
+                .setInit(() -> {
+                    INSTANCE.gripperL.setPosition(0);
+                    INSTANCE.gripperR.setPosition(1.0);
+                });
+    }
 }
