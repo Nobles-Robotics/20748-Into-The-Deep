@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import java.lang.annotation.ElementType;
@@ -25,6 +28,7 @@ public class Arm implements Subsystem {
     public static final Arm INSTANCE = new Arm();
 
     private Arm() { }
+    private static CRServo servoIntake;
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -46,15 +50,10 @@ public class Arm implements Subsystem {
         this.dependency = dependency;
     }
 
-    private final SubsystemObjectCell<MotorEx> motor = subsystemCell(() -> FeatureRegistrar.getActiveOpMode().hardwareMap.get(MotorEx.class, ""));
-    public static MotorEx getMotor() {
-        return INSTANCE.motor.get();
-    }
-
     //Declares default command + Initializes the Subsystem
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        setDefaultCommand(simpleCommand());
+        servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoIntake");
     }
 
     @Override
@@ -67,24 +66,12 @@ public class Arm implements Subsystem {
     public void cleanup(@NonNull Wrapper opMode) {}
 
     @NonNull
-    public static Lambda simpleCommand() {
+    public static Lambda runIntake() {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
-                .setInit(() -> getMotor().set(0.4))
+                .setInit(() -> servoIntake.set(1))
                 .setEnd(interrupted -> {
-                    if (!interrupted) getMotor().set(0.0);
-                });
-    }
-    @NonNull
-    public static StatefulLambda<RefCell<Double>> statefulCommand() {
-        return new StatefulLambda<>("stateful", new RefCell<>(0.0))
-                .addRequirements(INSTANCE)
-                .setInit((state) -> getMotor().set(0.4 + state.get()))
-                .setEnd((interrupted, state) -> {
-                    if (!interrupted) getMotor().set(0);
-                    state.accept(state.get() + 0.1);
+                    if (!interrupted) servoIntake.set(0.0);
                 });
     }
 }
-
-

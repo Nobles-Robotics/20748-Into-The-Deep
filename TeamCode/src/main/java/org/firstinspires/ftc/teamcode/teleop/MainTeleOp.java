@@ -7,11 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
+import org.firstinspires.ftc.teamcode.teleop.bot.*;
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
-import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
-import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
-import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
 
 @Mercurial.Attach
@@ -20,6 +17,7 @@ import org.firstinspires.ftc.teamcode.util.BulkReads;
 @Slides.Attach
 @BulkReads.Attach
 @Gripper.Attach
+@Arm.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
 
@@ -32,7 +30,8 @@ public class MainTeleOp extends OpMode {
     public void init() {
         //Mercurial.gamepad1().a().onTrue(Slides.runTo(3500));
         Mercurial.gamepad1().a().onTrue(new Sequential(Slides.runTo(3500)));
-        Mercurial.gamepad1().b().untilFalse(Gripper.open());
+        Mercurial.gamepad1().b().untilFalse(Arm.runIntake());
+
     }
     @Override
     public void init_loop() {
