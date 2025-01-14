@@ -104,8 +104,6 @@ public class Slides implements Subsystem {
                 .setFinish(Slides::atTarget);
     }
 
-
-
     private static void updatePIDF() {
         double power = 0;
         double currentTime = Timer.elapsedTime();

@@ -11,11 +11,13 @@ import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
+import org.firstinspires.ftc.teamcode.util.BulkReads;
 
 @Mercurial.Attach
 @Bot.Attach
 @Drive.Attach
 @Slides.Attach
+@BulkReads.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
 
@@ -27,6 +29,7 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         Mercurial.gamepad1().a().onTrue(Slides.runTo(3500));
+        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.runTo(3500)));
     }
     @Override
     public void init_loop() {

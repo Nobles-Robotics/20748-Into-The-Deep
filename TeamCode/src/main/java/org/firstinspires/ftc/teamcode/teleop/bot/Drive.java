@@ -26,7 +26,6 @@ public class Drive implements Subsystem {
 
     public static final Drive INSTANCE = new Drive();
 
-
     private Drive() { }
     private MotorEx fl, fr, br, bl;
     private IMU imu;
