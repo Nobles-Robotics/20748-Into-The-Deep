@@ -70,8 +70,8 @@ public class Gripper implements Subsystem {
         return new Lambda("open")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
-                    INSTANCE.gripperL.setPosition(0);
-                    INSTANCE.gripperR.setPosition(1.0);
+                    INSTANCE.gripperL.turnToAngle(0);
+                    INSTANCE.gripperR.turnToAngle(1.0);
                 })
                 .setEnd((interupted) -> {
                     close().execute();
@@ -82,8 +82,8 @@ public class Gripper implements Subsystem {
         return new Lambda("close")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
-                    INSTANCE.gripperL.setPosition(0);
-                    INSTANCE.gripperR.setPosition(1.0);
+                    INSTANCE.gripperL.turnToAngle(0);
+                    INSTANCE.gripperR.turnToAngle(1.0);
                 });
     }
 }
