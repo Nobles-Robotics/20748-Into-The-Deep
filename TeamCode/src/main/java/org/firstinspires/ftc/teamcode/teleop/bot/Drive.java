@@ -35,20 +35,14 @@ public class Drive implements Subsystem {
     @MustBeDocumented
     @Inherited
     public @interface Attach{}
-    private Dependency<?> dependency =
-            Subsystem.DEFAULT_DEPENDENCY
-                    .and(new SingleAnnotation<>(Attach.class));
+    private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
     @NonNull
     @Override
-    public Dependency<?> getDependency() {
-        return dependency;
-    }
+    public Dependency<?> getDependency() { return dependency; }
 
     @Override
-    public void setDependency(@NonNull Dependency<?> dependency) {
-        this.dependency = dependency;
-    }
+    public void setDependency(@NonNull Dependency<?> dependency) { this.dependency = dependency; }
 
 
     private final boolean fieldCentric = false;
@@ -96,7 +90,8 @@ public class Drive implements Subsystem {
                     bl.set(blPower);
                     fr.set(frPower);
                     br.set(brPower);
-                });
+                })
+                .setFinish(() -> false);
     }
 
 
