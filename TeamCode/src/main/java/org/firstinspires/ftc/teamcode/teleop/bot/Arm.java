@@ -29,6 +29,7 @@ public class Arm implements Subsystem {
 
     private Arm() { }
     private static CRServo servoIntake;
+    private static ServoEx servoWrist;
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -54,6 +55,8 @@ public class Arm implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoIntake");
+        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servoWrist", 0, 300);
+        servoIntake.setInverted(true);
     }
 
     @Override
@@ -72,6 +75,25 @@ public class Arm implements Subsystem {
                 .setInit(() -> servoIntake.set(1))
                 .setEnd(interrupted -> {
                     if (!interrupted) servoIntake.set(0.0);
+                });
+    }
+    @NonNull
+    public static Lambda releaseIntake() {
+        return new Lambda("simple")
+                .addRequirements(INSTANCE)
+                .setInit(() -> servoIntake.set(-1))
+                .setEnd(interrupted -> {
+                    if (!interrupted) servoIntake.set(0.0);
+                });
+    }
+
+    @NonNull
+    public static Lambda runServoWrist() {
+        return new Lambda("simple")
+                .addRequirements(INSTANCE)
+                .setInit(() -> servoWrist.turnToAngle(300))
+                .setEnd(interrupted -> {
+                    if (!interrupted) servoWrist.turnToAngle(0);
                 });
     }
 }

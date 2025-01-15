@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
+
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -11,154 +16,88 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.arcrobotics.ftclib.util.Timing;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
+@Config
 public class Slides implements Subsystem {
     public static final Slides INSTANCE = new Slides();
-
+    private static int liftTarget;
+    private static double power;
+    private static PIDFController pidf;
+    private static double kP = .004, kI = 0, kD = 0, kF = 0;
+    private static MotorEx slideER, slideEL, slideRR, slideRL;
+    private static int tollerence = 20;
     private Slides() { }
-    private static MotorEx slideEL, slideER, slideRL, slideRR;
-    private static Telemetry telemetry;
-    private static MotorGroup slideE;
-    private static MotorGroup slideR;
-    private static PIDFController controller;
-    private final double p = 0.01, i = 0, d = 0.001, f = 0;
-    private double maxV = 10000, maxA = 5000;
-    private static MotionProfiler profiler;
-    private static int target;
-    private static double startTime;
-    private static double tolerance = 0.1;
 
-    private static Timing.Timer Timer;
-
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @MustBeDocumented
+    @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
     @Inherited
-    public @interface Attach {}
+    public @interface Attach { }
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
     @NonNull
     @Override
     public Dependency<?> getDependency() { return dependency; }
+
     @Override
     public void setDependency(@NonNull Dependency<?> dependency) { this.dependency = dependency; }
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        telemetry = opMode.getOpMode().telemetry;
         slideER = new MotorEx(hwmap, "motorSlideER");
         slideEL = new MotorEx(hwmap, "motorSlideEL");
         slideRR = new MotorEx(hwmap, "motorSlideRR");
         slideRL = new MotorEx(hwmap, "motorSlideRL");
-        slideE = new MotorGroup(slideEL, slideRL);
-        slideR = new MotorGroup(slideER, slideRR);
-        initializeSlides();
-        controller = new PIDFController(p, i, d, f);
-        controller.setTolerance(tolerance);
-        profiler = new MotionProfiler(maxV, maxA);
+        slideER.setRunMode(Motor.RunMode.RawPower);
+        slideEL.setRunMode(Motor.RunMode.RawPower);
         setDefaultCommand(update());
-        setTarget(0);
+        pidf = new PIDFController(kP, kI, kD, kF);
     }
 
-    @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {
+    public static void setTarget(int target){ liftTarget = target; }
+
+    public static int getTarget(){ return liftTarget; }
+
+    public static void pidUpdate() {
+        pidf.setSetPoint(liftTarget);
+        power = pidf.calculate(liftTarget, slideER.getCurrentPosition());
+        slideER.set(power);
+        slideEL.set(power);
     }
 
-    @Override
-    public void postUserStopHook(@NonNull Wrapper opMode) {}
-    @Override
-    public void cleanup(@NonNull Wrapper opMode) {}
-
-    public void initializeSlides() {
-        slideE.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideE.setInverted(false);
-        slideR.setInverted(false);
-        slideE.setRunMode(Motor.RunMode.RawPower);
-        slideR.setRunMode(Motor.RunMode.RawPower);
+    public static void hold() {
+        slideER.set(power);
+        slideEL.set(power);
     }
+    public static double getPower(){
+        return power;
+    }
+
+    public static int getLiftPosition(){
+        return slideER.getCurrentPosition();
+    }
+
+    public static boolean atTarget() { return (slideER.getCurrentPosition() >= (getTarget() - tollerence) || slideER.getCurrentPosition() <= (getTarget() + tollerence)); }
 
     @NonNull
     public static Lambda update() {
-        return new Lambda("update")
+        return new Lambda("update the pid")
                 .addRequirements(INSTANCE)
-                .setExecute(Slides::updatePIDF)
+                .setExecute(Slides::pidUpdate)
                 .setFinish(() -> false);
     }
 
     @NonNull
-    public static Lambda runTo(int to){
-        return new Lambda("runTo")
+    public static Lambda goTo(int to){
+        return new Lambda("set pid target")
                 .setExecute(() -> setTarget(to))
                 .setFinish(Slides::atTarget);
     }
 
-    private static void updatePIDF() {
-        double power = 0;
-        double currentTime = 0;
-        if (Timer.isTimerOn()){
-            currentTime = Timer.elapsedTime();
-        }
-
-        //If we want to implement the ElevatorFeedForward in ftclib (https://docs.ftclib.org/ftclib/features/controllers#elevatorfeedforward)
-        double desiredPos = profiler.pos(currentTime);
-        double desiredVelo = profiler.velocity(currentTime);
-        double desiredAccel = profiler.acceleration(currentTime);
-
-        if (profiler.isOver()){
-            if (profiler.isDone()){
-                INSTANCE.resetProfiler();
-            } else {
-                controller.setSetPoint(getTarget());
-                power = controller.calculate(slideER.getCurrentPosition());
-            }
-        } else {
-            controller.setSetPoint(profiler.pos(currentTime));
-            power = controller.calculate(slideER.getCurrentPosition());
-        }
-        telemetry.addData("Power", power);
-        telemetry.update();
-        if (power >= 0){
-            slideE.set(power);
-            slideR.set(-power);
-        } else {
-            slideE.set(-power);
-            slideR.set(power);
-        }
-    }
-
-    public static boolean atTarget() {
-        return (slideER.getCurrentPosition() >= (getTarget() - tolerance) || slideER.getCurrentPosition() <= (getTarget() + tolerance));
-    }
-    public void resetProfiler() {
-        profiler = new MotionProfiler(maxV, maxA);
-    }
-
-    public static void setTarget(int runTo) {
-        INSTANCE.resetProfiler();
-        profiler.initialize(slideER.getCurrentPosition(), runTo);
-        Timer = new Timing.Timer(profiler.getEntiredT());
-    }
-
-    public static int getTarget() {
-        return target;
-    }
-    public static void resetEncoder(){
-        slideE.resetEncoder();
-    }
 }
