@@ -19,6 +19,7 @@ import java.lang.annotation.Target;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
@@ -31,7 +32,7 @@ public class Slides implements Subsystem {
     private static PIDFController pidf;
     private static double kP = .004, kI = 0, kD = 0, kF = 0;
     private static MotorEx slideER, slideEL, slideRR, slideRL;
-    private static int tollerence = 20;
+    private static int tollerence = 500;
     private Slides() { }
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
@@ -56,9 +57,17 @@ public class Slides implements Subsystem {
         slideRL = new MotorEx(hwmap, "motorSlideRL");
         slideER.setRunMode(Motor.RunMode.RawPower);
         slideEL.setRunMode(Motor.RunMode.RawPower);
+        slideER.setInverted(true);
+        slideEL.setInverted(true);
+        slideEL.stopAndResetEncoder();
         setDefaultCommand(update());
         pidf = new PIDFController(kP, kI, kD, kF);
     }
+
+    @Override
+    public void postUserLoopHook(@NonNull Wrapper opMode) {
+    }
+
 
     public static void setTarget(int target){ liftTarget = target; }
 
@@ -66,7 +75,7 @@ public class Slides implements Subsystem {
 
     public static void pidUpdate() {
         pidf.setSetPoint(liftTarget);
-        power = pidf.calculate(liftTarget, slideER.getCurrentPosition());
+        power = pidf.calculate(liftTarget, getLiftPosition());
         slideER.set(power);
         slideEL.set(power);
     }
@@ -80,10 +89,14 @@ public class Slides implements Subsystem {
     }
 
     public static int getLiftPosition(){
-        return slideER.getCurrentPosition();
+        if (slideER.getCurrentPosition() < 0){
+            return 0;
+        } else {
+            return slideER.getCurrentPosition();
+        }
     }
 
-    public static boolean atTarget() { return (slideER.getCurrentPosition() >= (getTarget() - tollerence) || slideER.getCurrentPosition() <= (getTarget() + tollerence)); }
+    public static boolean atTarget() { return (getLiftPosition() >= (getTarget() - tollerence) || getLiftPosition() <= (getTarget() + tollerence)); }
 
     @NonNull
     public static Lambda update() {
@@ -99,5 +112,15 @@ public class Slides implements Subsystem {
                 .setExecute(() -> setTarget(to))
                 .setFinish(Slides::atTarget);
     }
+    @NonNull
+    public static Lambda resetEncoder(){
+        return new Lambda("set pid target")
+                .setExecute(Slides::resetEncoders);
+    }
 
+
+    public static void resetEncoders(){
+        slideER.stopAndResetEncoder();
+        slideEL.stopAndResetEncoder();
+    }
 }

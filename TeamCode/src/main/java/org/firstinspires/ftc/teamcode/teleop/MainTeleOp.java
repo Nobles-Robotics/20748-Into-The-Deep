@@ -29,11 +29,13 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         //Mercurial.gamepad1().a().onTrue(Slides.runTo(3500));
-        Mercurial.gamepad1().a().whileTrue(new Sequential(Slides.goTo(3500)));
-        Mercurial.gamepad1().a().whileFalse(new Sequential(Slides.goTo(0)));
-        Mercurial.gamepad1().x().untilFalse(Arm.runIntake());
-        Mercurial.gamepad1().y().untilFalse(Arm.releaseIntake());
-        Mercurial.gamepad1().b().untilFalse(Arm.runServoWrist());
+        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.goTo(3500)));
+        Mercurial.gamepad1().b().onTrue(new Sequential(Slides.goTo(1)));
+        Mercurial.gamepad1().x().onTrue(new Sequential(Slides.resetEncoder()));
+
+        Mercurial.gamepad1().a().onTrue(new Sequential(Arm.runIntake()));
+        Mercurial.gamepad1().b().onTrue(new Sequential(Arm.releaseIntake()));
+
     }
     @Override
     public void init_loop() {
@@ -49,6 +51,7 @@ public class MainTeleOp extends OpMode {
     public void loop() {
         telemetry.addData("Lift Pos", Slides.getLiftPosition());
         telemetry.addData("lift power", Slides.getPower());
+        telemetry.addData("Wrist Position", Arm.getWrist());
         telemetry.update();
     }
 

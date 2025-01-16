@@ -75,9 +75,9 @@ public class Drive implements Subsystem {
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
                 .setExecute(() -> {
-                    double rightX = Mercurial.gamepad1().leftStickX().state();
-                    double rightY = Mercurial.gamepad1().leftStickY().state();
-                    double turn = Mercurial.gamepad1().rightStickX().state() * 1;
+                    double rightX = Mercurial.gamepad2().leftStickX().state();
+                    double rightY = Mercurial.gamepad2().leftStickY().state();
+                    double turn = Mercurial.gamepad2().rightStickX().state() * 1;
                     double heading = 0;
                     double rotX = (rightX * Math.cos(-heading) - rightY * Math.sin(-heading)) * 1.1;
                     double rotY = rightX * Math.sin(-heading) + rightY * Math.cos(-heading);
