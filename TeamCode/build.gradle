@@ -18,7 +18,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "dev.frozenmilk.sinister.sloth:Load:0.0.0"
+        classpath "dev.frozenmilk.sinister.sloth:Load:0.0.2"
     }
 }
 // Include common definitions from above.
@@ -45,6 +45,10 @@ repositories {
     maven {
         url = 'https://repo.dairy.foundation/releases'
     }
+    maven {
+        url = 'https://repo.dairy.foundation/snapshots'
+    }
+
 
 }
 dependencies {
@@ -56,7 +60,9 @@ dependencies {
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     implementation "page.j5155.roadrunner:ftc-otos:0.1.2+0.1.14"
     implementation "dev.frozenmilk.mercurial:Mercurial:1.0.1"
-    implementation "dev.frozenmilk.dairy:Core:1.0.1"
     implementation "dev.frozenmilk.dairy:Util:1.0.2"
+    implementation "dev.frozenmilk:Sinister:2.0.0"
+    implementation "dev.frozenmilk.dairy:Core:2.0.0"
+
 
 }
