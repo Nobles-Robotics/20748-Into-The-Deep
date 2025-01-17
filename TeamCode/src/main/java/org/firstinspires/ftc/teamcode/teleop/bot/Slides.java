@@ -39,6 +39,7 @@ public class Slides implements Subsystem {
     private static int tolerance = 500;
 
     private static boolean isClimb = false;
+    private static boolean isManual = false;
     private Slides() { }
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
@@ -80,16 +81,21 @@ public class Slides implements Subsystem {
     public static int getTarget(){ return liftTarget; }
 
     public static void pidfUpdate() {
-        pidf.setSetPoint(liftTarget);
-        power = pidf.calculate(liftTarget, getLiftPosition());
-        if (!isClimb){
+        if (isManual){
+            power = Mercurial.gamepad1().rightStickY().state();
             slideER.set(power);
             slideEL.set(power);
         } else {
-            slideER.set(1);
-            slideEL.set(1);
+            pidf.setSetPoint(liftTarget);
+            power = pidf.calculate(liftTarget, getLiftPosition());
+            if (!isClimb){
+                slideER.set(power);
+                slideEL.set(power);
+            } else {
+                slideER.set(1);
+                slideEL.set(1);
+            }
         }
-
     }
 
     public static void hold() {
@@ -136,6 +142,14 @@ public class Slides implements Subsystem {
         return new Lambda("set climb variable")
                 .setExecute(() -> isClimb = climb);
     }
+
+    @NonNull
+    public static Lambda setManual(boolean manual){
+        return new Lambda("set climb variable")
+                .setExecute(() -> isManual = manual);
+    }
+
+
 
 
     public static void resetEncoders(){
