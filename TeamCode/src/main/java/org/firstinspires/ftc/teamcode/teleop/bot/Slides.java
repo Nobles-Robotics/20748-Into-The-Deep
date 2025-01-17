@@ -79,7 +79,7 @@ public class Slides implements Subsystem {
 
     public static void pidfUpdate() {
         if (isManual){
-            power = Mercurial.gamepad1().leftStickY().state();
+            power = parseGamepad();
             slideER.set(power);
             slideEL.set(power);
         } else {
@@ -95,6 +95,13 @@ public class Slides implements Subsystem {
         }
     }
 
+    public static double parseGamepad(){
+        if ((Math.abs(Mercurial.gamepad1().leftStickY().state()) - 0.2) < 0 ){
+            return 0;
+        }
+        return Mercurial.gamepad1().leftStickY().state();
+    }
+
     public static void hold() {
         slideER.set(power);
         slideEL.set(power);
@@ -106,6 +113,10 @@ public class Slides implements Subsystem {
     public static int getLiftPosition(){
         return Math.max(slideER.getCurrentPosition(), 0);
         //Or else it will blow right past 0 and go to negative infinity! Downwards!
+    }
+
+    public static int getActualLiftPosition(){
+        return slideER.getCurrentPosition();
     }
 
     public static boolean atTarget() { return (getLiftPosition() >= (getTarget() - tolerance) || getLiftPosition() <= (getTarget() + tolerance)); }
@@ -145,8 +156,6 @@ public class Slides implements Subsystem {
         return new Lambda("set climb variable")
                 .setExecute(() -> isManual = manual);
     }
-
-
 
 
     public static void resetEncoders(){
