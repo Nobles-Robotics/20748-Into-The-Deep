@@ -38,7 +38,6 @@ public class MainTeleOp extends OpMode {
         Mercurial.gamepad1().leftStickButton().onTrue(new Sequential(Slides.setManual(true)));
         Mercurial.gamepad1().leftStickButton().onFalse(new Sequential(Slides.setManual(false)));
 
-
         Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.runIntake()));
         Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.releaseIntake()));
 
@@ -59,6 +58,12 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("Actual Lift Pos", Slides.getActualLiftPosition());
         telemetry.addData("lift power", Slides.getPower());
         telemetry.addData("Wrist Position", Arm.getWrist());
+        telemetry.addData("Slide isManual", Slides.getManual());
+        telemetry.addData("servo Power", Gripper.parseGamepad());
+        telemetry.addData("rightY", Mercurial.gamepad1().rightStickY().state());
+        telemetry.addData("gripperl", Gripper.getPositionGripperL());
+        telemetry.addData("gripperr", Gripper.getPositionGripperR());
+
         telemetry.update();
     }
 

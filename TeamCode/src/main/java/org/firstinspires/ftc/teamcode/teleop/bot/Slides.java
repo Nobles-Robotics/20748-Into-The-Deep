@@ -63,8 +63,8 @@ public class Slides implements Subsystem {
         slideRL = new MotorEx(hwmap, "motorSlideRL");
         slideER.setRunMode(Motor.RunMode.RawPower);
         slideEL.setRunMode(Motor.RunMode.RawPower);
-        slideER.setInverted(true);
-        slideEL.setInverted(true);
+        slideER.setInverted(false);
+        slideEL.setInverted(false);
         slideEL.stopAndResetEncoder();
         setDefaultCommand(update());
         pidf = new PIDFController(kP, kI, kD, kF);
@@ -78,18 +78,20 @@ public class Slides implements Subsystem {
     public static void setTarget(int target){ liftTarget = target; }
 
     public static int getTarget(){ return liftTarget; }
+    public static boolean getManual(){ return isManual; }
 
     public static void pidfUpdate() {
         if (isManual){
             power = parseGamepad();
             slideER.set(power);
             slideEL.set(power);
+            setTarget(getLiftPosition());
         } else {
             pidf.setSetPoint(liftTarget);
             power = pidf.calculate(liftTarget, getLiftPosition());
             if (!isClimb){
-                slideER.set(power);
-                slideEL.set(power);
+                slideER.set(-power);
+                slideEL.set(-power);
             } else {
                 slideER.set(1);
                 slideEL.set(1);
@@ -99,10 +101,12 @@ public class Slides implements Subsystem {
 
     public static double parseGamepad(){
         double output = Mercurial.gamepad1().leftStickY().state();
-        if ((Math.abs(Mercurial.gamepad1().leftStickY().state()) - gamepadTollerance) < 0 ){
-            return output;
+        if ((output > 0.5 )){
+            return 0.5;
+        } else if (output < -0.5 ){
+            return -0.5;
         }
-        return output;
+        return 0;
     }
 
     public static void hold() {
@@ -164,5 +168,6 @@ public class Slides implements Subsystem {
     public static void resetEncoders(){
         slideER.stopAndResetEncoder();
         slideEL.stopAndResetEncoder();
+        setTarget(getTarget());
     }
 }

@@ -24,7 +24,7 @@ public class Arm implements Subsystem {
     public static final Arm INSTANCE = new Arm();
 
     private Arm() { }
-    private static CRServo servoIntake, servoSlideL, servoSlideR;
+    private static CRServo servoIntake, servoSlideE, servoSlideR;
     private static ServoEx servoWrist;
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -51,7 +51,7 @@ public class Arm implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoIntake");
-        servoSlideL = new CRServo(opMode.getOpMode().hardwareMap, "servoSlideL");
+        servoSlideE = new CRServo(opMode.getOpMode().hardwareMap, "servoSlideE");
         servoSlideR = new CRServo(opMode.getOpMode().hardwareMap, "servoSlideR");
         servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servoWrist", 0, 300);
         servoIntake.setInverted(true);
@@ -61,6 +61,7 @@ public class Arm implements Subsystem {
     public void postUserLoopHook(@NonNull Wrapper opMode) {
         runSlides();
         runServoWrist();
+        servoSlideE.set(1);
     }
 
     @Override
@@ -103,13 +104,13 @@ public class Arm implements Subsystem {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
-                    double power = Mercurial.gamepad1().rightStickY().state();
-                    servoSlideL.set(power);
+                    double power = parseGamepad();
+                    servoSlideE.set(power);
                     servoSlideR.set(power);
                 })
                 .setEnd(interrupted -> {
                     if (!interrupted){
-                        servoSlideL.set(0);
+                        servoSlideE.set(0);
                         servoSlideR.set(0);
                     }
                 });
@@ -117,5 +118,15 @@ public class Arm implements Subsystem {
 
     public static double getWrist(){
         return servoWrist.getAngle();
+    }
+
+    public static double parseGamepad(){
+        double output = Mercurial.gamepad1().rightStickY().state();
+        if ((output > 0.5 )){
+            return 0.5;
+        } else if (output < -0.5 ){
+            return -0.5;
+        }
+        return 0;
     }
 }
