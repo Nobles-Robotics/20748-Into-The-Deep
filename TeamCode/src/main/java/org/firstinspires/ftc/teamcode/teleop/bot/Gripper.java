@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
 
-import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -12,15 +10,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.stateful.StatefulLambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
-import dev.frozenmilk.mercurial.subsystems.SubsystemObjectCell;
-import dev.frozenmilk.util.cell.RefCell;
 import kotlin.annotation.MustBeDocumented;
 
 public class Gripper implements Subsystem {
@@ -73,9 +67,7 @@ public class Gripper implements Subsystem {
                     INSTANCE.gripperL.turnToAngle(0);
                     INSTANCE.gripperR.turnToAngle(1.0);
                 })
-                .setEnd((interupted) -> {
-                    close().execute();
-                });
+                .setEnd((interupted) -> close().execute());
     }
     @NonNull
     public static Lambda close() {

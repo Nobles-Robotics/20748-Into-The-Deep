@@ -12,7 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -110,7 +109,7 @@ public class Arm implements Subsystem {
                     if (!interrupted){
                         servoSlideL.set(0);
                         servoSlideR.set(0);
-                    };
+                    }
                 });
     }
 
