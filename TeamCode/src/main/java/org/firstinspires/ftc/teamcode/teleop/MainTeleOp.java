@@ -29,7 +29,7 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         //Normal Slide Controller
-        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.goTo(3500)));
+        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.goTo(10000)));
         Mercurial.gamepad1().b().onTrue(new Sequential(Slides.goTo(0)));
         Mercurial.gamepad1().x().onTrue(new Sequential(Slides.resetEncoder()));
         Mercurial.gamepad1().y().onTrue(new Sequential(Slides.climb()));
