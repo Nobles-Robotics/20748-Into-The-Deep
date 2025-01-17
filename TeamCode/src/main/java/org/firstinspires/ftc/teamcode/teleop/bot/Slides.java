@@ -35,6 +35,8 @@ public class Slides implements Subsystem {
     private static MotorEx slideER, slideEL, slideRR, slideRL;
     private static int tolerance = 500;
 
+    private static double gamepadTollerance = 0.2;
+
     private static boolean isClimb = false;
     private static boolean isManual = false;
     private Slides() { }
@@ -96,10 +98,11 @@ public class Slides implements Subsystem {
     }
 
     public static double parseGamepad(){
-        if ((Math.abs(Mercurial.gamepad1().leftStickY().state()) - 0.2) < 0 ){
-            return 0;
+        double output = Mercurial.gamepad1().leftStickY().state();
+        if ((Math.abs(Mercurial.gamepad1().leftStickY().state()) - gamepadTollerance) < 0 ){
+            return output;
         }
-        return Mercurial.gamepad1().leftStickY().state();
+        return output;
     }
 
     public static void hold() {
