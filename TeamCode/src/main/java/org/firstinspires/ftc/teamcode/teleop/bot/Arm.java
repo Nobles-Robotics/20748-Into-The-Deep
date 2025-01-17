@@ -59,6 +59,7 @@ public class Arm implements Subsystem {
 
     @Override
     public void postUserLoopHook(@NonNull Wrapper opMode) {
+        runSlides();
         runServoWrist();
     }
 
@@ -91,9 +92,9 @@ public class Arm implements Subsystem {
     public static Lambda runServoWrist() {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
-                .setInit(() -> servoWrist.rotateByAngle(Mercurial.gamepad1().rightStickY().state()))
+                .setInit(() -> servoWrist.turnToAngle(100))
                 .setEnd(interrupted -> {
-                    //if (!interrupted) servoWrist.turnToAngle(0);
+                    if (!interrupted) servoWrist.turnToAngle(0);
                 });
     }
 
@@ -102,8 +103,9 @@ public class Arm implements Subsystem {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
-                    servoSlideL.set(1);
-                    servoSlideR.set(1);
+                    double power = Mercurial.gamepad1().rightStickY().state();
+                    servoSlideL.set(power);
+                    servoSlideR.set(power);
                 })
                 .setEnd(interrupted -> {
                     if (!interrupted){

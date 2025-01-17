@@ -79,7 +79,7 @@ public class Slides implements Subsystem {
 
     public static void pidfUpdate() {
         if (isManual){
-            power = Mercurial.gamepad1().rightStickY().state();
+            power = Mercurial.gamepad1().leftStickY().state();
             slideER.set(power);
             slideEL.set(power);
         } else {
@@ -105,7 +105,7 @@ public class Slides implements Subsystem {
 
     public static int getLiftPosition(){
         return Math.max(slideER.getCurrentPosition(), 0);
-        //Or else it will blow right past 0 and go to negative infinity! Onwards!
+        //Or else it will blow right past 0 and go to negative infinity! Downwards!
     }
 
     public static boolean atTarget() { return (getLiftPosition() >= (getTarget() - tolerance) || getLiftPosition() <= (getTarget() + tolerance)); }
