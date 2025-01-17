@@ -79,7 +79,7 @@ public class Slides implements Subsystem {
 
     public static int getTarget(){ return liftTarget; }
 
-    public static void pidUpdate() {
+    public static void pidfUpdate() {
         pidf.setSetPoint(liftTarget);
         power = pidf.calculate(liftTarget, getLiftPosition());
         if (!isClimb){
@@ -111,19 +111,19 @@ public class Slides implements Subsystem {
     public static Lambda update() {
         return new Lambda("update the pid")
                 .addRequirements(INSTANCE)
-                .setExecute(Slides::pidUpdate)
+                .setExecute(Slides::pidfUpdate)
                 .setFinish(() -> false);
     }
 
     @NonNull
     public static Lambda goTo(int to){
-        return new Lambda("set pid target")
+        return new Lambda("set pidf target")
                 .setExecute(() -> setTarget(to))
                 .setFinish(Slides::atTarget);
     }
     @NonNull
     public static Lambda resetEncoder(){
-        return new Lambda("set pid target")
+        return new Lambda("reset encoders")
                 .setExecute(Slides::resetEncoders);
     }
     @NonNull
@@ -133,10 +133,9 @@ public class Slides implements Subsystem {
 
     @NonNull
     public static Lambda setClimb(boolean climb){
-        return new Lambda("set pid target")
+        return new Lambda("set climb variable")
                 .setExecute(() -> isClimb = climb);
     }
-
 
 
     public static void resetEncoders(){
