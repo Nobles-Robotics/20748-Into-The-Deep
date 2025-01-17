@@ -34,8 +34,8 @@ public class MainTeleOp extends OpMode {
         Mercurial.gamepad1().x().onTrue(new Sequential(Slides.resetEncoder()));
         Mercurial.gamepad1().y().onTrue(new Sequential(Slides.climb()));
 
-        Mercurial.gamepad1().a().onTrue(new Sequential(Arm.runIntake()));
-        Mercurial.gamepad1().b().onTrue(new Sequential(Arm.releaseIntake()));
+        Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.runIntake()));
+        Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.releaseIntake()));
 
     }
     @Override
