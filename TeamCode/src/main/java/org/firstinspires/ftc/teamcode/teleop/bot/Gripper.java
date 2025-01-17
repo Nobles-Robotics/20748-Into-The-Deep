@@ -67,7 +67,7 @@ public class Gripper implements Subsystem {
                     INSTANCE.gripperL.turnToAngle(0);
                     INSTANCE.gripperR.turnToAngle(1.0);
                 })
-                .setEnd((interupted) -> close().execute());
+                .setEnd((interrupted) -> close().execute());
     }
     @NonNull
     public static Lambda close() {
