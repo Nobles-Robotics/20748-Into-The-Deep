@@ -21,6 +21,10 @@ import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.groups.CommandGroup;
+import dev.frozenmilk.mercurial.commands.groups.Race;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
+import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 
@@ -32,7 +36,9 @@ public class Slides implements Subsystem {
     private static PIDFController pidf;
     private static double kP = .004, kI = 0, kD = 0, kF = 0;
     private static MotorEx slideER, slideEL, slideRR, slideRL;
-    private static int tollerence = 500;
+    private static int tolerance = 500;
+
+    private static boolean isClimb = false;
     private Slides() { }
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
@@ -76,8 +82,14 @@ public class Slides implements Subsystem {
     public static void pidUpdate() {
         pidf.setSetPoint(liftTarget);
         power = pidf.calculate(liftTarget, getLiftPosition());
-        slideER.set(power);
-        slideEL.set(power);
+        if (!isClimb){
+            slideER.set(power);
+            slideEL.set(power);
+        } else {
+            slideER.set(1);
+            slideEL.set(1);
+        }
+
     }
 
     public static void hold() {
@@ -89,14 +101,11 @@ public class Slides implements Subsystem {
     }
 
     public static int getLiftPosition(){
-        if (slideER.getCurrentPosition() < 0){
-            return 0;
-        } else {
-            return slideER.getCurrentPosition();
-        }
+        return Math.max(slideER.getCurrentPosition(), 0);
+        //Or else it will blow right past 0 and go to negative infinity! Onwards!
     }
 
-    public static boolean atTarget() { return (getLiftPosition() >= (getTarget() - tollerence) || getLiftPosition() <= (getTarget() + tollerence)); }
+    public static boolean atTarget() { return (getLiftPosition() >= (getTarget() - tolerance) || getLiftPosition() <= (getTarget() + tolerance)); }
 
     @NonNull
     public static Lambda update() {
@@ -117,6 +126,17 @@ public class Slides implements Subsystem {
         return new Lambda("set pid target")
                 .setExecute(Slides::resetEncoders);
     }
+    @NonNull
+    public static Sequential climb(){
+        return new Sequential(setClimb(true), new Race(new Wait(5.0), goTo(0)), setClimb(false));
+    }
+
+    @NonNull
+    public static Lambda setClimb(boolean climb){
+        return new Lambda("set pid target")
+                .setExecute(() -> isClimb = climb);
+    }
+
 
 
     public static void resetEncoders(){

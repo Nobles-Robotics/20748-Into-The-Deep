@@ -92,7 +92,7 @@ public class Arm implements Subsystem {
     public static Lambda runServoWrist() {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
-                .setInit(() -> servoWrist.rotateByAngle(Mercurial.gamepad1().leftStickY().state()))
+                .setInit(() -> servoWrist.rotateByAngle(Mercurial.gamepad1().rightStickY().state()))
                 .setEnd(interrupted -> {
                     //if (!interrupted) servoWrist.turnToAngle(0);
                 });
