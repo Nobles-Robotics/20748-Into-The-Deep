@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -24,6 +16,8 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+
+import java.lang.annotation.*;
 
 @Config
 public class Slides implements Subsystem {
@@ -39,6 +33,8 @@ public class Slides implements Subsystem {
 
     private static boolean isClimb = false;
     private static boolean isManual = false;
+
+    double retractionPowerScale = (57.0 / 63.0) * (17.0 / 11.0);
     private Slides() { }
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
@@ -92,6 +88,8 @@ public class Slides implements Subsystem {
             if (!isClimb){
                 slideER.set(-power);
                 slideEL.set(-power);
+                //slideRR.set(power * retractionPowerScale);
+                //slideRL.set(power * retractionPowerScale);
             } else {
                 slideER.set(1);
                 slideEL.set(1);
