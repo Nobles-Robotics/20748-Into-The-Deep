@@ -29,15 +29,15 @@ import dev.frozenmilk.mercurial.commands.groups.Sequential;
 @SilkRoad.Attach
 public class MainAuto extends OpMode {
     private final Pose2d initialPose = new Pose2d(-24, -62.5, Math.toRadians(90));
-    private MechanumDrive drive;
+    //private MechanumDrive drive;
     private Action driveAction;
 
     @Override
     public void init() {
-        drive = new MechanumDrive(hardwareMap, initialPose);
-        driveAction = drive.actionBuilder(initialPose)
+        //drive = new MechanumDrive(hardwareMap, initialPose);
+        //driveAction = drive.actionBuilder(initialPose)
 
-                .build();
+        //        .build();
     }
     @Override
     public void start(){
