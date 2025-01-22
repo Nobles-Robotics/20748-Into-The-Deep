@@ -12,7 +12,6 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
 
 @Mercurial.Attach
-@Bot.Attach
 @Drive.Attach
 @Slides.Attach
 @BulkReads.Attach
@@ -40,6 +39,8 @@ public class MainTeleOp extends OpMode {
 
         Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.runIntake()));
         Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.releaseIntake()));
+
+        Mercurial.gamepad1().back().whileTrue(new Sequential(Gripper.open()));
 
     }
     @Override

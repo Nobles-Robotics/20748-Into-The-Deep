@@ -60,8 +60,6 @@ public class Arm implements Subsystem {
     @Override
     public void postUserLoopHook(@NonNull Wrapper opMode) {
         runSlides();
-        runServoWrist();
-        servoSlideE.set(1);
     }
 
     @Override
@@ -106,12 +104,12 @@ public class Arm implements Subsystem {
                 .setInit(() -> {
                     double power = parseGamepad();
                     servoSlideE.set(power);
-                    servoSlideR.set(power);
+                    //servoSlideR.set(power);
                 })
                 .setEnd(interrupted -> {
                     if (!interrupted){
                         servoSlideE.set(0);
-                        servoSlideR.set(0);
+                        //servoSlideR.set(0);
                     }
                 });
     }
@@ -129,4 +127,9 @@ public class Arm implements Subsystem {
         }
         return 0;
     }
+
+    //rightUp
+    //leftDown
+    //leftUp
+    //rightdown
 }

@@ -11,33 +11,15 @@ import java.lang.annotation.Target;
 
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
+import dev.frozenmilk.mercurial.commands.Command;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 
 @Slides.Attach
-public class Bot implements Subsystem {
-    public static final Bot INSTANCE = new Bot();
-
-    private Bot() { }
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @MustBeDocumented
-    @Inherited
-    public @interface Attach{}
-    private Dependency<?> dependency =
-            Subsystem.DEFAULT_DEPENDENCY
-                    .and(new SingleAnnotation<>(Attach.class));
-
-    @NonNull
-    @Override
-    public Dependency<?> getDependency() {
-        return dependency;
-    }
-
-    @Override
-    public void setDependency(@NonNull Dependency<?> dependency) {
-        this.dependency = dependency;
+public class Bot{
+    public static Command lift3(){
+        return new Sequential(Slides.goTo(10000));
     }
 }
 

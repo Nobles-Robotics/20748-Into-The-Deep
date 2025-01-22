@@ -26,6 +26,7 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 // there should be 3 more lines that start with apply here
 apply plugin: 'dev.frozenmilk.sinister.sloth.Load'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 
 android {
@@ -36,6 +37,9 @@ android {
             pickFirsts += ['**/*.so']
         }
         jniLibs.useLegacyPackaging true
+    }
+    kotlinOptions {
+        jvmTarget = '11'
     }
 }
 repositories {
@@ -48,8 +52,6 @@ repositories {
     maven {
         url = 'https://repo.dairy.foundation/snapshots'
     }
-
-
 }
 dependencies {
     implementation project(':FtcRobotController')
@@ -65,4 +67,5 @@ dependencies {
     implementation "dev.frozenmilk.dairy:Core:2.0.0"
     implementation "dev.frozenmilk.sinister.sloth:Load:0.0.2"
     implementation "dev.frozenmilk.sinister:Sloth:0.0.1"
+    implementation 'androidx.core:core-ktx:1.15.0'
 }

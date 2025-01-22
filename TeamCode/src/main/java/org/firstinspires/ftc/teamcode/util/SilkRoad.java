@@ -12,19 +12,20 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SilkRoad implements Feature {
-    private Dependency dependency = new SingleAnnotation<>(org.firstinspires.ftc.teamcode.util.SilkRoad.Attach.class);
+    private Dependency<?> dependency = new SingleAnnotation<>(Attach.class);
     private static FtcDashboard dash;
     private static Canvas canvas;
-    private static Action actions;
-    private static boolean run = true;
+    private static final ArrayList<Action> actions = new ArrayList<Action>();
     @NonNull
     @Override
-    public Dependency getDependency() { return dependency; }
+    public Dependency<?> getDependency() { return dependency; }
 
     @Override
-    public void setDependency(@NonNull Dependency dependency) {
+    public void setDependency(@NonNull Dependency<?> dependency) {
         this.dependency = dependency;
     }
 
@@ -34,25 +35,32 @@ public class SilkRoad implements Feature {
 
 
     @Override
-    public void postUserInitLoopHook(@NotNull Wrapper opMode) {
+    public void postUserInitHook(@NotNull Wrapper opMode) {
         dash = FtcDashboard.getInstance();
         canvas = new Canvas();
     }
 
     @Override
     public void postUserLoopHook(@NotNull Wrapper opMode) {
-        if (run && !Thread.currentThread().isInterrupted()) {
-            TelemetryPacket packet = new TelemetryPacket();
-            packet.fieldOverlay().getOperations().addAll(canvas.getOperations());
-
-            run = actions.run(packet);
-
-            dash.sendTelemetryPacket(packet);
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().getOperations().addAll(canvas.getOperations());
+        Iterator<Action> iter = actions.iterator();
+        while (iter.hasNext() && !Thread.currentThread().isInterrupted()) {
+            Action action = iter.next();
+            if (!action.run(packet)) iter.remove();
         }
+        dash.sendTelemetryPacket(packet);
     }
 
-    public static void RunAsync(Action actions){
-        SilkRoad.actions = actions;
+    @Override
+    public void cleanup(@NotNull Wrapper opMode) {
+        dash = null;
+        canvas = null;
+        actions.clear();
+    }
+
+    public static void runAsync(Action action){
+        actions.add(action);
     }
 
     @Retention(RetentionPolicy.RUNTIME)

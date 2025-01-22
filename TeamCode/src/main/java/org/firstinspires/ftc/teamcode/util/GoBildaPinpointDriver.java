@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.util;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 
@@ -49,6 +49,8 @@ import java.util.Arrays;
 )
 
 public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSimple> {
+    private EncoderDirection xEncoderDirection;
+    private EncoderDirection yEncoderDirection;
 
     private int deviceStatus   = 0;
     private int loopTime       = 0;
@@ -266,6 +268,13 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
         xVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 28,32), ByteOrder.LITTLE_ENDIAN);
         yVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 32,36), ByteOrder.LITTLE_ENDIAN);
         hVelocity     = byteArrayToFloat(Arrays.copyOfRange(bArr, 36,40), ByteOrder.LITTLE_ENDIAN);
+
+        if (xEncoderDirection == EncoderDirection.REVERSED) {
+            xEncoderValue = -xEncoderValue;
+        }
+        if (yEncoderDirection == EncoderDirection.REVERSED) {
+            yEncoderValue = -yEncoderValue;
+        }
     }
 
     /**
@@ -313,6 +322,9 @@ public class GoBildaPinpointDriver extends I2cDeviceSynchDevice<I2cDeviceSynchSi
      * @param yEncoder FORWARD or REVERSED, Y (strafe) pod should increase when the robot is moving left
      */
     public void setEncoderDirections(EncoderDirection xEncoder, EncoderDirection yEncoder){
+        xEncoderDirection = xEncoder;
+        yEncoderDirection = yEncoder;
+
         if (xEncoder == EncoderDirection.FORWARD){
             writeInt(Register.DEVICE_CONTROL,1<<5);
         }

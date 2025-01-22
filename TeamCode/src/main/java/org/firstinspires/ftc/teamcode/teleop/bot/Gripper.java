@@ -54,8 +54,7 @@ public class Gripper implements Subsystem {
 
     @Override
     public void postUserLoopHook(@NonNull Wrapper opMode) {
-        //runManual();
-        gripperL.setPosition(0);
+        runManual();
     }
 
     @Override
