@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import android.annotation.SuppressLint;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
