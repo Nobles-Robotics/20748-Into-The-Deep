@@ -47,7 +47,7 @@ public class Arm implements Subsystem {
         servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoExp1");
         servoSlideE = new CRServo(opMode.getOpMode().hardwareMap, "servoExp5");
         servoSlideR = new CRServo(opMode.getOpMode().hardwareMap, "servoExp3");
-        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servoControl5", 0, 300);
+        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servo5", 0, 300);
         servoIntake.setInverted(true);
     }
 

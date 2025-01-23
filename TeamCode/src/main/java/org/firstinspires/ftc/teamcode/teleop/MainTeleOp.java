@@ -26,13 +26,12 @@ public class MainTeleOp extends OpMode {
         FeatureRegistrar.checkFeatures();
     }
 
-    public PinPointDrive ppdrive;
     @Override
     public void init() {
         //Normal Slide Controller
-        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.goTo(10000)));
+        Mercurial.gamepad1().x().onTrue(new Sequential(Slides.goTo(10000)));
         Mercurial.gamepad1().b().onTrue(new Sequential(Slides.goTo(0)));
-        Mercurial.gamepad1().x().onTrue(new Sequential(Slides.resetEncoder()));
+        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.resetEncoder()));
         Mercurial.gamepad1().y().onTrue(new Sequential(Slides.climb()));
 
         //Manual Slide Control
@@ -59,7 +58,8 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Slide", " ", Slides.getLiftPosition(), Slides.getActualLiftPosition());
+        telemetry.addData("Slide", Slides.getLiftPosition());
+        telemetry.addData("Slide Actual", Slides.getActualLiftPosition());
         telemetry.addData("Slide Power", Slides.getPower());
         telemetry.addData("Slide isManual", Slides.getManual());
         telemetry.update();

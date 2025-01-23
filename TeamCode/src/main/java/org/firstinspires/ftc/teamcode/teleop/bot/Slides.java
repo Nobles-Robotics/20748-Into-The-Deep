@@ -34,7 +34,7 @@ public class Slides implements Subsystem {
     private static boolean isClimb = false;
     private static boolean isManual = false;
 
-    double retractionPowerScale = (57.0 / 63.0) * (17.0 / 11.0);
+    private static double PowerScale = 1/((57.0 / 63.0) * (17.0 / 11.0));
     private Slides() { }
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
@@ -57,11 +57,25 @@ public class Slides implements Subsystem {
         slideEL = new MotorEx(hwmap, "vertSlideLeftUp");
         slideRR = new MotorEx(hwmap, "vertSlideRightDown");
         slideRL = new MotorEx(hwmap, "vertSlideLeftDown");
+
         slideER.setRunMode(Motor.RunMode.RawPower);
         slideEL.setRunMode(Motor.RunMode.RawPower);
-        slideER.setInverted(false);
-        slideEL.setInverted(false);
+        slideRR.setRunMode(Motor.RunMode.RawPower);
+        slideRL.setRunMode(Motor.RunMode.RawPower);
+
+        slideER.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideEL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideRR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideRL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+
+        slideER.setInverted(true);
+        slideEL.setInverted(true);
+
         slideEL.stopAndResetEncoder();
+        slideER.stopAndResetEncoder();
+        slideRL.stopAndResetEncoder();
+        slideRR.stopAndResetEncoder();
+
         setDefaultCommand(update());
         pidf = new PIDFController(kP, kI, kD, kF);
     }
@@ -85,11 +99,16 @@ public class Slides implements Subsystem {
         } else {
             pidf.setSetPoint(liftTarget);
             power = pidf.calculate(liftTarget, getLiftPosition());
+            if (power > 1) {
+                power = 1;
+            } else if (power < -1){
+                power = -1;
+            }
             if (!isClimb){
-                slideER.set(-power);
-                slideEL.set(-power);
-                //slideRR.set(power * retractionPowerScale);
-                //slideRL.set(power * retractionPowerScale);
+                slideER.set(power);
+                slideEL.set(power);
+                //slideRR.set(power);
+                //slideRL.set(power);
             } else {
                 slideER.set(1);
                 slideEL.set(1);
@@ -116,6 +135,7 @@ public class Slides implements Subsystem {
     }
 
     public static int getLiftPosition(){
+        //return Math.max(slideER.getCurrentPosition()-slideRR.getCurrentPosition(), 0);
         return Math.max(slideER.getCurrentPosition(), 0);
         //Or else it will blow right past 0 and go to negative infinity! Downwards!
     }
