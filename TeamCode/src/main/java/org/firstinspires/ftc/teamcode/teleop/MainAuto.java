@@ -85,8 +85,13 @@ public class MainAuto extends OpMode {
     public void start(){
         SilkRoad.runAsync(driveAction);
     }
+
     @Override
     public void loop() {
+        telemetry.addData("x", drive.pose.position.x);
+        telemetry.addData("y", drive.pose.position.y);
+        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+        telemetry.update();
     }
 }
 ;
