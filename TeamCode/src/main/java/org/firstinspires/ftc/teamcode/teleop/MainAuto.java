@@ -30,19 +30,24 @@ public class MainAuto extends OpMode {
     double specimen2 = 56;
     double specimen3 = 63;
     double specimenMax = -10;
-    double specimenClose = -65;
+    double specimenClose = -57;
     double specimenReturn = -20;
+    double specimenPickup = 45;
+    double wall = -60;
+    double specimenRung = 0;
+    double specimenRung2 = -32;
     @Override
     public void init() {
         drive = new PinPointDrive(hardwareMap, initialPose);
         driveAction = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(0, -43))
                 .strafeTo(new Vector2d(0, -34))
+
                 .splineToConstantHeading(new Vector2d(24, -36), Math.toRadians(0))
 
                 .splineToConstantHeading(new Vector2d(specimen1, specimenMax), Math.toRadians(0))
                 .strafeTo(new Vector2d(specimen1, specimenClose))
-                .strafeTo(new Vector2d(specimen1, specimenReturn))
+                .strafeToSplineHeading(new Vector2d(specimen1, specimenReturn), Math.toRadians(-90)) //reverse direction
 
                 .splineToConstantHeading(new Vector2d(specimen2, specimenMax), Math.toRadians(0))
                 .strafeTo(new Vector2d(specimen2, specimenClose))
@@ -50,6 +55,30 @@ public class MainAuto extends OpMode {
 
                 .splineToConstantHeading(new Vector2d(specimen3, specimenMax), Math.toRadians(0))
                 .strafeTo(new Vector2d(specimen3, specimenClose))
+
+                .strafeTo(new Vector2d(specimenPickup, wall))
+
+                .strafeToSplineHeading(new Vector2d(specimenRung, specimenRung2-10), Math.toRadians(90))
+                .strafeTo(new Vector2d(specimenRung, specimenRung2))
+                .strafeTo(new Vector2d(specimenRung, specimenRung2-10))
+
+                .strafeToSplineHeading(new Vector2d(specimenPickup, wall), Math.toRadians(-90))
+
+                .strafeToSplineHeading(new Vector2d(specimenRung+3, specimenRung2-10), Math.toRadians(90))
+                .strafeTo(new Vector2d(specimenRung+3, specimenRung2))
+                .strafeTo(new Vector2d(specimenRung+3, specimenRung2-10))
+
+                .strafeToSplineHeading(new Vector2d(specimenPickup, wall), Math.toRadians(-90))
+
+                .strafeToSplineHeading(new Vector2d(specimenRung+6, specimenRung2-10), Math.toRadians(90))
+                .strafeTo(new Vector2d(specimenRung+6, specimenRung2))
+                .strafeTo(new Vector2d(specimenRung+6, specimenRung2-10))
+
+                .strafeToSplineHeading(new Vector2d(specimenPickup, wall), Math.toRadians(-90))
+
+                .strafeToSplineHeading(new Vector2d(specimenRung+9, specimenRung2-10), Math.toRadians(90))
+                .strafeTo(new Vector2d(specimenRung+9, specimenRung2))
+                .strafeTo(new Vector2d(specimenRung+9, specimenRung2-10))
                 .build();
     }
     @Override
