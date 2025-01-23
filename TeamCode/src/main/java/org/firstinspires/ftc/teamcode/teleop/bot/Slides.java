@@ -53,10 +53,10 @@ public class Slides implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        slideER = new MotorEx(hwmap, "motorSlideER");
-        slideEL = new MotorEx(hwmap, "motorSlideEL");
-        slideRR = new MotorEx(hwmap, "motorSlideRR");
-        slideRL = new MotorEx(hwmap, "motorSlideRL");
+        slideER = new MotorEx(hwmap, "vertSlideRightUp");
+        slideEL = new MotorEx(hwmap, "vertSlideLeftUp");
+        slideRR = new MotorEx(hwmap, "vertSlideRightDown");
+        slideRL = new MotorEx(hwmap, "vertSlideLeftDown");
         slideER.setRunMode(Motor.RunMode.RawPower);
         slideEL.setRunMode(Motor.RunMode.RawPower);
         slideER.setInverted(false);

@@ -5,7 +5,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
+import dev.frozenmilk.mercurial.Mercurial;
 import org.firstinspires.ftc.teamcode.auto.PinPointDrive;
 import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
 import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
 import org.firstinspires.ftc.teamcode.util.SilkRoad;
-
-import dev.frozenmilk.mercurial.Mercurial;
 
 @Autonomous(name="MainAuto")
 @Mercurial.Attach

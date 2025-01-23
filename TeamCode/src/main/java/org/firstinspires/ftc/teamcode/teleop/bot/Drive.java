@@ -1,16 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
-
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -21,6 +13,9 @@ import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+
+import java.lang.annotation.*;
+
 public class Drive implements Subsystem {
 
     public static final Drive INSTANCE = new Drive();
@@ -48,10 +43,10 @@ public class Drive implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        fl = new MotorEx(hwmap, "motorFL");
-        fr = new MotorEx(hwmap, "motorFR");
-        br = new MotorEx(hwmap, "motorBR");
-        bl = new MotorEx(hwmap, "motorBL");
+        fl = new MotorEx(hwmap, "frontLeft");
+        fr = new MotorEx(hwmap, "frontRight");
+        br = new MotorEx(hwmap, "backRight");
+        bl = new MotorEx(hwmap, "backLeft");
         imu = hwmap.get(IMU.class, "imu");
 
         initializeDrive();

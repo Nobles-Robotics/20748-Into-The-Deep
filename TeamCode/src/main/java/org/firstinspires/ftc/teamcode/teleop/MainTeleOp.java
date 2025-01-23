@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import org.firstinspires.ftc.teamcode.teleop.bot.*;
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
+import org.firstinspires.ftc.teamcode.auto.PinPointDrive;
+import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
+import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
+import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
+import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
 
 @Mercurial.Attach
@@ -21,7 +26,7 @@ public class MainTeleOp extends OpMode {
         FeatureRegistrar.checkFeatures();
     }
 
-
+    public PinPointDrive ppdrive;
     @Override
     public void init() {
         //Normal Slide Controller
@@ -38,7 +43,9 @@ public class MainTeleOp extends OpMode {
         Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.releaseIntake()));
 
         Mercurial.gamepad1().back().whileTrue(new Sequential(Gripper.open()));
+        Mercurial.gamepad1().back().onFalse(new Sequential(Gripper.close()));
 
+        PinPointDrive ppdrive = new PinPointDrive(hardwareMap, new Pose2d(0,0,0));
     }
     @Override
     public void init_loop() {
@@ -52,16 +59,9 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Lift Pos", Slides.getLiftPosition());
-        telemetry.addData("Actual Lift Pos", Slides.getActualLiftPosition());
-        telemetry.addData("lift power", Slides.getPower());
-        telemetry.addData("Wrist Position", Arm.getWrist());
+        telemetry.addData("Slide", " ", Slides.getLiftPosition(), Slides.getActualLiftPosition());
+        telemetry.addData("Slide Power", Slides.getPower());
         telemetry.addData("Slide isManual", Slides.getManual());
-        telemetry.addData("servo Power", Gripper.parseGamepad());
-        telemetry.addData("rightY", Mercurial.gamepad1().rightStickY().state());
-        telemetry.addData("gripperl", Gripper.getPositionGripperL());
-        telemetry.addData("gripperr", Gripper.getPositionGripperR());
-
         telemetry.update();
     }
 

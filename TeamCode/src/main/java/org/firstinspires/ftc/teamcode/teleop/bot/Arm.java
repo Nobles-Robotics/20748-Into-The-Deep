@@ -44,10 +44,10 @@ public class Arm implements Subsystem {
     //Declares default command + Initializes the Subsystem
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoIntake");
-        servoSlideE = new CRServo(opMode.getOpMode().hardwareMap, "servoSlideE");
-        servoSlideR = new CRServo(opMode.getOpMode().hardwareMap, "servoSlideR");
-        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servoWrist", 0, 300);
+        servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoExp1");
+        servoSlideE = new CRServo(opMode.getOpMode().hardwareMap, "servoExp5");
+        servoSlideR = new CRServo(opMode.getOpMode().hardwareMap, "servoExp3");
+        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servoControl5", 0, 300);
         servoIntake.setInverted(true);
     }
 
@@ -97,13 +97,16 @@ public class Arm implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
                     double power = parseGamepad();
-                    servoSlideE.set(power);
-                    //servoSlideR.set(power);
+                    if (power > 0){
+                        servoSlideE.set(power);
+                    } else {
+                        servoSlideR.set(power);
+                    }
                 })
                 .setEnd(interrupted -> {
                     if (!interrupted){
                         servoSlideE.set(0);
-                        //servoSlideR.set(0);
+                        servoSlideR.set(0);
                     }
                 });
     }
