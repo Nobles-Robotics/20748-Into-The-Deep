@@ -1,32 +1,45 @@
-package com.example.meepmeeptesting;
+package org.firstinspires.ftc.teamcode.teleop;
 
-
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.noahbres.meepmeep.MeepMeep;
-import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
-import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import dev.frozenmilk.mercurial.Mercurial;
+import org.firstinspires.ftc.teamcode.auto.PinPointDrive;
+import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
+import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
+import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
+import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
+import org.firstinspires.ftc.teamcode.util.BulkReads;
+import org.firstinspires.ftc.teamcode.util.SilkRoad;
 
-public class MeepMeepTesting {
-    public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
-
-        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(100, 100, Math.toRadians(360), Math.toRadians(360), 15)
-                .build();
-
-        double specimen1 = 46;
-        double specimen2 = 56;
-        double specimen3 = 63;
-        double specimenMax = -10;
-        double specimenClose = -57;
-        double specimenReturn = -20;
-        double specimenPickup = 45;
-        double wall = -60;
-        double specimenRung = 0;
-        double specimenRung2 = -32;
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, -63, Math.toRadians(90)))
+@Autonomous(name="MainAuto")
+@Mercurial.Attach
+@Drive.Attach
+@Slides.Attach
+@BulkReads.Attach
+@Gripper.Attach
+@Arm.Attach
+@SilkRoad.Attach
+public class MainAuto extends OpMode {
+    private final Pose2d initialPose = new Pose2d(-24, -62.5, Math.toRadians(90));
+    private PinPointDrive drive;
+    private Action driveAction;
+    double specimen1 = 46;
+    double specimen2 = 56;
+    double specimen3 = 63;
+    double specimenMax = -10;
+    double specimenClose = -57;
+    double specimenReturn = -20;
+    double specimenPickup = 45;
+    double wall = -60;
+    double specimenRung = 0;
+    double specimenRung2 = -32;
+    @Override
+    public void init() {
+        drive = new PinPointDrive(hardwareMap, initialPose);
+        driveAction = drive.actionBuilder(initialPose)
                 .strafeTo(new Vector2d(0, -43))
                 .strafeTo(new Vector2d(0, -34))
 
@@ -66,20 +79,19 @@ public class MeepMeepTesting {
                 .strafeToSplineHeading(new Vector2d(specimenRung+9, specimenRung2-10), Math.toRadians(90))
                 .strafeTo(new Vector2d(specimenRung+9, specimenRung2))
                 .strafeTo(new Vector2d(specimenRung+9, specimenRung2-10))
+                .build();
+    }
+    @Override
+    public void start(){
+        SilkRoad.runAsync(driveAction);
+    }
 
-
-
-
-
-
-
-                // .strafeTo(new Vector2d(specimenPickup, specimenRung))
-                .build());
-
-        meepMeep.setBackground(MeepMeep.Background.FIELD_INTO_THE_DEEP_JUICE_DARK)
-                .setDarkMode(true)
-                .setBackgroundAlpha(0.95f)
-                .addEntity(myBot)
-                .start();
+    @Override
+    public void loop() {
+        telemetry.addData("x", drive.pose.position.x);
+        telemetry.addData("y", drive.pose.position.y);
+        telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+        telemetry.update();
     }
 }
+;

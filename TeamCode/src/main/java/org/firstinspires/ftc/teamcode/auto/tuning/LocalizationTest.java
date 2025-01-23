@@ -9,14 +9,14 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.auto.Drawing;
-import org.firstinspires.ftc.teamcode.auto.PinpointDrive;
+import org.firstinspires.ftc.teamcode.auto.PinPointDrive;
 
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        PinpointDrive drive = new PinpointDrive(hardwareMap, new Pose2d(0, 0, 0));
+        PinPointDrive drive = new PinPointDrive(hardwareMap, new Pose2d(0, 0, 0));
 
         waitForStart();
 

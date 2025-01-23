@@ -1,128 +1,86 @@
 package org.firstinspires.ftc.teamcode.util;
 
-public class  MotionProfiler {
+public class MotionProfiler {
+    private double maxV, maxA;
+    private double tempV, tempA;
+    private double startPos, finalPos;
+    private double distance, distanceHalf;
+    private double cruiseDistance, cruisedT;
+    private double accelerationdT, accelerationDistance;
+    private double deaccelerationdT, deaccelerationTime;
+    private double entiredT;
+    private double timeElapsed;
+    private boolean isOver, isDone;
 
-    public MotionProfiler(double max_velocity, double max_acceleration){
-        this.max_acceleration = max_acceleration;
-        this.max_velocity = max_velocity;
-    }
-    private final double max_velocity, max_acceleration;
-    private boolean isOver = true;
-    private boolean isDone = false;
-    private double temp_max_accel, temp_max_vel;
-    private double start_pos, final_pos, distance, acceleration_dt, halfway_distance, acceleration_distance, new_max_velocity, deacceleration_dt, cruise_distance, cruise_dt, deacceleration_time, entire_dt;
-
-    public void init_new_profile(double start_pos, double final_pos){
-        this.start_pos = start_pos;
-        this.final_pos = final_pos;
-        isOver = false;
-
-        distance = final_pos-start_pos;
-
-        if(distance < 0){
-            temp_max_vel = -max_velocity;
-            temp_max_accel = -max_acceleration;
-        }else{
-            temp_max_accel = max_acceleration;
-            temp_max_vel = max_velocity;
-        }
-
-        acceleration_dt = temp_max_vel / temp_max_accel;
-
-        halfway_distance = distance / 2;
-        acceleration_distance = 0.5 * temp_max_accel * acceleration_dt * acceleration_dt;
-
-        if (Math.abs(acceleration_distance) > Math.abs(halfway_distance)) {
-            acceleration_dt = Math.sqrt(Math.abs(halfway_distance / (0.5 * temp_max_accel)));
-        }
-        acceleration_distance = 0.5 * temp_max_accel * acceleration_dt * acceleration_dt;
-
-        new_max_velocity = temp_max_accel * acceleration_dt;
-
-        deacceleration_dt = acceleration_dt;
-
-        cruise_distance = distance - 2 * acceleration_distance;
-        cruise_dt = cruise_distance / new_max_velocity;
-        deacceleration_time = acceleration_dt + cruise_dt;
-
-        entire_dt = acceleration_dt + cruise_dt + deacceleration_dt;
+    public MotionProfiler(double maxV, double maxA){
+        this.maxV = maxV;
+        this.maxA = maxA;
     }
 
+    public void initialize(double startPos, double finalPos){
+        this.startPos = startPos;
+        this.finalPos = finalPos;
+        distance = finalPos - startPos;
 
-    public double motion_profile_pos(double current_dt) {
+        //Check if going up or down & negate if going down | assign if going up
+        if (distance < 0){ tempV = -maxV; tempA = -maxA;
+        } else if (distance > 0){ tempV = maxV; tempA = maxA; }
 
-        if (current_dt > entire_dt) {
-            isOver = true;
-            isDone = true;
-            return final_pos;
+        accelerationdT = tempV / tempA;
+
+        distanceHalf = distance / 2;
+        accelerationDistance = tempA * accelerationdT * accelerationdT / 2;
+
+        //If we can't accelerate to maxV in time - recaulcuate accelerationDistance
+        if (Math.abs(accelerationDistance) > Math.abs(distanceHalf)){
+            accelerationdT = Math.sqrt(distanceHalf / (0.5 * tempA));
+            accelerationDistance = tempA * accelerationdT * accelerationdT / 2;
         }
 
-        if (current_dt < acceleration_dt)
-            return start_pos + 0.5 * temp_max_accel * current_dt * current_dt;
+        maxV = maxA * accelerationdT;
+        deaccelerationdT = accelerationdT;
 
-        else if (current_dt < deacceleration_time) {
-            acceleration_distance = 0.5 * temp_max_accel * acceleration_dt * acceleration_dt;
-            double cruise_current_dt = current_dt - acceleration_dt;
+        cruiseDistance = distance - 2 * accelerationDistance;
+        cruisedT = cruiseDistance / maxV;
+        deaccelerationTime = accelerationdT + cruisedT;
 
-            return start_pos + acceleration_distance + new_max_velocity * cruise_current_dt;
-        }
-
-        else {
-            acceleration_distance = 0.5 * temp_max_accel * acceleration_dt * acceleration_dt;
-            cruise_distance = new_max_velocity * cruise_dt;
-            deacceleration_time = current_dt - deacceleration_time;
-
-            return start_pos + acceleration_distance + cruise_distance + new_max_velocity * deacceleration_time - 0.5 * temp_max_accel * deacceleration_time * deacceleration_time;
-        }
+        entiredT = accelerationdT + cruisedT + deaccelerationdT;
     }
 
-    public double motion_profile_vel(double current_dt) {
+    public double pos(double timeElapsed){
+        if (timeElapsed > entiredT){ isOver = true; isDone = true; return finalPos;}
+        if (timeElapsed < accelerationdT){ return startPos + 0.5 * tempA * timeElapsed * timeElapsed;}
+        if (timeElapsed < deaccelerationdT){
+            accelerationDistance = 0.5 * tempA * accelerationdT * accelerationdT;
+            double cruisedT = timeElapsed - accelerationdT;
 
-        if (current_dt > entire_dt)
-            return 0;
-
-        if (current_dt < acceleration_dt)
-            return temp_max_accel*current_dt;
-
-        else if (current_dt < deacceleration_time) {
-            return new_max_velocity;
+            return startPos + accelerationDistance + maxV * cruisedT;
         }
-
-        else {
-            deacceleration_time = current_dt - deacceleration_time;
-
-            return new_max_velocity-deacceleration_time;
-        }
+        accelerationDistance = 0.5 * tempA * accelerationdT * accelerationdT;
+        cruiseDistance = maxV * cruisedT;
+        deaccelerationTime = timeElapsed - deaccelerationTime;
+        return startPos + accelerationDistance + cruiseDistance + maxV * deaccelerationTime - 0.5 * tempA * deaccelerationTime * deaccelerationTime;
     }
 
-    public double motion_profile_accel(double current_dt) {
-
-        if (current_dt > entire_dt)
-            return 0;
-
-        if (current_dt < acceleration_dt)
-            return temp_max_accel;
-
-        else if (current_dt < deacceleration_time) {
-
-            return 0;
-        }
-
-        else {
-            return -temp_max_accel;
-        }
+    public double velocity(double timeElapsed) {
+        if (timeElapsed > entiredT){ return 0;}
+        if (timeElapsed < accelerationdT){ return tempA * timeElapsed; }
+        if (timeElapsed < deaccelerationdT){ return maxV; }
+        deaccelerationTime = timeElapsed - deaccelerationTime;
+        return maxV - deaccelerationTime;
     }
 
-    public double getEntire_dt(){
-        return entire_dt;
+    public double acceleration(double timeElapsed) {
+        if (timeElapsed > entiredT){ return 0; }
+        if (timeElapsed < accelerationdT){ return tempA; }
+        if (timeElapsed < deaccelerationTime){ return 0; }
+        return -tempA;
     }
 
-    public boolean isOver(){
-        return isOver;
-    }
+    public boolean isDone() { return isDone; }
+    public boolean isOver() { return isOver; }
 
-    public boolean isDone(){
-        return isDone;
-    }
+    public long getEntiredT() { return Double.doubleToLongBits(entiredT); }
 }
+
 

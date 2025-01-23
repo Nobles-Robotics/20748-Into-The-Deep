@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.auto.messages;
-
 public final class MecanumCommandMessage {
     public long timestamp;
     public double voltage;

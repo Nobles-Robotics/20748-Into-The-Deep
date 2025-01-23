@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-
-
 import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.zyxOrientation;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -16,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.teamcode.auto.MecanumDrive;
 import org.firstinspires.ftc.teamcode.auto.messages.PoseMessage;
 
 /**
@@ -26,7 +25,7 @@ import org.firstinspires.ftc.teamcode.auto.messages.PoseMessage;
  * Unless otherwise noted, comments are from Gobilda
  */
 @Config
-public class PinpointDrive extends MecanumDrive {
+public class PinPointDrive extends MecanumDrive {
     public static class Params {
         /*
         Set this to the name that your Pinpoint is configured as in your hardware config.
@@ -79,7 +78,7 @@ public class PinpointDrive extends MecanumDrive {
     public GoBildaPinpointDriverRR pinpoint;
     private Pose2d lastPinpointPose = pose;
 
-    public PinpointDrive(HardwareMap hardwareMap, Pose2d pose) {
+    public PinPointDrive(HardwareMap hardwareMap, Pose2d pose) {
         super(hardwareMap, pose);
         FlightRecorder.write("PINPOINT_PARAMS",PARAMS);
         pinpoint = hardwareMap.get(GoBildaPinpointDriverRR.class,PARAMS.pinpointDeviceName);
@@ -159,7 +158,5 @@ public class PinpointDrive extends MecanumDrive {
             this.heading = pose.getHeading(AngleUnit.RADIANS);
         }
     }
-
-
 
 }

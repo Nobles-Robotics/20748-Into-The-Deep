@@ -10,10 +10,24 @@
 
 
 // Custom definitions may go here
-
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://repo.dairy.foundation/snapshots"
+        }
+    }
+    dependencies {
+        classpath "dev.frozenmilk.sinister.sloth:Load:0.0.2"
+    }
+}
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+// there should be 3 more lines that start with apply here
+apply plugin: 'dev.frozenmilk.sinister.sloth.Load'
+apply plugin: 'org.jetbrains.kotlin.android'
+
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
@@ -24,6 +38,9 @@ android {
         }
         jniLibs.useLegacyPackaging true
     }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 }
 repositories {
     maven {
@@ -31,6 +48,9 @@ repositories {
     }
     maven {
         url = 'https://repo.dairy.foundation/releases'
+    }
+    maven {
+        url = 'https://repo.dairy.foundation/snapshots'
     }
 }
 dependencies {
@@ -41,9 +61,10 @@ dependencies {
     implementation "com.acmerobotics.roadrunner:actions:1.0.0"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.16"
     implementation "page.j5155.roadrunner:ftc-otos:0.1.2+0.1.14"
-    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.2"
-    implementation "dev.frozenmilk.dairy:Core:1.0.1"
-    implementation "dev.frozenmilk.dairy:Util:1.1.0"
-
-
+    implementation "dev.frozenmilk.mercurial:Mercurial:1.0.1"
+    implementation "dev.frozenmilk.dairy:Util:1.0.2"
+    implementation "dev.frozenmilk:Sinister:2.0.1"
+    implementation "dev.frozenmilk.dairy:Core:2.0.0"
+    implementation "dev.frozenmilk.sinister.sloth:Load:0.0.2"
+    implementation "dev.frozenmilk.sinister:Sloth:0.0.1"
 }
