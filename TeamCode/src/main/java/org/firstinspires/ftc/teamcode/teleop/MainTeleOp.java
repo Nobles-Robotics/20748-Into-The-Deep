@@ -7,10 +7,7 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.teamcode.auto.PinPointDrive;
-import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
-import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
-import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
-import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
+import org.firstinspires.ftc.teamcode.teleop.bot.*;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
 
 @Mercurial.Attach
@@ -40,16 +37,16 @@ public class MainTeleOp extends OpMode {
 
         //Gripper Control
         Mercurial.gamepad2().rightBumper().onTrue(new Sequential(Gripper.open()));
-        Mercurial.gamepad2().rightBumper().onFalse(new Sequential(Gripper.close()));
+        Mercurial.gamepad2().rightBumper().whileFalse(new Sequential(Gripper.close()));
 
         //Intake1 Control
         Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.runIntake()));
         Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.releaseIntake()));
 
+        Mercurial.gamepad2().back().onTrue(new Sequential(Bot.attachSpecimen()));
 //        Horizontal Slide Controllers
 //        double outputR = Mercurial.gamepad1().rightTrigger().state();
 //        double outputL = Mercurial.gamepad1().leftTrigger().state();
-
 
 
         PinPointDrive ppdrive = new PinPointDrive(hardwareMap, new Pose2d(0,0,0));
