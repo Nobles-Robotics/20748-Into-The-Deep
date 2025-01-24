@@ -6,12 +6,14 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import dev.frozenmilk.mercurial.Mercurial;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.teamcode.auto.PinPointDrive;
 import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
 import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
 import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
+import org.firstinspires.ftc.teamcode.util.MercurialAction;
 import org.firstinspires.ftc.teamcode.util.SilkRoad;
 
 @Autonomous(name="MainAuto")
@@ -40,7 +42,10 @@ public class MainAuto extends OpMode {
     public void init() {
         drive = new PinPointDrive(hardwareMap, initialPose);
         driveAction = drive.actionBuilder(initialPose)
+                .stopAndAdd(new MercurialAction(new Sequential(Slides.goTo(3000))))
                 .strafeTo(new Vector2d(0, -43))
+                .stopAndAdd(new MercurialAction(new Sequential(Slides.goTo(0))))
+
                 .strafeTo(new Vector2d(0, -34))
 
                 .splineToConstantHeading(new Vector2d(24, -36), Math.toRadians(0))

@@ -68,8 +68,8 @@ public class Slides implements Subsystem {
         slideRR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideRL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        slideER.setInverted(true);
-        slideEL.setInverted(true);
+        slideER.setInverted(false);
+        slideEL.setInverted(false);
 
         slideEL.stopAndResetEncoder();
         slideER.stopAndResetEncoder();
@@ -93,8 +93,8 @@ public class Slides implements Subsystem {
     public static void pidfUpdate() {
         if (isManual){
             power = parseGamepad();
-            slideER.set(-power);
-            slideEL.set(-power);
+            slideER.set(power);
+            slideEL.set(power);
             setTarget(getLiftPosition());
         } else {
             pidf.setSetPoint(liftTarget);
@@ -105,8 +105,8 @@ public class Slides implements Subsystem {
                 power = -1;
             }
             if (!isClimb){
-                slideER.set(-power);
-                slideEL.set(-power);
+                slideER.set(power);
+                slideEL.set(power);
                 //slideRR.set(power);
                 //slideRL.set(power);
             } else {

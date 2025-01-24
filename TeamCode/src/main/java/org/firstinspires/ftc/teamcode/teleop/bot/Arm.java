@@ -85,9 +85,9 @@ public class Arm implements Subsystem {
     public static Lambda runServoWrist() {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
-                .setInit(() -> servoWrist.turnToAngle(100))
+                .setInit(() -> servoWrist.turnToAngle(256))
                 .setEnd(interrupted -> {
-                    if (!interrupted) servoWrist.turnToAngle(0);
+                    if (!interrupted) servoWrist.turnToAngle(55);
                 });
     }
 
@@ -99,8 +99,10 @@ public class Arm implements Subsystem {
                     double power = parseGamepad();
                     if (power > 0){
                         servoSlideE.set(power);
+                        servoSlideR.set(power * 1.2);
                     } else {
                         servoSlideR.set(power);
+                        servoSlideE.set(power * 0.8);
                     }
                 })
                 .setEnd(interrupted -> {
@@ -109,6 +111,21 @@ public class Arm implements Subsystem {
                         servoSlideR.set(0);
                     }
                 });
+
+        /*
+                if (Math.abs(power) < 0.01) {
+            extender.set(0);
+            retracter.set(0);
+        } else if (power > 0) {
+            extender.set(power);
+            retracter.set(power * CombinedActionTeleOpMode.horizontalExtender_extendingPowerFactor);
+        } else {
+            retracter.set(power);
+            extender.set(power * CombinedActionTeleOpMode.horizontalExtender_retractingPowerFactor);
+        }
+    }
+        */
+
     }
 
     public static double getWrist(){
@@ -118,9 +135,9 @@ public class Arm implements Subsystem {
     public static double parseGamepad(){
         double output = Mercurial.gamepad1().rightStickY().state();
         if ((output > 0.5 )){
-            return 1;
+            return 0.5;
         } else if (output < -0.5 ){
-            return -1;
+            return -0.5;
         }
         return 0;
     }
