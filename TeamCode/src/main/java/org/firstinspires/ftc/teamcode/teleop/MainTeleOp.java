@@ -29,20 +29,28 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         //Normal Slide Controller
-        Mercurial.gamepad1().x().onTrue(new Sequential(Slides.goTo(3000)));
-        Mercurial.gamepad1().b().onTrue(new Sequential(Slides.goTo(0)));
-        Mercurial.gamepad1().a().onTrue(new Sequential(Slides.resetEncoder()));
-        Mercurial.gamepad1().y().onTrue(new Sequential(Slides.climb()));
+        Mercurial.gamepad2().x().onTrue(new Sequential(Slides.goTo(2000)));
+        Mercurial.gamepad2().b().onTrue(new Sequential(Slides.goTo(0)));
+        Mercurial.gamepad2().a().onTrue(new Sequential(Slides.resetEncoder()));
+        Mercurial.gamepad2().y().onTrue(new Sequential(Slides.climb()));
 
         //Manual Slide Control
-        Mercurial.gamepad1().leftStickButton().onTrue(new Sequential(Slides.setManual(true)));
-        Mercurial.gamepad1().leftStickButton().onFalse(new Sequential(Slides.setManual(false)));
+        Mercurial.gamepad2().leftStickButton().onTrue(new Sequential(Slides.setManual(true)));
+        Mercurial.gamepad2().leftStickButton().onFalse(new Sequential(Slides.setManual(false)));
 
-        Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.runIntake()));
-        Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.releaseIntake()));
+        //Gripper Control
+        Mercurial.gamepad2().rightBumper().onTrue(new Sequential(Gripper.open()));
+        Mercurial.gamepad2().rightBumper().onFalse(new Sequential(Gripper.close()));
 
-        Mercurial.gamepad1().back().whileTrue(new Sequential(Gripper.open()));
-        Mercurial.gamepad1().back().onFalse(new Sequential(Gripper.close()));
+        //Intake1 Control
+        Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.runIntake()));
+        Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.releaseIntake()));
+
+//        Horizontal Slide Controllers
+//        double outputR = Mercurial.gamepad1().rightTrigger().state();
+//        double outputL = Mercurial.gamepad1().leftTrigger().state();
+
+
 
         PinPointDrive ppdrive = new PinPointDrive(hardwareMap, new Pose2d(0,0,0));
     }

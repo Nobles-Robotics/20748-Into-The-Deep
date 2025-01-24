@@ -117,7 +117,7 @@ public class Slides implements Subsystem {
     }
 
     public static double parseGamepad(){
-        double output = Mercurial.gamepad1().leftStickY().state();
+        double output = Mercurial.gamepad2().leftStickY().state();
         if ((output > 0.5 )){
             return 0.5;
         } else if (output < -0.5 ){
