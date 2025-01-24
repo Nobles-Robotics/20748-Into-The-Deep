@@ -135,10 +135,28 @@ public class Arm implements Subsystem {
     public static double parseGamepad(){
         double outputR = Mercurial.gamepad1().rightTrigger().state();
         double outputL = Mercurial.gamepad1().leftTrigger().state();
-        if ((outputR > 0.5 )){
-            return 0.5;
-        } else if (outputL > 0.5 ){
-            return -0.5;
+        if (outputR > 0.1){
+            if (outputR > 0.85){
+                return 0.6;
+            } else if (outputR > 0.75){
+                return 0.4;
+            } else if (outputR > 0.5){
+                return 0.3;
+            } else if (outputR > 0.25){
+                return 0.2;
+            }
+            return 0.1;
+        } else if (outputL > 0.1){
+            if (outputL > 0.85){
+                return -0.6;
+            } else if (outputL > 0.75){
+                return -0.4;
+            } else if (outputL > 0.5){
+                return -0.3;
+            } else if (outputL > 0.25){
+                return -0.2;
+            }
+            return -0.1;
         }
         return 0;
     }
