@@ -116,11 +116,12 @@ public class Arm implements Subsystem {
     }
 
     public static double parseGamepad(){
-        double output = Mercurial.gamepad1().rightStickY().state();
+        //double output = Mercurial.gamepad1().rightStickY().state();
+        double output = 0;
         if ((output > 0.5 )){
-            return 0.5;
+            return 1;
         } else if (output < -0.5 ){
-            return -0.5;
+            return -1;
         }
         return 0;
     }
