@@ -44,10 +44,10 @@ public class Arm implements Subsystem {
     //Declares default command + Initializes the Subsystem
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servoExp1");
+        servoIntake = new CRServo(opMode.getOpMode().hardwareMap, "servo5");
         servoSlideE = new CRServo(opMode.getOpMode().hardwareMap, "servoExp5");
         servoSlideR = new CRServo(opMode.getOpMode().hardwareMap, "servoExp3");
-        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servo5", 0, 300);
+        servoWrist = new SimpleServo(opMode.getOpMode().hardwareMap, "servo3", 0, 300);
         servoIntake.setInverted(true);
     }
 
