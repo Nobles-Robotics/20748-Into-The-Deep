@@ -65,11 +65,13 @@ public class Slides implements Subsystem {
 
         slideER.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         slideEL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideRR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideRL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        slideRR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        slideRL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
 
         slideER.setInverted(false);
         slideEL.setInverted(false);
+        slideRR.setInverted(false);
+        slideRL.setInverted(false);
 
         slideEL.stopAndResetEncoder();
         slideER.stopAndResetEncoder();
@@ -110,14 +112,19 @@ public class Slides implements Subsystem {
                 //slideRR.set(power);
                 //slideRL.set(power);
             } else {
-                slideER.set(1);
-                slideEL.set(1);
+                slideRR.set(1);
+                slideRR.set(1);
             }
+        }
+
+        if (power==0){
+            slideRR.set(0.05);
+            slideRL.set(0.05);
         }
     }
 
     public static double parseGamepad(){
-        double output = Mercurial.gamepad2().leftStickY().state();
+        double output = Mercurial.gamepad1().leftStickY().state();
         if ((output > 0.5 )){
             return 0.5;
         } else if (output < -0.5 ){

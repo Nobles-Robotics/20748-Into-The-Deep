@@ -85,9 +85,9 @@ public class Arm implements Subsystem {
     public static Lambda runServoWrist() {
         return new Lambda("simple")
                 .addRequirements(INSTANCE)
-                .setInit(() -> servoWrist.turnToAngle(256))
+                .setInit(() -> servoWrist.turnToAngle(258))
                 .setEnd(interrupted -> {
-                    if (!interrupted) servoWrist.turnToAngle(55);
+                    if (!interrupted) servoWrist.turnToAngle(61);
                 });
     }
 

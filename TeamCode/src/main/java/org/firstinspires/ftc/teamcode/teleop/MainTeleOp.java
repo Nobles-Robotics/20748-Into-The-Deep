@@ -43,7 +43,6 @@ public class MainTeleOp extends OpMode {
         Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.runIntake()));
         Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.releaseIntake()));
 
-        Mercurial.gamepad2().back().onTrue(new Sequential(Bot.attachSpecimen()));
 //        Horizontal Slide Controllers
 //        double outputR = Mercurial.gamepad1().rightTrigger().state();
 //        double outputL = Mercurial.gamepad1().leftTrigger().state();
