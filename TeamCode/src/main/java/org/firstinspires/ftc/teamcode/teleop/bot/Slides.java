@@ -1,198 +1,203 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
-import dev.frozenmilk.mercurial.commands.groups.Race;
-import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
-
-import java.lang.annotation.*;
 
 @Config
 public class Slides implements Subsystem {
     public static final Slides INSTANCE = new Slides();
-    private static int liftTarget;
-    private static double power;
-    private static PIDFController pidf;
-    private static double kP = .004, kI = 0, kD = 0, kF = 0;
-    private static MotorEx slideER, slideEL, slideRR, slideRL;
-    private static int tolerance = 500;
+    public static DcMotorEx slideR;
+    public static DcMotorEx slideE;
+    public static DcMotorEx encoder;
+    public static Telemetry telemetry;
+    public static int tolerance = 10;
+    public static int safePos = 100;
+    public static int wall = safePos;
+    public static int scoreHighPos = 3000;
+    public static int scoreLowPos = 2000;
+    public static int lowPos = 2500;
+    public static int highPos = 3500;
+    public static double Kp = 0.00014;
+    public static double Ki = 0.0000;
+    public static double Kd = 0.0000;
+    public static double Kf = 0.0000;
+    public static double currentLimit = 4;
+    public static volatile boolean enablePID = true;
 
-    private static double gamepadTollerance = 0.2;
+    public static PIDFController controller = new PIDFController(Kp, Ki, Kd, Kf);
 
-    private static boolean isClimb = false;
-    private static boolean isManual = false;
-
-    private static double PowerScale = 1/((57.0 / 63.0) * (17.0 / 11.0));
-    private Slides() { }
+    private Slides() {}
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
     @Inherited
     public @interface Attach { }
 
+    @Override
+    public void preUserInitHook(@NonNull Wrapper opMode) {
+        HardwareMap hMap = opMode.getOpMode().hardwareMap;
+        telemetry = opMode.getOpMode().telemetry;
+        slideE = hMap.get(DcMotorEx.class, "vertSlideUp");
+        slideR = hMap.get(DcMotorEx.class, "vertSlideDown");
+        slideR.setCurrentAlert(currentLimit, CurrentUnit.AMPS);
+        slideE.setCurrentAlert(currentLimit, CurrentUnit.AMPS);
+        slideR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        reset();
+
+        controller.setTolerance(tolerance);
+
+        setDefaultCommand(runPID());
+    }
+
+    @Override
+    public void postUserInitHook(@NonNull Wrapper opMode) {
+        Bot.init();
+    }
+
+    @Override
+    public void postUserLoopHook(@NonNull Wrapper opMode) {}
+
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
     @NonNull
     @Override
-    public Dependency<?> getDependency() { return dependency; }
-
-    @Override
-    public void setDependency(@NonNull Dependency<?> dependency) { this.dependency = dependency; }
-
-    @Override
-    public void postUserInitHook(@NonNull Wrapper opMode) {
-        HardwareMap hwmap = opMode.getOpMode().hardwareMap;
-        slideER = new MotorEx(hwmap, "vertSlideRightUp");
-        slideEL = new MotorEx(hwmap, "vertSlideLeftUp");
-        slideRR = new MotorEx(hwmap, "vertSlideRightDown");
-        slideRL = new MotorEx(hwmap, "vertSlideLeftDown");
-
-        slideER.setRunMode(Motor.RunMode.RawPower);
-        slideEL.setRunMode(Motor.RunMode.RawPower);
-        slideRR.setRunMode(Motor.RunMode.RawPower);
-        slideRL.setRunMode(Motor.RunMode.RawPower);
-
-        slideER.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideEL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
-        slideRR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-        slideRL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
-
-        slideER.setInverted(false);
-        slideEL.setInverted(false);
-        slideRR.setInverted(false);
-        slideRL.setInverted(false);
-
-        slideEL.stopAndResetEncoder();
-        slideER.stopAndResetEncoder();
-        slideRL.stopAndResetEncoder();
-        slideRR.stopAndResetEncoder();
-
-        setDefaultCommand(update());
-        pidf = new PIDFController(kP, kI, kD, kF);
+    public Dependency<?> getDependency() {
+        return dependency;
     }
 
     @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {
+    public void setDependency(@NonNull Dependency<?> dependency) {
+        this.dependency = dependency;
     }
 
-
-    public static void setTarget(int target){ liftTarget = target; }
-
-    public static int getTarget(){ return liftTarget; }
-    public static boolean getManual(){ return isManual; }
-
-    public static void pidfUpdate() {
-        if (isManual){
-            power = parseGamepad();
-            slideER.set(power);
-            slideEL.set(power);
-            setTarget(getLiftPosition());
-        } else {
-            pidf.setSetPoint(liftTarget);
-            power = pidf.calculate(liftTarget, getLiftPosition());
-            if (power > 1) {
-                power = 1;
-            } else if (power < -1){
-                power = -1;
-            }
-            if (!isClimb){
-                slideER.set(power);
-                slideEL.set(power);
-                //slideRR.set(power);
-                //slideRL.set(power);
-            } else {
-                slideRR.set(1);
-                slideRR.set(1);
-            }
-        }
-
-        if (power==0){
-            slideRR.set(0.05);
-            slideRL.set(0.05);
-        }
+    public static void setPower(double power){
+        slideE.setPower(power);
+        slideR.setPower(power);
     }
 
-    public static double parseGamepad(){
-        double output = Mercurial.gamepad1().leftStickY().state();
-        if ((output > 0.5 )){
-            return 0.5;
-        } else if (output < -0.5 ){
-            return -0.5;
-        }
-        return 0;
+    public static Lambda setPowerCommand(double power){
+        return new Lambda("set-power")
+                .setExecute(() -> {
+                    if (power != 0) {
+                        enablePID = false;
+                        setPower(power);
+                        controller.setSetPoint(getPos());
+                        logTele();
+                    } else {
+                        enablePID = true;
+                        controller.setSetPoint(getPos());
+                        setPower(0);
+                    }
+
+                });
     }
 
-    public static void hold() {
-        slideER.set(power);
-        slideEL.set(power);
-    }
-    public static double getPower(){
-        return power;
+    public static boolean isOverCurrent() {
+        return slideR.isOverCurrent() || slideE.isOverCurrent();
     }
 
-    public static int getLiftPosition(){
-        //return Math.max(slideER.getCurrentPosition()-slideRR.getCurrentPosition(), 0);
-        return Math.max(slideER.getCurrentPosition(), 0);
-        //Or else it will blow right past 0 and go to negative infinity! Downwards!
+    public static void reset() {
+        slideE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        controller.reset();
+        controller.setSetPoint(0);
+        logTele();
     }
 
-    public static int getActualLiftPosition(){
-        return slideER.getCurrentPosition();
+    public static Lambda runToPosition(int pos){
+        return new Lambda("set-target-pos")
+                .setInterruptible(true)
+                .setInit(() -> {
+                    controller.setSetPoint(pos);
+                })
+                .setFinish(() -> controller.atSetPoint());
     }
 
-    public static boolean atTarget() { return (getLiftPosition() >= (getTarget() - tolerance) || getLiftPosition() <= (getTarget() + tolerance)); }
+    public static void logCurrent(){
+        telemetry.addData("isOver", isOverCurrent());
+        telemetry.update();
+    }
 
-    @NonNull
-    public static Lambda update() {
-        return new Lambda("update the pid")
+    public static double getPos(){
+        return encoder.getCurrentPosition();
+    }
+
+    public static void logTele(){
+        telemetry.addData("Slide Pos", getPos());
+        telemetry.addData("Slide Power", slideE.getPower());
+        telemetry.addData("Slide Setpoint", controller.getSetPoint());
+        telemetry.addData("Slide Error", controller.getPositionError());
+        telemetry.addData("At Setpoint?", controller.atSetPoint());
+        telemetry.addData("Enable PID", enablePID);
+    }
+
+    public static Lambda runPID() {
+        return new Lambda("outtake-pid")
                 .addRequirements(INSTANCE)
-                .setExecute(Slides::pidfUpdate)
+                .setInterruptible(true)
+                .setExecute(() -> {
+                    if (enablePID) {
+                        double power = controller.calculate(getPos());
+                        setPower(power);
+                        logTele();
+                    }
+                })
                 .setFinish(() -> false);
     }
 
-    @NonNull
-    public static Lambda goTo(int to){
-        return new Lambda("set pidf target")
-                .setExecute(() -> setTarget(to))
-                .setFinish(Slides::atTarget);
-    }
-    @NonNull
-    public static Lambda resetEncoder(){
-        return new Lambda("reset encoders")
-                .setExecute(Slides::resetEncoders);
-    }
-    @NonNull
-    public static Sequential climb(){
-        return new Sequential(setClimb(true), new Race(new Wait(5.0), goTo(0)), setClimb(false));
-    }
-
-    @NonNull
-    public static Lambda setClimb(boolean climb){
-        return new Lambda("set climb variable")
-                .setExecute(() -> isClimb = climb);
+    public static Lambda home() {
+        return new Lambda("home-outtake")
+                .setInit(() -> {
+                    enablePID = false;
+                    setPower(-1);
+                })
+                .setFinish(Slides::isOverCurrent)
+                .setEnd((interrupted) -> {
+                    if (!interrupted) {
+                        reset();
+                    }
+                    setPower(0);
+                    enablePID = true;
+                });
     }
 
-    @NonNull
-    public static Lambda setManual(boolean manual){
-        return new Lambda("set climb variable")
-                .setExecute(() -> isManual = manual);
+    public static Lambda waitForPos(int pos) {
+        return new Lambda("wait-for-pos")
+                .setFinish(() -> Math.abs(getPos() - pos) < tolerance);
     }
 
-
-    public static void resetEncoders(){
-        slideER.stopAndResetEncoder();
-        slideEL.stopAndResetEncoder();
-        setTarget(getTarget());
+    public static Lambda setPowerSafe(int pow){
+        return new Lambda("set-power-safe")
+                .setInit(() -> {
+                    enablePID = false;
+                    setPower(pow);
+                })
+                .setFinish(() -> isOverCurrent());
     }
 }

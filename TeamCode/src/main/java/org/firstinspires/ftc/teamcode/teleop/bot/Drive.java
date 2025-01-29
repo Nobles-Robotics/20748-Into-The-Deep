@@ -60,7 +60,8 @@ public class Drive implements Subsystem {
         follower.setTeleOpMovementVectors(
                 x * (isSlowed? slowSpeed : 1),
                 y * (isSlowed? slowSpeed : 1),
-                z * (isSlowed? slowSpeed : 1)
+                z * (isSlowed? slowSpeed : 1),
+                false
         );
         follower.update();
         telemetry.addData("Chassis Vectors", "x: %f, y: %f, z: %f", x, y, z);

@@ -36,27 +36,27 @@ public class Bot {
 
     public static void init() {
 
-        StatePositions init = new StatePositions(
-                Outtake.armHomePos,
-                Outtake.pivotHomePos,
+        /* StatePositions init = new StatePositions(
+                arn.armHomePos,
+                Slides.wall,
                 true,
                 OuttakeSlides.minPos
         );
         StatePositions idle = new StatePositions(
                 Outtake.armHomePos,
-                Outtake.pivotHomePos,
+                Slides.wall,
                 true,
                 OuttakeSlides.minPos
         );
         StatePositions intake = new StatePositions(
                 Outtake.armSpecPos,
-                Outtake.pivotSpecPos,
+                Slides.wall,
                 true,
                 OuttakeSlides.minPos
         );
         StatePositions outtakeSubmersible = new StatePositions(
                 Outtake.armSubmersiblePos,
-                Outtake.pivotSubmersiblePos,
+                Slides.scoreHighPos,
                 false,
                 OuttakeSlides.submersiblePos
         );
@@ -71,21 +71,14 @@ public class Bot {
                 State.IDLE, idle,
                 State.INTAKE_SPEC, intake,
                 State.OUTTAKE_SUBMERSIBLE, outtakeSubmersible,
-                State.OUTTAKE_SUBMERSIBLE_SCORE, outtakeSubmersibleScore,
+                State.OUTTAKE_SUBMERSIBLE_SCORE, outtakeSubmersibleScore
         );
 
         flavor = FeatureRegistrar.getActiveOpModeWrapper().getOpModeType();
 
         stateMachine = new StateMachine<>(State.IDLE)
-                .withState(State.HOME, (state, name) -> Lambda.from(
+                .withState(State.IDLE, (state, name) -> Lambda.from(
                         new Sequential(
-//                                new IfElse(
-//                                        () -> (Intake.raised && (
-//                                                OuttakeSlides.controller.getSetPoint() == OuttakeSlides.submersiblePos ||
-//                                                OuttakeSlides.controller.getSetPoint() == OuttakeSlides.scoreSubmersiblePos)),
-//                                        Intake.dropIntake().then(new Wait(0.4)),
-//                                        new Wait(0)
-//                                ),
                                 new IfElse(
                                         () -> Intake.raised,
                                         Intake.setIntake(Intake.hoverPos),
@@ -106,7 +99,6 @@ public class Bot {
                                 Outtake.setPivot(intake.pivotPos),
                                 new Wait(0.5),
                                 OuttakeSlides.runToPosition(OuttakeSlides.minPos)
-
                         )
                 ))
                 .withState(State.OUTTAKE_SUBMERSIBLE, (state, name) -> Lambda.from(
@@ -137,7 +129,7 @@ public class Bot {
                         )
                 ));
 
-        Paths.init();
+        Paths.init(); */
     }
 
     public static Lambda setState(State state) {
