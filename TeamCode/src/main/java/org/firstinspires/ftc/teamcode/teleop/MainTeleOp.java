@@ -26,29 +26,6 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         //Normal Slide Controller
-        Mercurial.gamepad2().x().onTrue(new Sequential(Slides.goTo(2000)));
-        Mercurial.gamepad2().b().onTrue(new Sequential(Slides.goTo(0)));
-        Mercurial.gamepad2().a().onTrue(new Sequential(Slides.resetEncoder()));
-        Mercurial.gamepad2().y().onTrue(new Sequential(Slides.climb()));
-
-        //Manual Slide Control
-        Mercurial.gamepad2().leftStickButton().onTrue(new Sequential(Slides.setManual(true)));
-        Mercurial.gamepad2().leftStickButton().onFalse(new Sequential(Slides.setManual(false)));
-
-        //Gripper Control
-        Mercurial.gamepad2().rightBumper().onTrue(new Sequential(Gripper.open()));
-        Mercurial.gamepad2().rightBumper().whileFalse(new Sequential(Gripper.close()));
-
-        //Intake1 Control
-        Mercurial.gamepad1().rightBumper().onTrue(new Sequential(Arm.runIntake()));
-        Mercurial.gamepad1().leftBumper().onTrue(new Sequential(Arm.releaseIntake()));
-
-//        Horizontal Slide Controllers
-//        double outputR = Mercurial.gamepad1().rightTrigger().state();
-//        double outputL = Mercurial.gamepad1().leftTrigger().state();
-
-
-        PinPointDrive ppdrive = new PinPointDrive(hardwareMap, new Pose2d(0,0,0));
     }
     @Override
     public void init_loop() {
