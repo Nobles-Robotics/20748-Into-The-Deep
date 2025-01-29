@@ -38,7 +38,6 @@ public class Gripper implements Subsystem {
         this.dependency = dependency;
     }
 
-    //Declares default command + Initializes the Subsystem
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, "servoExp0", 0, 300);
