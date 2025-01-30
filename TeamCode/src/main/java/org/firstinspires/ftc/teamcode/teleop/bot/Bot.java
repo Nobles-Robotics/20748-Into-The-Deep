@@ -1,22 +1,17 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.pedropathing.pathgen.PathBuilder;
-
-import dev.frozenmilk.mercurial.commands.groups.Race;
-import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-
-import java.util.Map;
-
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
+import dev.frozenmilk.mercurial.commands.groups.Race;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import dev.frozenmilk.mercurial.commands.util.IfElse;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
-import dev.frozenmilk.mercurial.commands.util.Wait;
+import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.util.Pathing.Paths;
 import org.firstinspires.ftc.teamcode.util.States.StatePositions;
+
+import java.util.Map;
 
 public class Bot {
 

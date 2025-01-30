@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
-import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
@@ -16,7 +15,7 @@ public class Gripper implements Subsystem {
     public static final Gripper INSTANCE = new Gripper();
 
     private Gripper() { }
-    private static SimpleServo gripperL, gripperR;
+    private static SimpleServo gripperL;
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -60,9 +59,7 @@ public class Gripper implements Subsystem {
     public static Lambda open() {
         return new Lambda("open")
                 .addRequirements(INSTANCE)
-                .setInit(() -> {
-                    gripperL.turnToAngle(93);
-                })
+                .setInit(() -> gripperL.turnToAngle(93))
                 .setFinish(() -> true);
     }
     @NonNull
@@ -75,8 +72,5 @@ public class Gripper implements Subsystem {
     }
     public static double getPositionGripperL(){
         return gripperL.getPosition();
-    }
-    public static double getPositionGripperR(){
-        return gripperR.getPosition();
     }
 }

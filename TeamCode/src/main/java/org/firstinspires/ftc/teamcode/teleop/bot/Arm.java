@@ -1,28 +1,21 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.lang.annotation.*;
 
 @Config
 public class Arm implements Subsystem {
@@ -77,13 +70,12 @@ public class Arm implements Subsystem {
     public static void reset() {
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public static Lambda setPower(double pow) {
         return new Lambda("power-intake")
-                .setInit(() -> {
-                    extendo.setPower(pow);
-                })
+                .setInit(() -> extendo.setPower(pow))
                 .setFinish(() -> true);
     }
 
@@ -98,6 +90,6 @@ public class Arm implements Subsystem {
         return new Lambda("extend-intake")
                 .setInit(() -> extendo.setPower(1))
                 .setFinish(() -> extendo.getCurrentPosition() > armExtendPos)
-                .setEnd((interrupted) -> extendo.setPower(-constantPower));
+                .setEnd((interrupted) -> extendo.setPower(constantPower));
     }
 }

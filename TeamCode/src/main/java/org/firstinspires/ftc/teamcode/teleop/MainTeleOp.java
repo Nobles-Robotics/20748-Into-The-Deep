@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
-import dev.frozenmilk.mercurial.commands.groups.Sequential;
-import org.firstinspires.ftc.teamcode.teleop.bot.*;
+import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
+import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
+import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
+import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.BulkReads;
 import org.firstinspires.ftc.teamcode.util.RevDistanceSensor;
 

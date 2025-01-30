@@ -1,29 +1,22 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
-import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
+import java.lang.annotation.*;
 
 @Config
 public class Slides implements Subsystem {
@@ -133,9 +126,7 @@ public class Slides implements Subsystem {
     public static Lambda runToPosition(double pos){
         return new Lambda("set-target-pos")
                 .setInterruptible(true)
-                .setInit(() -> {
-                    controller.setSetPoint(pos);
-                })
+                .setInit(() -> controller.setSetPoint(pos))
                 .setFinish(() -> controller.atSetPoint());
     }
 
@@ -198,6 +189,6 @@ public class Slides implements Subsystem {
                     enablePID = false;
                     setPower(pow);
                 })
-                .setFinish(() -> isOverCurrent());
+                .setFinish(Slides::isOverCurrent);
     }
 }
