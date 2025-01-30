@@ -39,9 +39,12 @@ public class Arm implements Subsystem {
 
     public static PIDFController controller = new PIDFController(0.00014, 0.0000, 0.0000, 0.0000);
 
-    @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @MustBeDocumented
     @Inherited
-    public @interface Attach { }
+    public @interface Attach {
+    }
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
@@ -68,7 +71,8 @@ public class Arm implements Subsystem {
     }
 
     @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {}
+    public void postUserLoopHook(@NonNull Wrapper opMode) {
+    }
 
     public static void reset() {
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -90,12 +94,10 @@ public class Arm implements Subsystem {
                 .setEnd((interrupted) -> extendo.setPower(-constantPower));
     }
 
-    public static Lambda runToPosition(double pos){
-        return new Lambda("set-target-pos")
-                .setInterruptible(true)
-                .setInit(() -> {
-                    controller.setSetPoint(pos);
-                })
-                .setFinish(() -> controller.atSetPoint());
+    public static Lambda extend() {
+        return new Lambda("extend-intake")
+                .setInit(() -> extendo.setPower(1))
+                .setFinish(() -> extendo.getCurrentPosition() > armExtendPos)
+                .setEnd((interrupted) -> extendo.setPower(-constantPower));
     }
 }

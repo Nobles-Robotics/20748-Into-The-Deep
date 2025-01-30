@@ -152,7 +152,7 @@ public class Bot {
                 .withState(State.INTAKE_SAM, (state, name) -> Lambda.from(
                         new Sequential(
                             new Parallel(
-                                    Arm.runToPosition(intakeSam.armPos),
+                                    Arm.extend(),
                                     Intake.dropIntake()
                             ),
                             Intake.spintake(intakeSam.intakeSpeed)
@@ -161,7 +161,7 @@ public class Bot {
                 .withState(State.OUTAKE_SAM, (state, name) -> Lambda.from(
                         new Sequential(
                                 new Parallel(
-                                        Arm.runToPosition(outakeSam.armPos),
+                                        Arm.extend(),
                                         Intake.raiseIntake()
                                 ),
                                 Intake.spintake(outakeSam.intakeSpeed)

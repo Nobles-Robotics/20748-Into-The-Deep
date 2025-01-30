@@ -62,15 +62,16 @@ public class Gripper implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
                     gripperL.turnToAngle(93);
-                });
+                })
+                .setFinish(() -> true);
     }
     @NonNull
     public static Lambda close() {
         return new Lambda("close")
                 .addRequirements(INSTANCE)
-                .setInit(() -> {
-                    gripperL.turnToAngle(85);
-                });
+                .setInit(() -> gripperL.turnToAngle(85))
+                .setFinish(() -> true);
+
     }
     public static double getPositionGripperL(){
         return gripperL.getPosition();
