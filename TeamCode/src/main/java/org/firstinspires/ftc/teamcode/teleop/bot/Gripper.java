@@ -41,7 +41,6 @@ public class Gripper implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, "servoExp0", 0, 300);
-        gripperR = new SimpleServo(opMode.getOpMode().hardwareMap, "servoExp1", 0, 300);
         open();
     }
 
@@ -63,7 +62,6 @@ public class Gripper implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
                     gripperL.turnToAngle(93);
-                    gripperR.turnToAngle(131);
                 });
     }
     @NonNull
@@ -72,33 +70,8 @@ public class Gripper implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
                     gripperL.turnToAngle(85);
-                    gripperR.turnToAngle(141);
                 });
     }
-
-    @NonNull
-    public static Lambda runManual() {
-        return new Lambda("runManual")
-                .addRequirements(INSTANCE)
-                .setInit(() -> {
-                    double angle = parseGamepad();
-                    gripperL.rotateByAngle(angle);
-                    gripperR.rotateByAngle(angle);
-                })
-                .setEnd((interrupted) -> open().execute());
-    }
-
-
-    public static double parseGamepad(){
-        double output = Mercurial.gamepad1().rightStickY().state();
-        if ((output > 0.5 )){
-            return 1;
-        } else if (output < -0.5 ){
-            return -1;
-        }
-        return 0;
-    }
-
     public static double getPositionGripperL(){
         return gripperL.getPosition();
     }

@@ -33,8 +33,11 @@ public class Arm implements Subsystem {
     public static Telemetry telemetry;
 
     public static double constantPower = 0.1;
-
+    public static double armHomePos = 0;
+    public static double armExtendPos = 1000;
     public static boolean enablePID = true;
+
+    public static PIDFController controller = new PIDFController(0.00014, 0.0000, 0.0000, 0.0000);
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
     @Inherited
@@ -73,7 +76,7 @@ public class Arm implements Subsystem {
     }
 
     public static Lambda setPower(double pow) {
-        return new Lambda("power-outtake")
+        return new Lambda("power-intake")
                 .setInit(() -> {
                     extendo.setPower(pow);
                 })
@@ -81,9 +84,18 @@ public class Arm implements Subsystem {
     }
 
     public static Lambda home() {
-        return new Lambda("home-outtake")
+        return new Lambda("home-intake")
                 .setInit(() -> extendo.setPower(-1))
                 .setFinish(() -> touch.isPressed())
                 .setEnd((interrupted) -> extendo.setPower(-constantPower));
+    }
+
+    public static Lambda runToPosition(double pos){
+        return new Lambda("set-target-pos")
+                .setInterruptible(true)
+                .setInit(() -> {
+                    controller.setSetPoint(pos);
+                })
+                .setFinish(() -> controller.atSetPoint());
     }
 }

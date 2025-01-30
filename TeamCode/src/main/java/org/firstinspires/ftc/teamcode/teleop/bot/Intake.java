@@ -23,7 +23,7 @@ import kotlin.annotation.MustBeDocumented;
 @Config
 public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
-    private static double dropPos = 0.00;
+    public static double dropPos = 0.00;
     public static double raisePos = 0.5;
     public static double storePos = 1.0;
     public static Servo wrist;
@@ -55,7 +55,6 @@ public class Intake implements Subsystem {
         wrist = hMap.get(Servo.class, "dropdownL");
 
         spinner = hMap.get(CRServo.class, "spintake");
-
     }
 
     @Override

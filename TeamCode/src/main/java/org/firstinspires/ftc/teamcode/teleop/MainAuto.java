@@ -36,6 +36,7 @@ public class MainAuto extends OpMode {
     double wall = -60;
     double specimenRung = 0;
     double specimenRung2 = -32;
+
     @Override
     public void init() {
 

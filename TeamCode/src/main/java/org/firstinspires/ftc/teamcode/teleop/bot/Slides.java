@@ -31,6 +31,7 @@ public class Slides implements Subsystem {
     public static DcMotorEx slideR;
     public static DcMotorEx slideE;
     public static DcMotorEx encoder;
+
     public static Telemetry telemetry;
     public static int tolerance = 10;
     public static int safePos = 100;
@@ -110,7 +111,6 @@ public class Slides implements Subsystem {
                         controller.setSetPoint(getPos());
                         setPower(0);
                     }
-
                 });
     }
 
@@ -130,7 +130,7 @@ public class Slides implements Subsystem {
         logTele();
     }
 
-    public static Lambda runToPosition(int pos){
+    public static Lambda runToPosition(double pos){
         return new Lambda("set-target-pos")
                 .setInterruptible(true)
                 .setInit(() -> {
