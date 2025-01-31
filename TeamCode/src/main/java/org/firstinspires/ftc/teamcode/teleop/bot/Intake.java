@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
@@ -22,6 +23,9 @@ public class Intake implements Subsystem {
     public static double storePos = 1.0;
     public static Servo wrist;
     public static CRServo spinner;
+
+    public static ColorSensor colorSensor;
+
     public static boolean raised;
     public static boolean stored;
     private Intake() {}
@@ -48,8 +52,9 @@ public class Intake implements Subsystem {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
 
         wrist = hMap.get(Servo.class, "dropdownL");
-
         spinner = hMap.get(CRServo.class, "spintake");
+        colorSensor = hMap.get(ColorSensor.class, "color");
+
     }
 
     @Override

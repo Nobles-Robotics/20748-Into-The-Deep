@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.util.BulkReads;
 @BulkReads.Attach
 @Gripper.Attach
 @Arm.Attach
-@ColorSensor.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
 
