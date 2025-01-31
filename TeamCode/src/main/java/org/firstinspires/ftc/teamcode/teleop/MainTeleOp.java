@@ -3,23 +3,19 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
-import dev.frozenmilk.mercurial.Mercurial;
-import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
-import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
-import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
-import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
-import org.firstinspires.ftc.teamcode.util.BulkReads;
-import org.firstinspires.ftc.teamcode.util.RevDistanceSensor;
+import org.firstinspires.ftc.teamcode.teleop.bot.ColorSensor;
+import org.firstinspires.ftc.teamcode.util.RevColorSensor;
 
-@Mercurial.Attach
-@Drive.Attach
-@Slides.Attach
-@BulkReads.Attach
-@Gripper.Attach
-@Arm.Attach
+//@Mercurial.Attach
+//@Drive.Attach
+//@Slides.Attach
+//@BulkReads.Attach
+//@Gripper.Attach
+//@Arm.Attach
+@ColorSensor.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
-    private RevDistanceSensor sensor;
+    private RevColorSensor colorSensorTest;
 
     public MainTeleOp() {
         FeatureRegistrar.checkFeatures();
@@ -27,12 +23,13 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
-        RevDistanceSensor sensor = new RevDistanceSensor();
-        sensor.init(FeatureRegistrar.getActiveOpMode().hardwareMap, "sensor");
+
     }
+
     @Override
     public void init_loop() {
         // the rest is as normal
+
     }
 
     @Override
@@ -42,9 +39,6 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("sensor", sensor.getDistanceMM());
-
-        telemetry.update();
     }
 
     @Override
