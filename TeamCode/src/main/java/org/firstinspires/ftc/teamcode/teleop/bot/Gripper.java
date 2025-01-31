@@ -68,7 +68,6 @@ public class Gripper implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setInit(() -> gripperL.turnToAngle(85))
                 .setFinish(() -> true);
-
     }
     public static double getPositionGripperL(){
         return gripperL.getPosition();
