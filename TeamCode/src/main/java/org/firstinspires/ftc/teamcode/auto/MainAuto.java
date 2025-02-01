@@ -6,7 +6,7 @@ import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.teamcode.teleop.bot.*;
-import org.firstinspires.ftc.teamcode.util.BulkReads;
+import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 import org.firstinspires.ftc.teamcode.auto.Pathing.Paths;
 
 @Mercurial.Attach
