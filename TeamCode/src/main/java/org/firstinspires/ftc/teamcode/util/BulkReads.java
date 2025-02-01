@@ -6,72 +6,52 @@ import dev.frozenmilk.dairy.core.Feature;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.List;
 
-public final class BulkReads implements Feature {
-    // first, we need to set up the dependency
-    // this makes a rule that says:
-    // "for this feature to receive updates about an OpMode, it must have @BulkReads.Attach"
+public class BulkReads implements Feature {
     private Dependency<?> dependency = new SingleAnnotation<>(Attach.class);
-    // getters and setters for dependency
     @NonNull
     @Override
-    public Dependency<?> getDependency() {
-        return dependency;
-    }
+    public Dependency<?> getDependency() { return dependency; }
 
     @Override
     public void setDependency(@NonNull Dependency<?> dependency) {
         this.dependency = dependency;
     }
 
-    // we'll make the constructor private
     private BulkReads() {}
-    // our singleton instance
     public static final BulkReads INSTANCE = new BulkReads();
-
-    private List<LynxModule> modules;
+    private static List<LynxModule> allHubs;
+    private void clearCache(){ for (LynxModule hub : allHubs) { hub.clearBulkCache(); }}
+    @Override
+    public void preUserInitHook(@NotNull Wrapper opMode) {}
 
     @Override
-    public void preUserInitHook(@NonNull Wrapper opMode) {
-        // collect and store the modules
-        modules = opMode.getOpMode().hardwareMap.getAll(LynxModule.class);
-        // set them to manual
-        modules.forEach(lynxModule -> lynxModule.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
-    }
-
-    // now, in each pre phase, we'll clear the bulk cache
-    // we do this in pre, as most calculations and updates happen during
-    // post,
-    @Override
-    public void preUserInitLoopHook(@NonNull Wrapper opMode) {
-        modules.forEach(LynxModule::clearBulkCache);
+    public void postUserInitHook(@NotNull Wrapper opMode) {
+        allHubs = opMode.getOpMode().hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) { hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL); }
     }
 
     @Override
-    public void preUserStartHook(@NonNull Wrapper opMode) {
-        modules.forEach(LynxModule::clearBulkCache);
-    }
+    public void preUserInitLoopHook(@NotNull Wrapper opMode) { clearCache(); }
 
     @Override
-    public void preUserLoopHook(@NonNull Wrapper opMode) {
-        modules.forEach(LynxModule::clearBulkCache);
-    }
+    public void preUserStartHook(@NotNull Wrapper opMode) { clearCache(); }
 
-    // cleanup is a guaranteed run post stop
-    // here, we'll drop our references to the modules
     @Override
-    public void cleanup(@NonNull Wrapper opMode) {
-        modules = null;
-    }
+    public void preUserLoopHook(@NotNull Wrapper opMode) { clearCache(); }
 
-    // the @BulkReads.Attach annotation
-    @Target(ElementType.TYPE)
+    @Override
+    public void preUserStopHook(@NotNull Wrapper opMode) { clearCache(); }
+
+    @Override
+    public void cleanup(@NonNull Wrapper opMode) { allHubs.clear(); }
+
     @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @Inherited
     public @interface Attach {}
 }
