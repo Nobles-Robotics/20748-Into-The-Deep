@@ -6,7 +6,7 @@ import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
 import org.firstinspires.ftc.teamcode.teleop.bot.*;
-import org.firstinspires.ftc.teamcode.util.BulkReads;
+import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
 @Mercurial.Attach
 @Drive.Attach

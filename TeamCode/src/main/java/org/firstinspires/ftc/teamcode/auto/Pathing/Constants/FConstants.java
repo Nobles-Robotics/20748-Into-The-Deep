@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.Pathing.Constants;
+package org.firstinspires.ftc.teamcode.auto.Pathing.Constants;
 
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Localizers;

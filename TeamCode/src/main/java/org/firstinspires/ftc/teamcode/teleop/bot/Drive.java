@@ -21,8 +21,8 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.FConstants;
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.LConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.FConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.LConstants;
 
 import java.lang.annotation.*;
 import java.util.concurrent.atomic.AtomicLong;

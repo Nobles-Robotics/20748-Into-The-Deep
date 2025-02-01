@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.Pathing.Tuning.localization;
+package org.firstinspires.ftc.teamcode.auto.Pathing.Tuning.localization;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,8 +12,8 @@ import com.pedropathing.localization.PoseUpdater;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.pedropathing.util.Drawing;
 
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.LConstants;
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.FConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.LConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.FConstants;
 /**
  * This is the ForwardTuner OpMode. This tracks the forward movement of the robot and displays the
  * necessary ticks to inches multiplier. This displayed multiplier is what's necessary to scale the

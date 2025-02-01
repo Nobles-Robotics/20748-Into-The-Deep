@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.Pathing.Tuning.localization;
+package org.firstinspires.ftc.teamcode.auto.Pathing.Tuning.localization;
 
 import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
 import static com.pedropathing.follower.FollowerConstants.leftRearMotorName;
@@ -27,8 +27,8 @@ import com.pedropathing.util.Drawing;
 import java.util.Arrays;
 import java.util.List;
 
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.LConstants;
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.FConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.LConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.FConstants;
 /**
  * This is the LocalizationTest OpMode. This is basically just a simple mecanum drive attached to a
  * PoseUpdater. The OpMode will print out the robot's pose to telemetry as well as draw the robot

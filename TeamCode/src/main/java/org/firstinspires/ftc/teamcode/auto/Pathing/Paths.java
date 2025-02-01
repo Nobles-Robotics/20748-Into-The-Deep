@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.Pathing;
+package org.firstinspires.ftc.teamcode.auto.Pathing;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.pathgen.BezierCurve;

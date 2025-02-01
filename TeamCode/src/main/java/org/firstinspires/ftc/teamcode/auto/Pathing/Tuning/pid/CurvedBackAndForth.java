@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.Pathing.Tuning.pid;
+package org.firstinspires.ftc.teamcode.auto.Pathing.Tuning.pid;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,8 +13,8 @@ import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.Point;
 
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.LConstants;
-import org.firstinspires.ftc.teamcode.util.Pathing.Constants.FConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.LConstants;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Constants.FConstants;
 
 /**
  * This is the CurvedBackAndForth autonomous OpMode. It runs the robot in a specified distance

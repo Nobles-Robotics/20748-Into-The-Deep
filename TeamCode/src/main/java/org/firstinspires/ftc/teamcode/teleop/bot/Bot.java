@@ -8,7 +8,7 @@ import dev.frozenmilk.mercurial.commands.groups.Race;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import org.firstinspires.ftc.teamcode.util.Pathing.Paths;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Paths;
 import org.firstinspires.ftc.teamcode.util.States.StatePositions;
 
 import java.util.Map;
