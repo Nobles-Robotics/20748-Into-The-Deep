@@ -93,7 +93,7 @@ public class Slides implements Subsystem {
         slideR.setPower(-power);
     }
 
-    public static Lambda setPowerCommand(double power){
+    public static Lambda setPowerPersistantCommand(double power){
         return new Lambda("set-power")
                 .setExecute(() -> {
                     if (power != 0) {
@@ -106,6 +106,27 @@ public class Slides implements Subsystem {
                         controller.setSetPoint(getPos());
                         setPower(0);
                     }
+                });
+    }
+    public static Lambda setPowerTransientCommand(double power){
+        return new Lambda("set-power")
+                .setExecute(() -> {
+                    if (power != 0) {
+                        enablePID = false;
+                        setPower(power);
+                        controller.setSetPoint(getPos());
+                        logTele();
+                    } else {
+                        enablePID = true;
+                        controller.setSetPoint(getPos());
+                        setPower(0);
+                    }
+                })
+                .setFinish(() -> true)
+                .setEnd((interrupted) -> {
+                    enablePID = true;
+                    controller.setSetPoint(getPos());
+                    setPower(0);
                 });
     }
 

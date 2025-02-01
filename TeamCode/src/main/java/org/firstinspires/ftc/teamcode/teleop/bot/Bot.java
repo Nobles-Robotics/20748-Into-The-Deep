@@ -126,18 +126,16 @@ public class Bot {
                                 new Parallel(
                                         Arm.home(),
                                         Slides.home(),
-                                        Intake.raiseIntake(),
-                                        Gripper.open()
+                                        Intake.storeIntake()
                                 ),
-                                Intake.spintake(home.intakeSpeed)
-                                //Should only start spinning intake to prevent unexpected behavior @ end
+                                Gripper.open()
                         )
                 ))
                 .withState(State.INTAKE_SPEC, (state, name) -> Lambda.from(
                         new Sequential(
                                 new Parallel(
                                         Arm.home(),
-                                        Slides.runToPosition(intakeSpec.slidePos),
+                                        Slides.home(),
                                         Intake.storeIntake()
                                 ),
                                 Gripper.close()
