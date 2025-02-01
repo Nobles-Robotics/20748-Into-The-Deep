@@ -76,7 +76,8 @@ public class Arm implements Subsystem {
     public static Lambda setPower(double pow) {
         return new Lambda("power-intake")
                 .setInit(() -> extendo.setPower(pow))
-                .setFinish(() -> true);
+                .setFinish(() -> true)
+                .setEnd((interrupted) -> extendo.setPower(0));
     }
 
     public static Lambda home() {

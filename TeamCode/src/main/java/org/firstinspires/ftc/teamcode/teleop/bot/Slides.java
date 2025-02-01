@@ -57,6 +57,8 @@ public class Slides implements Subsystem {
         slideR.setCurrentAlert(currentLimit, CurrentUnit.AMPS);
         slideE.setCurrentAlert(currentLimit, CurrentUnit.AMPS);
         slideR.setDirection(DcMotorSimple.Direction.REVERSE);
+        slideE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         reset();
 
@@ -88,7 +90,7 @@ public class Slides implements Subsystem {
 
     public static void setPower(double power){
         slideE.setPower(power);
-        slideR.setPower(power);
+        slideR.setPower(-power);
     }
 
     public static Lambda setPowerCommand(double power){
