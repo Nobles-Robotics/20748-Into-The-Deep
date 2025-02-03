@@ -12,6 +12,7 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.lang.annotation.*;
 
@@ -26,8 +27,10 @@ public class Intake implements Subsystem {
 
     public static ColorSensor colorSensor;
 
+    public static Telemetry telemetry;
     public static boolean raised;
     public static boolean stored;
+    public static String color;
     private Intake() {}
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
@@ -51,14 +54,22 @@ public class Intake implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
 
-        wrist = hMap.get(Servo.class, "dropdownL");
-        spinner = hMap.get(CRServo.class, "spintake");
+        //wrist = hMap.get(Servo.class, "dropdownL");
+        //spinner = hMap.get(CRServo.class, "spintake");
         colorSensor = hMap.get(ColorSensor.class, "color");
+        telemetry = opMode.getOpMode().telemetry;
 
     }
 
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode) {
+        if (colorSensor.red() > 2000 && colorSensor.green() > 2000) {
+            telemetry.addLine("Yellow");
+        } else if (colorSensor.red() > 1500 && colorSensor.green() < 1150) {
+            telemetry.addLine("Red");
+        } else if (colorSensor.red() < 900 && colorSensor.green() > 1000) {
+            telemetry.addLine("Blue");
+        }
     }
 
 

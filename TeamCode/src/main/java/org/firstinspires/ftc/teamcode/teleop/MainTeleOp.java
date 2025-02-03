@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @BulkReads.Attach
 @Gripper.Attach
 @Arm.Attach
+@Intake.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
 
