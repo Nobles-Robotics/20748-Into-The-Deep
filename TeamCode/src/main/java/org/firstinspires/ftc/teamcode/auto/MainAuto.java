@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.auto.Pathing.Paths;
 @BulkReads.Attach
 @Gripper.Attach
 @Arm.Attach
+@Intake.Attach
 @Autonomous(name = "MainAuto")
 public class MainAuto extends OpMode {
 

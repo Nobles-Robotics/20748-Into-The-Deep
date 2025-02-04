@@ -39,6 +39,7 @@ public class Slides implements Subsystem {
     public static double Kf = 0.0000;
     public static double currentLimit = 4;
     public static volatile boolean enablePID = true;
+    public static boolean climbOver = false;
 
     public static PIDFController controller = new PIDFController(Kp, Ki, Kd, Kf);
 
@@ -89,8 +90,16 @@ public class Slides implements Subsystem {
     }
 
     public static void setPower(double power){
-        slideE.setPower(power);
-        slideR.setPower(-power);
+        if (power > 0){
+            slideE.setPower(power);
+            slideR.setPower(-power);
+        } else if (power < 0){
+            slideE.setPower(power);
+            slideR.setPower(-power);
+        } else {
+            removeRegressorSlack();
+            slideE.setPower(0);
+        }
     }
 
     public static Lambda setPowerPersistantCommand(double power){
@@ -199,6 +208,24 @@ public class Slides implements Subsystem {
                     setPower(0);
                     enablePID = true;
                 });
+    }
+
+    public static Lambda climb(){
+        return new Lambda("climb-slides")
+                //TODO: CLIMB LOGIC :sob:
+                .setInit(() -> {
+                    enablePID = false;
+                    slideR.setPower(-1);
+                })
+                .setFinish(() -> climbOver)
+                .setEnd((interrupted) -> {
+                    slideR.setPower(0.4);
+                });
+    }
+    public static Lambda removeRegressorSlack(){
+        return new Lambda("remove-regressor-slack")
+                .setInit(() -> {enablePID = false; slideR.setPower(-1);})
+                .setFinish(() -> slideR.isOverCurrent());
     }
 
     public static Lambda waitForPos(int pos) {
