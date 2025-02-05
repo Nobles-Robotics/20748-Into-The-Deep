@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
 import org.firstinspires.ftc.teamcode.teleop.bot.*;
@@ -17,10 +16,6 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @Intake.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
-
-    public MainTeleOp() {
-        FeatureRegistrar.checkFeatures();
-    }
 
     @Override
     public void init() {

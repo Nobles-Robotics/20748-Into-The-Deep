@@ -143,6 +143,8 @@ public class Slides implements Subsystem {
     }
 
     public static void reset() {
+        slideE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slideR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slideE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

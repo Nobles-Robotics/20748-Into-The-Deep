@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
-import org.firstinspires.ftc.teamcode.teleop.bot.*;
+import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
 
@@ -14,9 +13,6 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @BulkReads.Attach
 @TeleOp(name = "TestTeleOp")
 public class TestTeleOp extends OpMode {
-    public TestTeleOp() {
-        FeatureRegistrar.checkFeatures();
-    }
 
 
     @Override
@@ -66,5 +62,4 @@ public class TestTeleOp extends OpMode {
         // the rest is as normal
     }
 }
-
 
