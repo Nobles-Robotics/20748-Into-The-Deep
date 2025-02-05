@@ -2,17 +2,41 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+import dev.frozenmilk.dairy.core.FeatureRegistrar;
+import dev.frozenmilk.mercurial.Mercurial;
+import dev.frozenmilk.mercurial.bindings.BoundGamepad;
+import org.firstinspires.ftc.teamcode.teleop.bot.*;
+import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
 
+@Mercurial.Attach
+@Slides.Attach
+@BulkReads.Attach
 @TeleOp(name = "TestTeleOp")
 public class TestTeleOp extends OpMode {
+    public TestTeleOp() {
+        FeatureRegistrar.checkFeatures();
+    }
 
-    public static ColorSensor colorSensor;
+
     @Override
     public void init() {
-
-        colorSensor = hardwareMap.get(ColorSensor.class, "color");
+        BoundGamepad test = Mercurial.gamepad1();
+        test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
+                Slides.setPowerUp(0.5)
+        );
+        test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().onTrue(
+                Slides.setPowerDown(-0.5)
+        );
+        test.rightStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
+                Slides.setPowerUp(0.5)
+        );
+        test.rightStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().onTrue(
+                Slides.setPowerDown(-0.5)
+        );
+        test.a().onTrue(
+                Slides.resetCommand()
+        );
     }
 
     @Override
@@ -28,17 +52,7 @@ public class TestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        if (colorSensor.red() > 2000 && colorSensor.green() > 2000) {
-            telemetry.addLine("Yellow");
-        } else if (colorSensor.red() > 1500 && colorSensor.green() < 1150) {
-            telemetry.addLine("Red");
-        } else if (colorSensor.red() < 900 && colorSensor.green() > 1000) {
-            telemetry.addLine("Blue");
-        }
-        telemetry.addData("Red", colorSensor.red());
-        telemetry.addData("Green", colorSensor.green());
-        telemetry.addData("Blue", colorSensor.blue());
-
+        Slides.logTele();
         telemetry.update();
 
         //Red: red greatest

@@ -23,7 +23,6 @@ public class Slides implements Subsystem {
     public static final Slides INSTANCE = new Slides();
     public static DcMotorEx slideR;
     public static DcMotorEx slideE;
-    public static DcMotorEx encoder;
 
     public static Telemetry telemetry;
     public static int tolerance = 10;
@@ -147,12 +146,16 @@ public class Slides implements Subsystem {
         slideE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         controller.reset();
         controller.setSetPoint(0);
         logTele();
+    }
+
+    public static Lambda resetCommand(){
+        return new Lambda("reset-slides")
+                .setInit(Slides::reset)
+                .setFinish(() -> true);
     }
 
     public static Lambda runToPosition(double pos){
@@ -174,12 +177,13 @@ public class Slides implements Subsystem {
     }
 
     public static double getPos(){
-        return encoder.getCurrentPosition();
+        return slideE.getCurrentPosition();
     }
 
     public static void logTele(){
         telemetry.addData("Slide Pos", getPos());
-        telemetry.addData("Slide Power", slideE.getPower());
+        telemetry.addData("Slide Power Up", slideE.getPower());
+        telemetry.addData("Slide Power Down", slideR.getPower());
         telemetry.addData("Slide Setpoint", controller.getSetPoint());
         telemetry.addData("Slide Error", controller.getPositionError());
         telemetry.addData("At Setpoint?", controller.atSetPoint());
@@ -246,5 +250,24 @@ public class Slides implements Subsystem {
                     setPower(pow);
                 })
                 .setFinish(Slides::isOverCurrent);
+    }
+
+    public static Lambda setPowerUp(double pow){
+        return new Lambda("set-power-up")
+                .setInit(() -> {
+                    enablePID = false;
+                    slideE.setPower(pow);
+                })
+                .setFinish(() -> true)
+                .setEnd((interrupted) -> slideE.setPower(0));
+    }
+    public static Lambda setPowerDown(double pow){
+        return new Lambda("set-power-up")
+                .setInit(() -> {
+                    enablePID = false;
+                    slideR.setPower(pow);
+                })
+                .setFinish(() -> true)
+                .setEnd((interrupted) -> slideR.setPower(0));
     }
 }
