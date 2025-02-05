@@ -37,7 +37,7 @@ public class Slides implements Subsystem {
     public static double Ki = 0.0000;
     public static double Kd = 0.0000;
     public static double Kf = 0.0000;
-    public static double currentLimit = 4;
+    public static double currentLimit = 3;
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
 
@@ -74,7 +74,7 @@ public class Slides implements Subsystem {
     }
 
     @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {}
+    public void postUserLoopHook(@NonNull Wrapper opMode) {runPID();}
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
@@ -158,8 +158,14 @@ public class Slides implements Subsystem {
     public static Lambda runToPosition(double pos){
         return new Lambda("set-target-pos")
                 .setInterruptible(true)
-                .setInit(() -> controller.setSetPoint(pos))
-                .setFinish(() -> controller.atSetPoint());
+                .setInit(() -> {
+                    controller.setSetPoint(pos);
+                    enablePID = true;
+                })
+                .setFinish(() -> controller.atSetPoint())
+                .setEnd((interrupted) -> {
+                    enablePID = false;
+                });
     }
 
     public static void logCurrent(){

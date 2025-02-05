@@ -68,6 +68,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.update();
     }
 
     @Override

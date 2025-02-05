@@ -63,13 +63,7 @@ public class Intake implements Subsystem {
 
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode) {
-        if (colorSensor.red() > 2000 && colorSensor.green() > 2000) {
-            telemetry.addLine("Yellow");
-        } else if (colorSensor.red() > 1500 && colorSensor.green() < 1150) {
-            telemetry.addLine("Red");
-        } else if (colorSensor.red() < 900 && colorSensor.green() > 1000) {
-            telemetry.addLine("Blue");
-        }
+        getColor();
     }
 
 
@@ -101,13 +95,13 @@ public class Intake implements Subsystem {
     public static Lambda raise() {
         return new Lambda("raise-intake")
                 .setInit(() -> {raised = true; stored = false;})
-                .setExecute(() -> {wrist.setPosition(raisePos);})
+                .setExecute(() -> wrist.setPosition(raisePos))
                 .setFinish(() -> !raised);
     }
     public static Lambda drop() {
         return new Lambda("drop-intake")
                 .setInit(() -> {raised = false; stored = false;})
-                .setExecute(() -> {wrist.setPosition(dropPos);})
+                .setExecute(() -> wrist.setPosition(dropPos))
                 .setFinish(() -> raised);
     }
     public static Lambda store() {
@@ -137,5 +131,23 @@ public class Intake implements Subsystem {
     public static Lambda setIntake(double pos) {
         return new  Lambda("set-intake")
                 .setInit(() -> Intake.setPos(pos));
+    }
+
+    public static Lambda getColor(){
+        return new Lambda("get-color")
+                .setExecute(() -> {
+                    double red = colorSensor.red();
+                    double green = colorSensor.green();
+                    double blue = colorSensor.blue();
+                    if (Math.abs(1- (red/green)) < 0.1 && red>blue*1.3){
+                        telemetry.addLine("Color: Yellow");
+                    }
+                    if (red>green*1.3 && red>blue*1.3){
+                        telemetry.addLine("Color: Red");
+                    }
+                    if (blue>green*1.3 && blue>red*1.3){
+                        telemetry.addLine("Color: Blue");
+                    }
+                });
     }
 }
