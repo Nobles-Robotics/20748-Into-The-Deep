@@ -32,11 +32,11 @@ public class Slides implements Subsystem {
     public static int scoreLowPos = 2000;
     public static int lowPos = 2500;
     public static int highPos = 3500;
-    public static double Kp = 0.00014;
+    public static double Kp = 0.0014;
     public static double Ki = 0.0000;
     public static double Kd = 0.0000;
     public static double Kf = 0.0000;
-    public static double currentLimit = 3;
+    public static double currentLimit = 1500;
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
 
@@ -54,8 +54,8 @@ public class Slides implements Subsystem {
         telemetry = opMode.getOpMode().telemetry;
         slideE = hMap.get(DcMotorEx.class, "vertSlideUp");
         slideR = hMap.get(DcMotorEx.class, "vertSlideDown");
-        slideR.setCurrentAlert(currentLimit, CurrentUnit.AMPS);
-        slideE.setCurrentAlert(currentLimit, CurrentUnit.AMPS);
+        slideR.setCurrentAlert(currentLimit, CurrentUnit.MILLIAMPS);
+        slideE.setCurrentAlert(currentLimit, CurrentUnit.MILLIAMPS);
         slideR.setDirection(DcMotorSimple.Direction.REVERSE);
         slideE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -69,11 +69,11 @@ public class Slides implements Subsystem {
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        Bot.init();
+        runPID();
     }
 
     @Override
-    public void postUserLoopHook(@NonNull Wrapper opMode) {runPID();}
+    public void postUserLoopHook(@NonNull Wrapper opMode) {}
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
@@ -89,53 +89,28 @@ public class Slides implements Subsystem {
     }
 
     public static void setPower(double power){
-        if (power > 0){
-            slideE.setPower(power);
-            slideR.setPower(-power);
-        } else if (power < 0){
-            slideE.setPower(power);
-            slideR.setPower(-power);
-        } else {
-            removeRegressorSlack();
+        if (isOverCurrent()){
             slideE.setPower(0);
+            slideR.setPower(0);
+        } else {
+            if (power > 0) {
+                if (power > 0.5) {
+                    power = 0.5;
+                }
+                slideE.setPower(power);
+                slideR.setPower(-power * 1.75);
+            } else if (power < 0) {
+                if (power < -0.5) {
+                    power = -0.5;
+                }
+                slideE.setPower(power);
+                slideR.setPower(-power * 2);
+            } else {
+                removeRegressorSlack();
+                slideE.setPower(0);
+            }
         }
-    }
 
-    public static Lambda setPowerPersistantCommand(double power){
-        return new Lambda("set-power")
-                .setExecute(() -> {
-                    if (power != 0) {
-                        enablePID = false;
-                        setPower(power);
-                        controller.setSetPoint(getPos());
-                        logTele();
-                    } else {
-                        enablePID = true;
-                        controller.setSetPoint(getPos());
-                        setPower(0);
-                    }
-                });
-    }
-    public static Lambda setPowerTransientCommand(double power){
-        return new Lambda("set-power")
-                .setExecute(() -> {
-                    if (power != 0) {
-                        enablePID = false;
-                        setPower(power);
-                        controller.setSetPoint(getPos());
-                        logTele();
-                    } else {
-                        enablePID = true;
-                        controller.setSetPoint(getPos());
-                        setPower(0);
-                    }
-                })
-                .setFinish(() -> true)
-                .setEnd((interrupted) -> {
-                    enablePID = true;
-                    controller.setSetPoint(getPos());
-                    setPower(0);
-                });
     }
 
     public static boolean isOverCurrent() {
@@ -173,11 +148,6 @@ public class Slides implements Subsystem {
                 });
     }
 
-    public static void logCurrent(){
-        telemetry.addData("isOver", isOverCurrent());
-        telemetry.update();
-    }
-
     public static double getPos(){
         return slideE.getCurrentPosition();
     }
@@ -190,12 +160,13 @@ public class Slides implements Subsystem {
         telemetry.addData("Slide Error", controller.getPositionError());
         telemetry.addData("At Setpoint?", controller.atSetPoint());
         telemetry.addData("Enable PID", enablePID);
+        telemetry.addData("slide Current Up", slideE.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("slide Current Down", slideR.getCurrent(CurrentUnit.AMPS));
+
     }
 
     public static Lambda runPID() {
         return new Lambda("outtake-pid")
-                .addRequirements(INSTANCE)
-                .setInterruptible(true)
                 .setExecute(() -> {
                     if (enablePID) {
                         double power = controller.calculate(getPos());
@@ -236,7 +207,7 @@ public class Slides implements Subsystem {
     }
     public static Lambda removeRegressorSlack(){
         return new Lambda("remove-regressor-slack")
-                .setInit(() -> {enablePID = false; slideR.setPower(-1);})
+                .setInit(() -> slideR.setPower(-1))
                 .setFinish(() -> slideR.isOverCurrent());
     }
 
@@ -261,7 +232,11 @@ public class Slides implements Subsystem {
                     slideE.setPower(pow);
                 })
                 .setFinish(() -> true)
-                .setEnd((interrupted) -> slideE.setPower(0));
+                .setEnd((interrupted) -> {
+                    slideE.setPower(0);
+                    controller.setSetPoint(slideE.getCurrentPosition());
+                    enablePID = true;
+                });
     }
     public static Lambda setPowerDown(double pow){
         return new Lambda("set-power-up")
@@ -270,6 +245,10 @@ public class Slides implements Subsystem {
                     slideR.setPower(pow);
                 })
                 .setFinish(() -> true)
-                .setEnd((interrupted) -> slideR.setPower(0));
+                .setEnd((interrupted) -> {
+                    slideR.setPower(0);
+                    controller.setSetPoint(slideE.getCurrentPosition());
+                    enablePID = true;
+                });
     }
 }

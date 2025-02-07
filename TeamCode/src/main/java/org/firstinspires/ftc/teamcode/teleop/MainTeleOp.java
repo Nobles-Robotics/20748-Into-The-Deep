@@ -19,6 +19,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
+        Bot.init();
         BoundGamepad alex = Mercurial.gamepad1();
         BoundGamepad jeff = Mercurial.gamepad2();
 

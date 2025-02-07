@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
+import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
@@ -11,30 +12,35 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @Mercurial.Attach
 @Slides.Attach
 @BulkReads.Attach
-@TeleOp(name = "TestTeleOp")
-public class TestTeleOp extends OpMode {
+@TeleOp(name = "SlidesTestTeleOp")
+public class SlidesTestTeleOp extends OpMode {
 
+    BoundGamepad test;
 
     @Override
     public void init() {
-        BoundGamepad test = Mercurial.gamepad1();
-        test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
+        Bot.init();
+        test = Mercurial.gamepad1();
+
+        test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
                 Slides.setPowerUp(0.5)
         );
-        test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().onTrue(
-                Slides.setPowerDown(-0.5)
+        test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
+                Slides.setPowerUp(-0.5)
         );
-        test.rightStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
-                Slides.setPowerUp(0.5)
+        test.rightStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
+                Slides.setPowerDown(1)
         );
-        test.rightStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().onTrue(
-                Slides.setPowerDown(-0.5)
+        test.rightStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
+                Slides.setPowerDown(-1)
+        );
+        test.b().onTrue(
+                Slides.runToPosition(5000)
         );
         test.a().onTrue(
                 Slides.resetCommand()
         );
     }
-
     @Override
     public void init_loop() {
         // the rest is as normal
