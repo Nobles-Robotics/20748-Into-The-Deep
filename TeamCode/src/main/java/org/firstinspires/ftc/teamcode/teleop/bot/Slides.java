@@ -36,7 +36,7 @@ public class Slides implements Subsystem {
     public static double Ki = 0.0000;
     public static double Kd = 0.0000;
     public static double Kf = 0.0000;
-    public static double currentLimit = 1500;
+    public static double currentLimit = 1000;
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
 
@@ -58,7 +58,7 @@ public class Slides implements Subsystem {
         slideE.setCurrentAlert(currentLimit, CurrentUnit.MILLIAMPS);
         slideR.setDirection(DcMotorSimple.Direction.REVERSE);
         slideE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         reset();
 
@@ -153,16 +153,12 @@ public class Slides implements Subsystem {
     }
 
     public static void logTele(){
-        telemetry.addData("Slide Pos", getPos());
-        telemetry.addData("Slide Power Up", slideE.getPower());
-        telemetry.addData("Slide Power Down", slideR.getPower());
-        telemetry.addData("Slide Setpoint", controller.getSetPoint());
-        telemetry.addData("Slide Error", controller.getPositionError());
-        telemetry.addData("At Setpoint?", controller.atSetPoint());
-        telemetry.addData("Enable PID", enablePID);
-        telemetry.addData("slide Current Up", slideE.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("slide Current Down", slideR.getCurrent(CurrentUnit.AMPS));
-
+        telemetry.addLine("Slides: pid? " + enablePID);
+        telemetry.addLine("Position: " + getPos() + " | Error: " + controller.getPositionError());
+        telemetry.addLine("Up:" + slideE.getPower() + " | Down:" + slideR.getPower());
+        telemetry.addLine("Current: " + isOverCurrent() + " | Max: " + currentLimit);
+        telemetry.addLine("Up: " + slideE.getCurrent(CurrentUnit.MILLIAMPS) + " | Down: " + slideR.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addLine("Setpoint:" + controller.atSetPoint() + " | " + controller.getSetPoint());
     }
 
     public static Lambda runPID() {
