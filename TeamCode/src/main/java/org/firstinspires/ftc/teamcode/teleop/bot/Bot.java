@@ -125,7 +125,7 @@ public class Bot {
                         new Sequential(
                                 new Parallel(
                                         Arm.home(),
-                                        Slides.home(),
+                                        Slides.runToPosition(home.slidePos),
                                         Intake.storeIntake()
                                 ),
                                 Gripper.open()
@@ -135,7 +135,7 @@ public class Bot {
                         new Sequential(
                                 new Parallel(
                                         Arm.home(),
-                                        Slides.home(),
+                                        Slides.runToPosition(intakeSpec.slidePos),
                                         Intake.storeIntake()
                                 ),
                                 Gripper.close()

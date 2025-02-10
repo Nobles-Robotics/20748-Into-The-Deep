@@ -26,7 +26,7 @@ public class Slides implements Subsystem {
 
     public static Telemetry telemetry;
     public static int tolerance = 10;
-    public static int safePos = 100;
+    public static int safePos = 1000;
     public static int wall = safePos;
     public static int scoreHighPos = 3000;
     public static int scoreLowPos = 2000;
@@ -36,9 +36,11 @@ public class Slides implements Subsystem {
     public static double Ki = 0.0000;
     public static double Kd = 0.0000;
     public static double Kf = 0.0000;
-    public static double currentLimit = 1000;
+    public static double maxCurrentLimit = 2500;
+    public static double regressionCurrentLimit = 500;
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
+    private static double currentE = 0, currentR = 0;
 
     public static PIDFController controller = new PIDFController(Kp, Ki, Kd, Kf);
 
@@ -54,8 +56,8 @@ public class Slides implements Subsystem {
         telemetry = opMode.getOpMode().telemetry;
         slideE = hMap.get(DcMotorEx.class, "vertSlideUp");
         slideR = hMap.get(DcMotorEx.class, "vertSlideDown");
-        slideR.setCurrentAlert(currentLimit, CurrentUnit.MILLIAMPS);
-        slideE.setCurrentAlert(currentLimit, CurrentUnit.MILLIAMPS);
+        slideR.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
+        slideE.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
         slideR.setDirection(DcMotorSimple.Direction.REVERSE);
         slideE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -89,32 +91,39 @@ public class Slides implements Subsystem {
     }
 
     public static void setPower(double power){
-        if (isOverCurrent()){
-            slideE.setPower(0);
-            slideR.setPower(0);
-        } else {
-            if (power > 0) {
-                if (power > 0.5) {
-                    power = 0.5;
-                }
-                slideE.setPower(power);
-                slideR.setPower(-power * 1.75);
-            } else if (power < 0) {
-                if (power < -0.5) {
-                    power = -0.5;
-                }
-                slideE.setPower(power);
-                slideR.setPower(-power * 2);
-            } else {
-                removeRegressorSlack();
-                slideE.setPower(0);
+        if (power > 0) {
+            if (power > 0.5) {
+                power = 0.5;
             }
+            setPowerE(power);
+            setPowerR(-power * 1.75, true);
+        } else if (power < 0) {
+            if (power < -0.5) {
+                power = -0.5;
+            }
+            setPowerE(power);
+            setPowerR(-power * 2, false);
         }
-
     }
 
-    public static boolean isOverCurrent() {
-        return slideR.isOverCurrent() || slideE.isOverCurrent();
+    public static void setPowerE(double power){
+        if (!(slideE.getCurrent(CurrentUnit.MILLIAMPS) > maxCurrentLimit)) {
+            slideE.setPower(power);
+        } else {
+            slideE.setPower(0);
+        }
+    }
+
+    public static void setPowerR(double power, boolean current){
+        if (!(slideR.getCurrent(CurrentUnit.MILLIAMPS) > maxCurrentLimit)) {
+            slideR.setPower(power);
+        } else {
+            slideR.setPower(0);
+        }
+    }
+
+    public static boolean isOverCurrent(double limit) {
+        return slideR.getCurrent(CurrentUnit.MILLIAMPS) > limit || slideE.getCurrent(CurrentUnit.MILLIAMPS) > limit;
     }
 
     public static void reset() {
@@ -145,6 +154,9 @@ public class Slides implements Subsystem {
                 .setFinish(() -> controller.atSetPoint())
                 .setEnd((interrupted) -> {
                     enablePID = false;
+                    if (!interrupted) {
+                        removeSlack();
+                    }
                 });
     }
 
@@ -156,9 +168,17 @@ public class Slides implements Subsystem {
         telemetry.addLine("Slides: pid? " + enablePID);
         telemetry.addLine("Position: " + getPos() + " | Error: " + controller.getPositionError());
         telemetry.addLine("Up:" + slideE.getPower() + " | Down:" + slideR.getPower());
-        telemetry.addLine("Current: " + isOverCurrent() + " | Max: " + currentLimit);
+        telemetry.addLine("Current: " + isOverCurrent(maxCurrentLimit) + " | Max: " + maxCurrentLimit);
+        telemetry.addLine("Slack: " + isOverCurrent(regressionCurrentLimit) + " | Max: " + regressionCurrentLimit);
         telemetry.addLine("Up: " + slideE.getCurrent(CurrentUnit.MILLIAMPS) + " | Down: " + slideR.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addLine("Setpoint:" + controller.atSetPoint() + " | " + controller.getSetPoint());
+        if (slideE.getCurrent(CurrentUnit.MILLIAMPS) > currentE){
+            currentE = slideE.getCurrent(CurrentUnit.MILLIAMPS);
+        }
+        if (slideR.getCurrent(CurrentUnit.MILLIAMPS) > currentR){
+            currentR = slideR.getCurrent(CurrentUnit.MILLIAMPS);
+        }
+        telemetry.addLine("Max SlideE: " + currentE + " | Max SlideR: " + currentR);
     }
 
     public static Lambda runPID() {
@@ -166,8 +186,8 @@ public class Slides implements Subsystem {
                 .setExecute(() -> {
                     if (enablePID) {
                         double power = controller.calculate(getPos());
-                        setPower(power);
                         logTele();
+                        setPower(power);
                     }
                 })
                 .setFinish(() -> false);
@@ -179,9 +199,10 @@ public class Slides implements Subsystem {
                     enablePID = false;
                     setPower(-1);
                 })
-                .setFinish(Slides::isOverCurrent)
+                .setFinish(() -> isOverCurrent(maxCurrentLimit))
                 .setEnd((interrupted) -> {
                     if (!interrupted) {
+                        removeSlack();
                         reset();
                     }
                     setPower(0);
@@ -201,24 +222,15 @@ public class Slides implements Subsystem {
                     slideR.setPower(0.4);
                 });
     }
-    public static Lambda removeRegressorSlack(){
+    public static Lambda removeSlack(){
         return new Lambda("remove-regressor-slack")
                 .setInit(() -> slideR.setPower(-1))
-                .setFinish(() -> slideR.isOverCurrent());
+                .setFinish(() -> isOverCurrent(regressionCurrentLimit));
     }
 
     public static Lambda waitForPos(int pos) {
         return new Lambda("wait-for-pos")
                 .setFinish(() -> Math.abs(getPos() - pos) < tolerance);
-    }
-
-    public static Lambda setPowerSafe(int pow){
-        return new Lambda("set-power-safe")
-                .setInit(() -> {
-                    enablePID = false;
-                    setPower(pow);
-                })
-                .setFinish(Slides::isOverCurrent);
     }
 
     public static Lambda setPowerUp(double pow){

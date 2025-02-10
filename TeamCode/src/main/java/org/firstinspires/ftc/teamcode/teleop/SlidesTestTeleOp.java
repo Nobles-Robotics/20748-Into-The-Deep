@@ -34,11 +34,20 @@ public class SlidesTestTeleOp extends OpMode {
         test.rightStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
                 Slides.setPowerDown(-1)
         );
-        test.b().onTrue(
-                Slides.runToPosition(5000)
-        );
         test.a().onTrue(
                 Slides.resetCommand()
+        );
+        test.b().onTrue(
+                Slides.removeSlack()
+        );
+        test.x().onTrue(
+                Slides.runToPosition(5000)
+        );
+        test.y().onTrue(
+                Slides.runToPosition(0)
+        );
+        test.dpadDown().onTrue(
+                Slides.home()
         );
     }
     @Override
