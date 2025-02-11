@@ -32,12 +32,12 @@ public class Slides implements Subsystem {
     public static int scoreLowPos = 2000;
     public static int lowPos = 2500;
     public static int highPos = 3500;
-    public static double Kp = 0.0014;
+    public static double Kp = 0.14;
     public static double Ki = 0.0000;
     public static double Kd = 0.0000;
     public static double Kf = 0.0000;
-    public static double maxCurrentLimit = 2500;
-    public static double regressionCurrentLimit = 500;
+    public static double maxCurrentLimit = 3500;
+    public static double regressionCurrentLimit = 1000;
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
     private static double currentE = 0, currentR = 0;
