@@ -54,7 +54,7 @@ public class Drive implements Subsystem {
                 x * (isSlowed? slowSpeed : 1),
                 y * (isSlowed? slowSpeed : 1),
                 z * (isSlowed? slowSpeed : 1),
-                false
+                true
         );
         follower.update();
         telemetry.addData("Chassis Vectors", "x: %f, y: %f, z: %f", x, y, z);
@@ -111,9 +111,9 @@ public class Drive implements Subsystem {
                 .addRequirements(INSTANCE)
                 .setExecute(() -> {
                     drive(
-                            gamepad.rightStickY().state(),
-                            -gamepad.rightStickX().state(),
-                            -gamepad.leftStickX().state()
+                            -gamepad.leftStickY().state(),
+                            gamepad.leftStickX().state(),
+                            gamepad.rightStickX().state()
                     );
                 })
                 .setFinish(() -> false);
