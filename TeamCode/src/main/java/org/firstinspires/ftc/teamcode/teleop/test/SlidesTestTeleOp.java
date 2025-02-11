@@ -28,11 +28,17 @@ public class SlidesTestTeleOp extends OpMode {
         test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
                 Slides.setPowerUp(-0.5)
         );
+        test.leftStickY().conditionalBindState().lessThan(0.5).greaterThan(-0.5).bind().whileTrue(
+                Slides.setPowerUp(0)
+        );
         test.rightStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
                 Slides.setPowerDown(1)
         );
         test.rightStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
                 Slides.setPowerDown(-1)
+        );
+        test.rightStickY().conditionalBindState().lessThan(0.5).greaterThan(-0.5).bind().whileTrue(
+                Slides.setPowerDown(0)
         );
         test.a().onTrue(
                 Slides.resetCommand()
@@ -46,10 +52,6 @@ public class SlidesTestTeleOp extends OpMode {
         test.y().onTrue(
                 Slides.runToPosition(0)
         );
-        test.dpadDown().onTrue(
-                Slides.home()
-        );
-
     }
     @Override
     public void init_loop() {
@@ -66,10 +68,6 @@ public class SlidesTestTeleOp extends OpMode {
     public void loop() {
         Slides.logTele();
         telemetry.update();
-
-        //Red: red greatest
-        //Yellow: green greatest (kinda green + red should be the same))
-        //Blue: blue greatest
 
     }
 

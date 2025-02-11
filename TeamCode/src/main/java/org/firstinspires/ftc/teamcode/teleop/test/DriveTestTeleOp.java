@@ -28,6 +28,18 @@ public class DriveTestTeleOp extends OpMode {
                 Drive.fast()
         );
 
+        test.dpadUp().onTrue(
+            Drive.turnToCommand(0)
+        );
+        test.dpadDown().onTrue(
+                Drive.turnToCommand(180)
+        );
+        test.dpadLeft().onTrue(
+                Drive.turnToCommand(90)
+        );
+        test.dpadRight().onTrue(
+                Drive.turnToCommand(-90)
+        );
     }
 
     @Override

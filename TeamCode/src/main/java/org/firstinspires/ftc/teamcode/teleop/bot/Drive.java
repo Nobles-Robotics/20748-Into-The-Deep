@@ -188,7 +188,29 @@ public class Drive implements Subsystem {
                 .setInit(() -> follower.followPath(chain, true))
                 .setExecute(() -> {
                     follower.update();
-                    telemetry.addData("pinpoint cooked", follower.isPinpointCooked());
+                    telemetry.addData("pinpoint cooked", follower.isLocalizationNAN());
+                })
+                .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
+    }
+
+    public static Lambda turnToCommand(double degrees) {
+        return new Lambda("follow-path-chain")
+                .addRequirements(INSTANCE)
+                .setInit(() -> follower.turnToDegrees(degrees))
+                .setExecute(() -> {
+                    follower.update();
+                    telemetry.addData("pinpoint cooked", follower.isLocalizationNAN());
+                })
+                .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
+    }
+
+    public static Lambda turnByCommand(double degrees, boolean isLeft) {
+        return new Lambda("follow-path-chain")
+                .addRequirements(INSTANCE)
+                .setInit(() -> follower.turnDegrees(degrees, isLeft))
+                .setExecute(() -> {
+                    follower.update();
+                    telemetry.addData("pinpoint cooked", follower.isLocalizationNAN());
                 })
                 .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
     }
