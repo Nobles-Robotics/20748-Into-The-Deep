@@ -8,6 +8,7 @@ import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.lang.annotation.*;
 
@@ -15,6 +16,7 @@ public class Gripper implements Subsystem {
     public static final Gripper INSTANCE = new Gripper();
 
     private Gripper() { }
+    private static Telemetry telemetry;
     private static SimpleServo gripperL;
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -39,7 +41,8 @@ public class Gripper implements Subsystem {
 
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, "servoExp0", 0, 300);
+        telemetry = opMode.getOpMode().telemetry;
+        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Bot.claw, 0, 300);
         open();
     }
 
@@ -59,17 +62,29 @@ public class Gripper implements Subsystem {
     public static Lambda open() {
         return new Lambda("open")
                 .addRequirements(INSTANCE)
-                .setInit(() -> gripperL.turnToAngle(93))
+                .setInit(() -> gripperL.turnToAngle(230))
                 .setFinish(() -> true);
     }
     @NonNull
     public static Lambda close() {
         return new Lambda("close")
                 .addRequirements(INSTANCE)
-                .setInit(() -> gripperL.turnToAngle(85))
+                .setInit(() -> gripperL.turnToAngle(205))
                 .setFinish(() -> true);
     }
     public static double getPositionGripperL(){
-        return gripperL.getPosition();
+        return gripperL.getAngle();
+    }
+
+    public static void logTele(){
+        telemetry.addLine("Current Gripper Location" + getPositionGripperL());
+    }
+
+    public static Lambda runManual(double angle){
+        return new Lambda("set-power-up")
+                .setInit(() -> {
+                    gripperL.rotateByAngle(angle);
+                })
+                .setFinish(() -> true);
     }
 }
