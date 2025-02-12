@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -13,16 +13,17 @@ import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.Names;
 
 import java.lang.annotation.*;
 
 @Config
 public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
-    public static double dropPos = 0.00;
-    public static double raisePos = 0.5;
-    public static double storePos = 1.0;
-    public static Servo wrist;
+    public static double dropPos = 0;
+    public static double raisePos = 100;
+    public static double storePos = 200;
+    public static SimpleServo wrist;
     public static CRServo spinner;
 
     public static ColorSensor colorSensor;
@@ -54,9 +55,10 @@ public class Intake implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
 
-        //wrist = hMap.get(Servo.class, "dropdownL");
-        //spinner = hMap.get(CRServo.class, "spintake");
-        colorSensor = hMap.get(ColorSensor.class, "color");
+        wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 300);
+
+        spinner = hMap.get(CRServo.class, Names.spinTake);
+        //colorSensor = hMap.get(ColorSensor.class, "color");
         telemetry = opMode.getOpMode().telemetry;
 
     }
@@ -95,19 +97,19 @@ public class Intake implements Subsystem {
     public static Lambda raise() {
         return new Lambda("raise-intake")
                 .setInit(() -> {raised = true; stored = false;})
-                .setExecute(() -> wrist.setPosition(raisePos))
+                .setExecute(() -> wrist.turnToAngle(raisePos))
                 .setFinish(() -> !raised);
     }
     public static Lambda drop() {
         return new Lambda("drop-intake")
                 .setInit(() -> {raised = false; stored = false;})
-                .setExecute(() -> wrist.setPosition(dropPos))
+                .setExecute(() -> wrist.turnToAngle(dropPos))
                 .setFinish(() -> raised);
     }
     public static Lambda store() {
         return new Lambda("store-intake")
                 .setInit(() -> {stored = true;})
-                .setExecute(() -> {wrist.setPosition(storePos);})
+                .setExecute(() -> {wrist.turnToAngle(storePos);})
                 .setFinish(() -> !stored);
     }
 
@@ -125,7 +127,6 @@ public class Intake implements Subsystem {
         return new Lambda("store-intake")
                 .setInit(Intake::store)
                 .setFinish(() -> true);
-
     }
 
     public static Lambda setIntake(double pos) {
@@ -149,5 +150,24 @@ public class Intake implements Subsystem {
                         telemetry.addLine("Color: Blue");
                     }
                 });
+    }
+
+    public static Lambda runManual(double angle){
+        return new Lambda("set-power-up")
+                .setInit(() -> {
+                    wrist.rotateByAngle(angle);
+                })
+                .setFinish(() -> true);
+    }
+
+    public static double getPositionWrist(){
+        return wrist.getAngle();
+    }
+
+    public static void logTele(){
+        telemetry.addLine("Current Wrist Location" + getPositionWrist());
+        telemetry.addLine("SpinTake Power" + spinner.getPower());
+        telemetry.addLine("Raised: " + raised);
+        telemetry.addLine("Stored: " + stored);
     }
 }
