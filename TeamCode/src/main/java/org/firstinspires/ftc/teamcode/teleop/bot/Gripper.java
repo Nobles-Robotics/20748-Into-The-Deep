@@ -9,6 +9,7 @@ import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.util.Names;
 
 import java.lang.annotation.*;
 
@@ -42,7 +43,7 @@ public class Gripper implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
-        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Bot.gripper, 0, 300);
+        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 300);
         open();
     }
 

@@ -15,6 +15,7 @@ import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.Names;
 
 import java.lang.annotation.*;
 
@@ -54,8 +55,8 @@ public class Slides implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
         telemetry = opMode.getOpMode().telemetry;
-        slideE = hMap.get(DcMotorEx.class, Bot.vertSlideUp);
-        slideR = hMap.get(DcMotorEx.class, Bot.vertSlideDown);
+        slideE = hMap.get(DcMotorEx.class, Names.vertSlideUp);
+        slideR = hMap.get(DcMotorEx.class, Names.vertSlideDown);
         slideR.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
         slideE.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
         slideR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -220,9 +221,7 @@ public class Slides implements Subsystem {
                     slideR.setPower(-1);
                 })
                 .setFinish(() -> climbOver)
-                .setEnd((interrupted) -> {
-                    slideR.setPower(0.4);
-                });
+                .setEnd((interrupted) -> slideR.setPower(0.4));
     }
     public static Lambda removeSlack(){
         return new Lambda("remove-regressor-slack")
