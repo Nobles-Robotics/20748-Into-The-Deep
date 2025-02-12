@@ -1,19 +1,20 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.subsystems;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
-import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
+import org.firstinspires.ftc.teamcode.teleop.bot.Intake;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
 
 @Mercurial.Attach
-@Gripper.Attach
+@Intake.Attach
 @BulkReads.Attach
-@TeleOp(name = "GripperTestTeleOp")
-public class GripperTestTeleOp extends OpMode {
+@TeleOp(name = "IntakeTestTeleOp")
+public class IntakeTestTeleOp extends OpMode {
 
     BoundGamepad test;
 
@@ -23,17 +24,29 @@ public class GripperTestTeleOp extends OpMode {
         test = Mercurial.gamepad1();
 
         test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
-                Gripper.runManual(10)
+                Intake.runManual(10)
         );
         test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().onTrue(
-                Gripper.runManual(-10)
+                Intake.runManual(-10)
         );
 
         test.x().onTrue(
-                Gripper.close()
+                Intake.raiseIntake()
         );
         test.y().onTrue(
-                Gripper.open()
+                Intake.dropIntake()
+        );
+        test.b().onTrue(
+                Intake.storeIntake()
+        );
+        test.dpadUp().onTrue(
+                Intake.spintake(1)
+        );
+        test.dpadDown().onTrue(
+                Intake.spintake(-1)
+        );
+        test.dpadRight().or(test.dpadLeft()).onTrue(
+                Intake.spintake(0)
         );
     }
     @Override
@@ -49,7 +62,7 @@ public class GripperTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Gripper.logTele();
+        Intake.logTele();
         telemetry.update();
 
     }

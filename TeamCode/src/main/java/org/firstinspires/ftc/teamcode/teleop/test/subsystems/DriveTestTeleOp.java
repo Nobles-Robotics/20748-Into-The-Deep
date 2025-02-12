@@ -1,20 +1,19 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.subsystems;
+
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
-import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
+import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
-
 @Mercurial.Attach
-@Arm.Attach
+@Drive.Attach
 @BulkReads.Attach
-@TeleOp(name = "ArmTestTeleOp")
-public class ArmTestTeleOp extends OpMode {
-
+@TeleOp(name = "DriveTestTeleOp")
+public class DriveTestTeleOp extends OpMode {
     BoundGamepad test;
 
     @Override
@@ -22,30 +21,27 @@ public class ArmTestTeleOp extends OpMode {
         Bot.init();
         test = Mercurial.gamepad1();
 
-        test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
-                Arm.setPowerManual(0.5)
+        test.leftBumper().onTrue(
+                Drive.slow()
         );
-        test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
-                Arm.setPowerManual(-0.5)
-        );
-
-        test.a().onTrue(
-                Arm.resetCommand()
+        test.rightBumper().onTrue(
+                Drive.fast()
         );
 
-        test.x().onTrue(
-                Arm.runToPosition(0)
-        );
-        test.y().onTrue(
-                Arm.runToPosition(1000)
-        );
         test.dpadUp().onTrue(
-                Arm.extend()
+            Drive.turnToCommand(0)
         );
         test.dpadDown().onTrue(
-                Arm.home()
+                Drive.turnToCommand(180)
+        );
+        test.dpadLeft().onTrue(
+                Drive.turnToCommand(90)
+        );
+        test.dpadRight().onTrue(
+                Drive.turnToCommand(-90)
         );
     }
+
     @Override
     public void init_loop() {
         // the rest is as normal
@@ -59,9 +55,7 @@ public class ArmTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Arm.logTele();
         telemetry.update();
-
     }
 
     @Override
@@ -69,4 +63,5 @@ public class ArmTestTeleOp extends OpMode {
         // the rest is as normal
     }
 }
+
 

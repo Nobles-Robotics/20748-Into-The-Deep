@@ -1,19 +1,19 @@
-package org.firstinspires.ftc.teamcode.teleop.test;
+package org.firstinspires.ftc.teamcode.teleop.test.subsystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
+import org.firstinspires.ftc.teamcode.teleop.bot.Arm;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
-import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 
 
 @Mercurial.Attach
-@Slides.Attach
+@Arm.Attach
 @BulkReads.Attach
-@TeleOp(name = "SlidesTestTeleOp")
-public class SlidesTestTeleOp extends OpMode {
+@TeleOp(name = "ArmTestTeleOp")
+public class ArmTestTeleOp extends OpMode {
 
     BoundGamepad test;
 
@@ -23,34 +23,27 @@ public class SlidesTestTeleOp extends OpMode {
         test = Mercurial.gamepad1();
 
         test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
-                Slides.setPowerUp(0.5)
+                Arm.setPowerManual(0.5)
         );
         test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
-                Slides.setPowerUp(-0.5)
+                Arm.setPowerManual(-0.5)
         );
-        test.leftStickY().conditionalBindState().lessThan(0.5).greaterThan(-0.5).bind().whileTrue(
-                Slides.setPowerUp(0)
-        );
-        test.rightStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
-                Slides.setPowerDown(1)
-        );
-        test.rightStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
-                Slides.setPowerDown(-1)
-        );
-        test.rightStickY().conditionalBindState().lessThan(0.5).greaterThan(-0.5).bind().whileTrue(
-                Slides.setPowerDown(0)
-        );
+
         test.a().onTrue(
-                Slides.resetCommand()
+                Arm.resetCommand()
         );
-        test.b().onTrue(
-                Slides.removeSlack()
-        );
+
         test.x().onTrue(
-                Slides.runToPosition(1000)
+                Arm.runToPosition(0)
         );
         test.y().onTrue(
-                Slides.runToPosition(900)
+                Arm.runToPosition(1000)
+        );
+        test.dpadUp().onTrue(
+                Arm.extend()
+        );
+        test.dpadDown().onTrue(
+                Arm.home()
         );
     }
     @Override
@@ -66,7 +59,7 @@ public class SlidesTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Slides.logTele();
+        Arm.logTele();
         telemetry.update();
 
     }
