@@ -47,10 +47,10 @@ public class SlidesTestTeleOp extends OpMode {
                 Slides.removeSlack()
         );
         test.x().onTrue(
-                Slides.runToPosition(5000)
+                Slides.runToPosition(1000)
         );
         test.y().onTrue(
-                Slides.runToPosition(0)
+                Slides.runToPosition(900)
         );
     }
     @Override

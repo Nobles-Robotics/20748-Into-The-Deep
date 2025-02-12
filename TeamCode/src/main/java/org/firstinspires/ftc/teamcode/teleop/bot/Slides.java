@@ -32,7 +32,7 @@ public class Slides implements Subsystem {
     public static int scoreLowPos = 2000;
     public static int lowPos = 2500;
     public static int highPos = 3500;
-    public static double Kp = 0.14;
+    public static double Kp = 0.014;
     public static double Ki = 0.0000;
     public static double Kd = 0.0000;
     public static double Kf = 0.0000;
@@ -54,14 +54,13 @@ public class Slides implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
         telemetry = opMode.getOpMode().telemetry;
-        slideE = hMap.get(DcMotorEx.class, "vertSlideUp");
-        slideR = hMap.get(DcMotorEx.class, "vertSlideDown");
+        slideE = hMap.get(DcMotorEx.class, Bot.vertSlideUp);
+        slideR = hMap.get(DcMotorEx.class, Bot.vertSlideDown);
         slideR.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
         slideE.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
         slideR.setDirection(DcMotorSimple.Direction.REVERSE);
         slideE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         reset();
 
         controller.setTolerance(tolerance);
@@ -103,6 +102,9 @@ public class Slides implements Subsystem {
             }
             setPowerE(power);
             setPowerR(-power * 2, false);
+        } else {
+            setPowerE(0);
+            setPowerR(0, true);
         }
     }
 
@@ -153,7 +155,7 @@ public class Slides implements Subsystem {
                 })
                 .setFinish(() -> controller.atSetPoint())
                 .setEnd((interrupted) -> {
-                    enablePID = false;
+                    //enablePID = false;
                     if (!interrupted) {
                         removeSlack();
                     }
