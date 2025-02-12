@@ -83,9 +83,7 @@ public class Gripper implements Subsystem {
 
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
-                .setInit(() -> {
-                    gripperL.rotateByAngle(angle);
-                })
+                .setInit(() -> gripperL.rotateByAngle(angle))
                 .setFinish(() -> true);
     }
 }

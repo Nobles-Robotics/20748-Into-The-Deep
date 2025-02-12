@@ -41,11 +41,11 @@ public class Drive implements Subsystem {
     public static DashboardPoseTracker dashboardPoseTracker;
     public Drive() {}
 
-    public void speedSlow(){
+    public static void speedSlow(){
         isSlowed = true;
     }
 
-    public void speedFast(){
+    public static void speedFast(){
         isSlowed = false;
     }
 
@@ -109,21 +109,17 @@ public class Drive implements Subsystem {
     public static Lambda drive(BoundGamepad gamepad){
         return new Lambda("drive")
                 .addRequirements(INSTANCE)
-                .setExecute(() -> {
-                    drive(
-                            -gamepad.leftStickY().state(),
-                            gamepad.leftStickX().state(),
-                            gamepad.rightStickX().state()
-                    );
-                })
+                .setExecute(() -> drive(
+                        -gamepad.leftStickY().state(),
+                        gamepad.leftStickX().state(),
+                        gamepad.rightStickX().state()
+                ))
                 .setFinish(() -> false);
     }
     public static Lambda push(double pow, long time){
         AtomicLong startTime = new AtomicLong();
         return new Lambda("push-drive")
-                .setInit(() -> {
-                    startTime.set(System.currentTimeMillis());
-                })
+                .setInit(() -> startTime.set(System.currentTimeMillis()))
                 .setExecute(
                         () -> {
                             fl.setPower(pow);
@@ -143,12 +139,12 @@ public class Drive implements Subsystem {
 
     public static Lambda slow(){
         return new Lambda("slow")
-                .setInit(() -> isSlowed = true);
+                .setInit(Drive::speedSlow);
     }
 
     public static Lambda fast(){
         return new Lambda("fast")
-                .setInit(() -> isSlowed = false);
+                .setInit(Drive::speedFast);
     }
 
     public static Lambda followPath(Path path) {

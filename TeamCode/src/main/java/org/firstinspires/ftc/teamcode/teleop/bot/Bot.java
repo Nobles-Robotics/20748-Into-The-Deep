@@ -22,7 +22,7 @@ public class Bot {
         HOME,
         INTAKE_SPEC,
         INTAKE_SAM,
-        OUTAKE_SAM,
+        OUTTAKE_SAM,
         OUTTAKE_LOW,
         OUTTAKE_HIGH,
         SCORE_LOW,
@@ -68,7 +68,7 @@ public class Bot {
                 1
         );
 
-        StatePositions outakeSam = new StatePositions(
+        StatePositions outtakeSam = new StatePositions(
                 Arm.armExtendPos,
                 Slides.wall,
                 Intake.raisePos,
@@ -76,7 +76,7 @@ public class Bot {
                 -1
         );
 
-        StatePositions outakeLow = new StatePositions(
+        StatePositions outtakeLow = new StatePositions(
                 Arm.armHomePos,
                 Slides.lowPos,
                 Intake.storePos,
@@ -84,7 +84,7 @@ public class Bot {
                 0
         );
 
-        StatePositions outakeHigh = new StatePositions(
+        StatePositions outtakeHigh = new StatePositions(
                 Arm.armHomePos,
                 Slides.highPos,
                 Intake.storePos,
@@ -112,9 +112,9 @@ public class Bot {
                 State.HOME, home,
                 State.INTAKE_SPEC, intakeSpec,
                 State.INTAKE_SAM, intakeSam,
-                State.OUTAKE_SAM, outakeSam,
-                State.OUTTAKE_LOW, outakeLow,
-                State.OUTTAKE_HIGH, outakeHigh,
+                State.OUTTAKE_SAM, outtakeSam,
+                State.OUTTAKE_LOW, outtakeLow,
+                State.OUTTAKE_HIGH, outtakeHigh,
                 State.SCORE_LOW, scoreLow,
                 State.SCORE_HIGH, scoreHigh
         );
@@ -152,13 +152,13 @@ public class Bot {
                             Intake.spintake(intakeSam.intakeSpeed)
                         )
                 ))
-                .withState(State.OUTAKE_SAM, (state, name) -> Lambda.from(
+                .withState(State.OUTTAKE_SAM, (state, name) -> Lambda.from(
                         new Sequential(
                                 new Parallel(
                                         Arm.extend(),
                                         Intake.raiseIntake()
                                 ),
-                                Intake.spintake(outakeSam.intakeSpeed)
+                                Intake.spintake(outtakeSam.intakeSpeed)
                         )
                 ))
                 .withState(State.OUTTAKE_HIGH, (state, name) -> Lambda.from(
@@ -166,7 +166,7 @@ public class Bot {
                                 Arm.home(),
                                 Intake.storeIntake(),
                             new Race(
-                                    Slides.runToPosition(outakeHigh.slidePos),
+                                    Slides.runToPosition(outtakeHigh.slidePos),
                                     Gripper.close()
                             )
                         )
@@ -176,7 +176,7 @@ public class Bot {
                                 Arm.home(),
                                 Intake.storeIntake(),
                                 new Race(
-                                        Slides.runToPosition(outakeLow.slidePos),
+                                        Slides.runToPosition(outtakeLow.slidePos),
                                         Gripper.close()
                                 )
                         )
@@ -210,9 +210,7 @@ public class Bot {
 
     public static Lambda setState(State state) {
         return new Lambda("set-state")
-                .setInit(() -> {
-                    stateMachine.schedule(state);
-                })
+                .setInit(() -> stateMachine.schedule(state))
                 .setFinish(() -> true);
     }
 }

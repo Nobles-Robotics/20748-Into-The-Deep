@@ -26,7 +26,7 @@ public class MainTeleOp extends OpMode {
         alex.back().or(jeff.back()).onTrue(Bot.setState(Bot.State.HOME));
 
         alex.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SAM));
-        alex.leftBumper().onTrue(Bot.setState(Bot.State.OUTAKE_SAM));
+        alex.leftBumper().onTrue(Bot.setState(Bot.State.OUTTAKE_SAM));
 
         jeff.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SPEC));
         jeff.leftBumper().onTrue(Bot.setState(Bot.State.HOME));

@@ -23,14 +23,14 @@ import java.lang.annotation.*;
 public class Arm implements Subsystem {
     public static final Arm INSTANCE = new Arm();
 
-    public static DcMotorEx extendo;
+    public static DcMotorEx arm;
     public static TouchSensor touch;
     public static Telemetry telemetry;
 
     public static double armHomePos = 0;
     public static double armExtendPos = 1000;
     public static boolean enablePID = true;
-    public static double tollerance = 10;
+    public static double tolerance = 10;
 
     public static PIDFController controller = new PIDFController(0.00014, 0.0000, 0.0000, 0.0000);
 
@@ -59,11 +59,11 @@ public class Arm implements Subsystem {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
         telemetry = opMode.getOpMode().telemetry;
 
-        extendo = hMap.get(DcMotorEx.class, Names.arm);
+        arm = hMap.get(DcMotorEx.class, Names.arm);
         touch = hMap.get(TouchSensor.class, Names.touch);
 
-        extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        controller.setTolerance(tollerance);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        controller.setTolerance(tolerance);
 
         reset();
     }
@@ -77,10 +77,10 @@ public class Arm implements Subsystem {
     }
 
     public static void reset() {
-        extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         controller.reset();
         controller.setSetPoint(0);
@@ -88,14 +88,14 @@ public class Arm implements Subsystem {
 
     public static Lambda setPower(double pow) {
         return new Lambda("power-intake")
-                .setInit(() -> extendo.setPower(pow))
+                .setInit(() -> arm.setPower(pow))
                 .setFinish(() -> true)
-                .setEnd((interrupted) -> extendo.setPower(0));
+                .setEnd((interrupted) -> arm.setPower(0));
     }
 
     public static Lambda setPowerPersistent(double pow) {
         return new Lambda("power-intake")
-                .setInit(() -> extendo.setPower(pow))
+                .setInit(() -> arm.setPower(pow))
                 .setFinish(() -> true);
     }
 
@@ -103,7 +103,7 @@ public class Arm implements Subsystem {
         return new Lambda("home-intake")
                 .setInit(() -> {
                     enablePID = false;
-                    extendo.setPower(-1);
+                    arm.setPower(-1);
                 })
                 .setFinish(() -> touch.isPressed())
                 .setEnd((interrupted) -> {
@@ -115,19 +115,19 @@ public class Arm implements Subsystem {
     public static Lambda extend() {
         return new Lambda("extend-intake")
                 .setInit(() -> {
-                    extendo.setPower(1);
+                    arm.setPower(1);
                     enablePID = false;
                 })
-                .setFinish(() -> extendo.getCurrentPosition() > armExtendPos || extendo.getCurrent(CurrentUnit.MILLIAMPS) > 1500)
+                .setFinish(() -> arm.getCurrentPosition() > armExtendPos || arm.getCurrent(CurrentUnit.MILLIAMPS) > 1500)
                 .setEnd((interrupted) -> {
-                    controller.setSetPoint(extendo.getCurrentPosition());
+                    controller.setSetPoint(arm.getCurrentPosition());
                     enablePID = true;
                 });
     }
 
     public static void logTele() {
-        telemetry.addData("Arm Position", extendo.getCurrentPosition());
-        telemetry.addData("Current Power", extendo.getPower());
+        telemetry.addData("Arm Position", arm.getCurrentPosition());
+        telemetry.addData("Current Power", arm.getPower());
         telemetry.addData("Touch Sensor", touch.isPressed());
     }
 
@@ -135,12 +135,12 @@ public class Arm implements Subsystem {
         return new Lambda("set-power-up")
                 .setInit(() -> {
                     enablePID = false;
-                    extendo.setPower(pow);
+                    arm.setPower(pow);
                 })
                 .setFinish(() -> true)
                 .setEnd((interrupted) -> {
-                    extendo.setPower(pow);
-                    controller.setSetPoint(extendo.getCurrentPosition());
+                    arm.setPower(pow);
+                    controller.setSetPoint(arm.getCurrentPosition());
                     enablePID = true;
                 });
     }
@@ -149,7 +149,7 @@ public class Arm implements Subsystem {
         return new Lambda("outtake-pid")
                 .setExecute(() -> {
                     if (enablePID) {
-                        double power = controller.calculate(extendo.getCurrentPosition());
+                        double power = controller.calculate(arm.getCurrentPosition());
                         setPowerPersistent(power);
                     }
                 })

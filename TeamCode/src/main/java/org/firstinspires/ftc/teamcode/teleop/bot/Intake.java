@@ -108,8 +108,8 @@ public class Intake implements Subsystem {
     }
     public static Lambda store() {
         return new Lambda("store-intake")
-                .setInit(() -> {stored = true;})
-                .setExecute(() -> {wrist.turnToAngle(storePos);})
+                .setInit(() -> stored = true)
+                .setExecute(() -> wrist.turnToAngle(storePos))
                 .setFinish(() -> !stored);
     }
 
@@ -154,9 +154,7 @@ public class Intake implements Subsystem {
 
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
-                .setInit(() -> {
-                    wrist.rotateByAngle(angle);
-                })
+                .setInit(() -> wrist.rotateByAngle(angle))
                 .setFinish(() -> true);
     }
 

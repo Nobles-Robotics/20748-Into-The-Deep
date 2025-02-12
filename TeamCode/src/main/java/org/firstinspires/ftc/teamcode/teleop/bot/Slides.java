@@ -81,14 +81,10 @@ public class Slides implements Subsystem {
 
     @NonNull
     @Override
-    public Dependency<?> getDependency() {
-        return dependency;
-    }
+    public Dependency<?> getDependency() {return dependency;}
 
     @Override
-    public void setDependency(@NonNull Dependency<?> dependency) {
-        this.dependency = dependency;
-    }
+    public void setDependency(@NonNull Dependency<?> dependency) {this.dependency = dependency;}
 
     public static void setPower(double power){
         if (power > 0) {
