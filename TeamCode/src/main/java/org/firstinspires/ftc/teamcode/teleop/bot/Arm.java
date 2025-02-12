@@ -14,6 +14,8 @@ import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.Names;
 
 import java.lang.annotation.*;
 
@@ -25,10 +27,10 @@ public class Arm implements Subsystem {
     public static TouchSensor touch;
     public static Telemetry telemetry;
 
-    public static double constantPower = 0.1;
     public static double armHomePos = 0;
     public static double armExtendPos = 1000;
     public static boolean enablePID = true;
+    public static double tollerance = 10;
 
     public static PIDFController controller = new PIDFController(0.00014, 0.0000, 0.0000, 0.0000);
 
@@ -57,12 +59,19 @@ public class Arm implements Subsystem {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
         telemetry = opMode.getOpMode().telemetry;
 
-        extendo = hMap.get(DcMotorEx.class, "extendo");
-        touch = hMap.get(TouchSensor.class, "touchSlide");
+        extendo = hMap.get(DcMotorEx.class, Names.arm);
+        touch = hMap.get(TouchSensor.class, Names.touch);
+
+        extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        controller.setTolerance(tollerance);
 
         reset();
     }
 
+    @Override
+    public void postUserInitHook(@NonNull Wrapper opMode) {
+        runPID();
+    }
     @Override
     public void postUserLoopHook(@NonNull Wrapper opMode) {
     }
@@ -70,7 +79,11 @@ public class Arm implements Subsystem {
     public static void reset() {
         extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         extendo.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        controller.reset();
+        controller.setSetPoint(0);
     }
 
     public static Lambda setPower(double pow) {
@@ -80,17 +93,82 @@ public class Arm implements Subsystem {
                 .setEnd((interrupted) -> extendo.setPower(0));
     }
 
+    public static Lambda setPowerPersistent(double pow) {
+        return new Lambda("power-intake")
+                .setInit(() -> extendo.setPower(pow))
+                .setFinish(() -> true);
+    }
+
     public static Lambda home() {
         return new Lambda("home-intake")
-                .setInit(() -> extendo.setPower(-1))
+                .setInit(() -> {
+                    enablePID = false;
+                    extendo.setPower(-1);
+                })
                 .setFinish(() -> touch.isPressed())
-                .setEnd((interrupted) -> extendo.setPower(-constantPower));
+                .setEnd((interrupted) -> {
+                    reset();
+                    enablePID = true;
+                });
     }
 
     public static Lambda extend() {
         return new Lambda("extend-intake")
-                .setInit(() -> extendo.setPower(1))
-                .setFinish(() -> extendo.getCurrentPosition() > armExtendPos)
-                .setEnd((interrupted) -> extendo.setPower(constantPower));
+                .setInit(() -> {
+                    extendo.setPower(1);
+                    enablePID = false;
+                })
+                .setFinish(() -> extendo.getCurrentPosition() > armExtendPos || extendo.getCurrent(CurrentUnit.MILLIAMPS) > 1500)
+                .setEnd((interrupted) -> {
+                    controller.setSetPoint(extendo.getCurrentPosition());
+                    enablePID = true;
+                });
+    }
+
+    public static void logTele() {
+        telemetry.addData("Arm Position", extendo.getCurrentPosition());
+        telemetry.addData("Current Power", extendo.getPower());
+        telemetry.addData("Touch Sensor", touch.isPressed());
+    }
+
+    public static Lambda setPowerManual(double pow){
+        return new Lambda("set-power-up")
+                .setInit(() -> {
+                    enablePID = false;
+                    extendo.setPower(pow);
+                })
+                .setFinish(() -> true)
+                .setEnd((interrupted) -> {
+                    extendo.setPower(pow);
+                    controller.setSetPoint(extendo.getCurrentPosition());
+                    enablePID = true;
+                });
+    }
+
+    public static Lambda runPID() {
+        return new Lambda("outtake-pid")
+                .setExecute(() -> {
+                    if (enablePID) {
+                        double power = controller.calculate(extendo.getCurrentPosition());
+                        setPowerPersistent(power);
+                    }
+                })
+                .setFinish(() -> false);
+    }
+
+    public static Lambda runToPosition(double pos){
+        return new Lambda("set-target-pos")
+                .setInterruptible(true)
+                .setInit(() -> {
+                    controller.setSetPoint(pos);
+                    enablePID = true;
+                })
+                .setFinish(() -> controller.atSetPoint());
+    }
+
+    public static Lambda resetCommand(){
+        return new Lambda("reset-slides")
+                .setInit(Slides::reset)
+                .setFinish(() -> true);
     }
 }

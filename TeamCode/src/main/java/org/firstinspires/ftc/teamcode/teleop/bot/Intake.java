@@ -58,7 +58,7 @@ public class Intake implements Subsystem {
         wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 300);
 
         spinner = hMap.get(CRServo.class, Names.spinTake);
-        //colorSensor = hMap.get(ColorSensor.class, "color");
+        //colorSensor = hMap.get(ColorSensor.class, Names.color);
         telemetry = opMode.getOpMode().telemetry;
 
     }

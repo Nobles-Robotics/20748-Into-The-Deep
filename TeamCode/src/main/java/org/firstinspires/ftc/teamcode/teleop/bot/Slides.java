@@ -138,7 +138,6 @@ public class Slides implements Subsystem {
 
         controller.reset();
         controller.setSetPoint(0);
-        logTele();
     }
 
     public static Lambda resetCommand(){
@@ -189,7 +188,6 @@ public class Slides implements Subsystem {
                 .setExecute(() -> {
                     if (enablePID) {
                         double power = controller.calculate(getPos());
-                        logTele();
                         setPower(power);
                     }
                 })
