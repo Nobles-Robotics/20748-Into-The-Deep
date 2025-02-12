@@ -42,7 +42,7 @@ public class Gripper implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
-        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Bot.claw, 0, 300);
+        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Bot.gripper, 0, 300);
         open();
     }
 

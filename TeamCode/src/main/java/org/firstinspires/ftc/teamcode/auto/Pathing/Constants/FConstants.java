@@ -3,15 +3,16 @@ package org.firstinspires.ftc.teamcode.auto.Pathing.Constants;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.localization.Localizers;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 
 public class FConstants {
     static {
         FollowerConstants.localizers = Localizers.PINPOINT;
 
-        FollowerConstants.leftFrontMotorName = "frontLeft";
-        FollowerConstants.leftRearMotorName = "backLeft";
-        FollowerConstants.rightFrontMotorName = "frontRight";
-        FollowerConstants.rightRearMotorName = "backRight";
+        FollowerConstants.leftFrontMotorName = Bot.frontLeft;
+        FollowerConstants.leftRearMotorName = Bot.backLeft;
+        FollowerConstants.rightFrontMotorName = Bot.frontRight;
+        FollowerConstants.rightRearMotorName = Bot.backRight;
 
         FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
         FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.REVERSE;
