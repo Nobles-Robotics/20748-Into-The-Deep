@@ -44,13 +44,13 @@ public class SlidesTestTeleOp extends OpMode {
                 Slides.resetCommand()
         );
         test.b().onTrue(
-                Slides.removeSlack()
+                Slides.runToPosition(Slides.wall)
         );
         test.x().onTrue(
-                Slides.runToPosition(1000)
+                Slides.runToPosition(Slides.highPos)
         );
         test.y().onTrue(
-                Slides.runToPosition(900)
+                Slides.runToPosition(Slides.scoreHighPos)
         );
     }
     @Override
@@ -66,7 +66,7 @@ public class SlidesTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Slides.logTele();
+        //Slides.logTele();
         telemetry.update();
 
     }

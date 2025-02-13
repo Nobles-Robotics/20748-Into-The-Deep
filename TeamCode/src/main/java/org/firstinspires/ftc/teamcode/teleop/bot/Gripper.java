@@ -62,22 +62,22 @@ public class Gripper implements Subsystem {
     public void cleanup(@NonNull Wrapper opMode) {}
 
     @NonNull
-    public static Lambda open() {
+    public static Lambda close() {
         return new Lambda("open")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
                     gripperL.turnToAngle(0);
-                    isGripperOpen = true;
+                    isGripperOpen = false;
                 })
                 .setFinish(() -> true);
     }
     @NonNull
-    public static Lambda close() {
+    public static Lambda open() {
         return new Lambda("close")
                 .addRequirements(INSTANCE)
                 .setInit(() -> {
                     gripperL.turnToAngle(30);
-                    isGripperOpen = false;
+                    isGripperOpen = true;
                 })
                 .setFinish(() -> true);
     }
@@ -85,14 +85,11 @@ public class Gripper implements Subsystem {
     @NonNull
     public static Lambda toggle() {
         return new Lambda("toggle")
-                .addRequirements(INSTANCE)
                 .setInit(() -> {
                     if(isGripperOpen){
                         close();
-                        isGripperOpen = false;
                     } else {
                         open();
-                        isGripperOpen = true;
                     }
                 })
                 .setFinish(() -> true);
@@ -104,6 +101,7 @@ public class Gripper implements Subsystem {
 
     public static void logTele(){
         telemetry.addLine("Current Gripper Location" + getPositionGripperL());
+        telemetry.addData("Gripper Open", isGripperOpen);
     }
 
     public static Lambda runManual(double angle){

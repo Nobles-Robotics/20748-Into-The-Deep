@@ -28,12 +28,12 @@ public class Slides implements Subsystem {
 
     public static Telemetry telemetry;
     public static int tolerance = 10;
-    public static int safePos = 1000;
+    public static int safePos = 400;
     public static int wall = safePos;
-    public static int scoreHighPos = 3000;
+    public static int scoreHighPos = 5000;
     public static int scoreLowPos = 2000;
     public static int lowPos = 2500;
-    public static int highPos = 3500;
+    public static int highPos = 7000;
     public static double Kp = 0.008;
     public static double Ki = 0.0008;
     public static double Kd = 0.00025;
@@ -59,7 +59,7 @@ public class Slides implements Subsystem {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
         telemetry = opMode.getOpMode().telemetry;
 
-        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
+        dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
 
         slideE = hMap.get(DcMotorEx.class, Names.vertSlideUp);
         slideR = hMap.get(DcMotorEx.class, Names.vertSlideDown);

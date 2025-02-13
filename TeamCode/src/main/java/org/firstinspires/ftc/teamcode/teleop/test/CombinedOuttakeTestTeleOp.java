@@ -5,17 +5,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
+import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
+import org.firstinspires.ftc.teamcode.util.Features.LoopTimes;
 
 @Mercurial.Attach
 @Slides.Attach
 @Gripper.Attach
 //@Drive.Attach
 @BulkReads.Attach
+@LoopTimes.Attach
 @TeleOp(name = "CombinedOuttakeTestTeleOp")
 public class CombinedOuttakeTestTeleOp extends OpMode {
 
@@ -26,7 +29,7 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
     public void init() {
         Bot.init();
 
-        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
+        dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
 
 
         test2 = Mercurial.gamepad2();
@@ -53,15 +56,20 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
                 Slides.resetCommand()
         );
         test2.b().onTrue(
-                Slides.removeSlack()
+                Slides.runToPosition(Slides.wall)
         );
         test2.x().onTrue(
-                Slides.runToPosition(1000)
+                new Sequential(
+                        Gripper.close(),
+                        Slides.runToPosition(Slides.highPos)
+                )
         );
         test2.y().onTrue(
-                Slides.runToPosition(900)
+                new Sequential(
+                        Slides.runToPosition(Slides.scoreHighPos),
+                        Gripper.open()
+                )
         );
-
 
         test2.dpadUp().onTrue(
                 Gripper.close()
@@ -70,7 +78,7 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
                 Gripper.open()
         );
 
-        test2.dpadRight().or(test2.dpadLeft()).onTrue(
+        test2.dpadRight().onTrue(
                 Gripper.toggle()
         );
 
@@ -92,7 +100,6 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
         Gripper.logTele();
         telemetry.update();
         dashboardTelemetry.update();
-
     }
 
     @Override
