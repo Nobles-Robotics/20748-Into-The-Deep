@@ -23,10 +23,10 @@ public class SlidesTestTeleOp extends OpMode {
         test = Mercurial.gamepad1();
 
         test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
-                Slides.setPowerUp(0.5)
+                Slides.setPowerUp(1)
         );
         test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().whileTrue(
-                Slides.setPowerUp(-0.5)
+                Slides.setPowerUp(-1)
         );
         test.leftStickY().conditionalBindState().lessThan(0.5).greaterThan(-0.5).bind().whileTrue(
                 Slides.setPowerUp(0)

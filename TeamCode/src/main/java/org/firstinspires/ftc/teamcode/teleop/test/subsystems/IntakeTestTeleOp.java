@@ -26,6 +26,7 @@ public class IntakeTestTeleOp extends OpMode {
         test.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
                 Intake.runManual(10)
         );
+
         test.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind().onTrue(
                 Intake.runManual(-10)
         );
