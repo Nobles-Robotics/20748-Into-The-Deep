@@ -20,6 +20,8 @@ public class Gripper implements Subsystem {
     private static Telemetry telemetry;
     private static SimpleServo gripperL;
 
+    public static boolean isGripperOpen = true;
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @MustBeDocumented
@@ -63,16 +65,39 @@ public class Gripper implements Subsystem {
     public static Lambda open() {
         return new Lambda("open")
                 .addRequirements(INSTANCE)
-                .setInit(() -> gripperL.turnToAngle(0))
+                .setInit(() -> {
+                    gripperL.turnToAngle(0);
+                    isGripperOpen = true;
+                })
                 .setFinish(() -> true);
     }
     @NonNull
     public static Lambda close() {
         return new Lambda("close")
                 .addRequirements(INSTANCE)
-                .setInit(() -> gripperL.turnToAngle(30))
+                .setInit(() -> {
+                    gripperL.turnToAngle(30);
+                    isGripperOpen = false;
+                })
                 .setFinish(() -> true);
     }
+
+    @NonNull
+    public static Lambda toggle() {
+        return new Lambda("toggle")
+                .addRequirements(INSTANCE)
+                .setInit(() -> {
+                    if(isGripperOpen){
+                        close();
+                        isGripperOpen = false;
+                    } else {
+                        open();
+                        isGripperOpen = true;
+                    }
+                })
+                .setFinish(() -> true);
+    }
+
     public static double getPositionGripperL(){
         return gripperL.getAngle();
     }

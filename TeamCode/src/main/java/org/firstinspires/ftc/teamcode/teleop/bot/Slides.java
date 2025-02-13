@@ -235,7 +235,8 @@ public class Slides implements Subsystem {
         return new Lambda("set-power-up")
                 .setInit(() -> {
                     enablePID = false;
-                    slideE.setPower(pow);
+                    setPowerE(pow);
+                    //slideE.setPower(pow);
                 })
                 .setFinish(() -> true)
                 .setEnd((interrupted) -> {
@@ -248,7 +249,8 @@ public class Slides implements Subsystem {
         return new Lambda("set-power-up")
                 .setInit(() -> {
                     enablePID = false;
-                    slideR.setPower(pow);
+                    setPowerR(pow, false);
+                    //slideR.setPower(pow);
                 })
                 .setFinish(() -> true)
                 .setEnd((interrupted) -> {

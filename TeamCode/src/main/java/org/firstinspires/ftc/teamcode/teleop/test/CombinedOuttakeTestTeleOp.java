@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @TeleOp(name = "CombinedOuttakeTestTeleOp")
 public class CombinedOuttakeTestTeleOp extends OpMode {
 
-    BoundGamepad test, test2;
+    BoundGamepad test2;
     Telemetry dashboardTelemetry;
 
     @Override
@@ -69,6 +69,11 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
         test2.dpadDown().onTrue(
                 Gripper.open()
         );
+
+        test2.dpadRight().or(test2.dpadLeft()).onTrue(
+                Gripper.toggle()
+        );
+
     }
     @Override
     public void init_loop() {
