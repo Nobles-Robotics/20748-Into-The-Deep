@@ -58,14 +58,13 @@ public class Intake implements Subsystem {
         wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 300);
 
         spinner = hMap.get(CRServo.class, Names.spinTake);
-        //colorSensor = hMap.get(ColorSensor.class, Names.color);
+        colorSensor = hMap.get(ColorSensor.class, Names.color);
         telemetry = opMode.getOpMode().telemetry;
 
     }
 
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode) {
-        getColor();
     }
 
 
@@ -134,24 +133,6 @@ public class Intake implements Subsystem {
                 .setInit(() -> Intake.setPos(pos));
     }
 
-    public static Lambda getColor(){
-        return new Lambda("get-color")
-                .setExecute(() -> {
-                    double red = colorSensor.red();
-                    double green = colorSensor.green();
-                    double blue = colorSensor.blue();
-                    if (Math.abs(1- (red/green)) < 0.1 && red>blue*1.3){
-                        telemetry.addLine("Color: Yellow");
-                    }
-                    if (red>green*1.3 && red>blue*1.3){
-                        telemetry.addLine("Color: Red");
-                    }
-                    if (blue>green*1.3 && blue>red*1.3){
-                        telemetry.addLine("Color: Blue");
-                    }
-                });
-    }
-
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
                 .setInit(() -> wrist.rotateByAngle(angle))
@@ -167,5 +148,18 @@ public class Intake implements Subsystem {
         telemetry.addLine("SpinTake Power" + spinner.getPower());
         telemetry.addLine("Raised: " + raised);
         telemetry.addLine("Stored: " + stored);
+        telemetry.addData("red", colorSensor.red());
+        telemetry.addData("blue", colorSensor.blue());
+        telemetry.addData("green", colorSensor.green());
+        double red = colorSensor.red();
+        double green = colorSensor.green();
+        double blue = colorSensor.blue();
+        if (red>green*1.3 && red>blue*1.3){
+            telemetry.addLine("Color: Red");
+        } else if (blue>green*1.3 && blue>red*1.3){
+            telemetry.addLine("Color: Blue");
+        } else {
+            telemetry.addLine("Nothing (or yellow :sob:)");
+        }
     }
 }
