@@ -33,12 +33,12 @@ public class Slides implements Subsystem {
     public static int scoreLowPos = 2000;
     public static int lowPos = 2500;
     public static int highPos = 3500;
-    public static double Kp = 0.014;
-    public static double Ki = 0.0000;
-    public static double Kd = 0.0000;
+    public static double Kp = 0.008;
+    public static double Ki = 0.0008;
+    public static double Kd = 0.00025;
     public static double Kf = 0.0000;
     public static double maxCurrentLimit = 3500;
-    public static double regressionCurrentLimit = 1000;
+    public static double regressionCurrentLimit = 800;
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
     private static double currentE = 0, currentR = 0;
@@ -88,20 +88,14 @@ public class Slides implements Subsystem {
 
     public static void setPower(double power){
         if (power > 0) {
-            if (power > 0.5) {
-                power = 0.5;
-            }
             setPowerE(power);
-            setPowerR(-power * 1.75, true);
+            //setPowerR(-power * 1.75, true);
         } else if (power < 0) {
-            if (power < -0.5) {
-                power = -0.5;
-            }
             setPowerE(power);
-            setPowerR(-power * 2, false);
+            //setPowerR(-power * 2, false);
         } else {
             setPowerE(0);
-            setPowerR(0, true);
+            //setPowerR(0, true);
         }
     }
 
@@ -151,7 +145,6 @@ public class Slides implements Subsystem {
                 })
                 .setFinish(() -> controller.atSetPoint())
                 .setEnd((interrupted) -> {
-                    //enablePID = false;
                     if (!interrupted) {
                         removeSlack();
                     }
@@ -220,7 +213,8 @@ public class Slides implements Subsystem {
     public static Lambda removeSlack(){
         return new Lambda("remove-regressor-slack")
                 .setInit(() -> slideR.setPower(-1))
-                .setFinish(() -> isOverCurrent(regressionCurrentLimit));
+                .setFinish(() -> isOverCurrent(regressionCurrentLimit))
+                .setEnd((interrupted) -> slideR.setPower(0));
     }
 
     public static Lambda waitForPos(int pos) {
