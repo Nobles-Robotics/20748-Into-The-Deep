@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop.test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
@@ -18,10 +20,14 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 public class CombinedOuttakeTestTeleOp extends OpMode {
 
     BoundGamepad test, test2;
+    Telemetry dashboardTelemetry;
 
     @Override
     public void init() {
         Bot.init();
+
+        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
+
 
         test2 = Mercurial.gamepad2();
 
@@ -80,6 +86,7 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
         Slides.logTele();
         Gripper.logTele();
         telemetry.update();
+        dashboardTelemetry.update();
 
     }
 

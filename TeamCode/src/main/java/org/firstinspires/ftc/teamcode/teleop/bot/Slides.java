@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -42,6 +43,8 @@ public class Slides implements Subsystem {
     public static volatile boolean enablePID = true;
     public static boolean climbOver = false;
     private static double currentE = 0, currentR = 0;
+    FtcDashboard dashboard;
+    static Telemetry dashboardTelemetry;
 
     public static PIDFController controller = new PIDFController(Kp, Ki, Kd, Kf);
 
@@ -55,6 +58,9 @@ public class Slides implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
         telemetry = opMode.getOpMode().telemetry;
+
+        Telemetry dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
+
         slideE = hMap.get(DcMotorEx.class, Names.vertSlideUp);
         slideR = hMap.get(DcMotorEx.class, Names.vertSlideDown);
         slideR.setCurrentAlert(maxCurrentLimit, CurrentUnit.MILLIAMPS);
@@ -170,6 +176,9 @@ public class Slides implements Subsystem {
             currentR = slideR.getCurrent(CurrentUnit.MILLIAMPS);
         }
         telemetry.addLine("Max SlideE: " + currentE + " | Max SlideR: " + currentR);
+
+        dashboardTelemetry.addData("current position", slideE.getCurrentPosition());
+        dashboardTelemetry.addData("desired position", controller.getSetPoint());
     }
 
     public static Lambda runPID() {
