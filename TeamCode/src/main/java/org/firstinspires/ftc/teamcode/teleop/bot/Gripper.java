@@ -43,7 +43,7 @@ public class Gripper implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
-        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 300);
+        gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 355);
         open();
     }
 
@@ -63,14 +63,14 @@ public class Gripper implements Subsystem {
     public static Lambda open() {
         return new Lambda("open")
                 .addRequirements(INSTANCE)
-                .setInit(() -> gripperL.turnToAngle(230))
+                .setInit(() -> gripperL.turnToAngle(0))
                 .setFinish(() -> true);
     }
     @NonNull
     public static Lambda close() {
         return new Lambda("close")
                 .addRequirements(INSTANCE)
-                .setInit(() -> gripperL.turnToAngle(205))
+                .setInit(() -> gripperL.turnToAngle(30))
                 .setFinish(() -> true);
     }
     public static double getPositionGripperL(){
