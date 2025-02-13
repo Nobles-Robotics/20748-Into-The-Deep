@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -21,9 +22,10 @@ import java.lang.annotation.*;
 public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
     public static double dropPos = 0;
-    public static double raisePos = 100;
-    public static double storePos = 200;
+    public static double raisePos = 355;
+    public static double storePos = 0;
     public static SimpleServo wrist;
+    public static Servo wrist2;
     public static CRServo spinner;
 
     public static ColorSensor colorSensor;
@@ -55,7 +57,8 @@ public class Intake implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         HardwareMap hMap = opMode.getOpMode().hardwareMap;
 
-        wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 300);
+        wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 355);
+        wrist2 = hMap.get(Servo.class, Names.wrist);
 
         spinner = hMap.get(CRServo.class, Names.spinTake);
         colorSensor = hMap.get(ColorSensor.class, Names.color);
@@ -95,37 +98,29 @@ public class Intake implements Subsystem {
 
     public static Lambda raise() {
         return new Lambda("raise-intake")
-                .setInit(() -> {raised = true; stored = false;})
+                .setInit(() -> {raised = true; stored = false; wrist2.getController().pwmEnable();})
                 .setExecute(() -> wrist.turnToAngle(raisePos))
-                .setFinish(() -> !raised);
+                .setFinish(() -> !raised || stored);
     }
     public static Lambda drop() {
         return new Lambda("drop-intake")
-                .setInit(() -> {raised = false; stored = false;})
+                .setInit(() -> {raised = false; stored = false; wrist2.getController().pwmEnable();})
                 .setExecute(() -> wrist.turnToAngle(dropPos))
-                .setFinish(() -> raised);
-    }
-    public static Lambda store() {
-        return new Lambda("store-intake")
-                .setInit(() -> stored = true)
-                .setExecute(() -> wrist.turnToAngle(storePos))
-                .setFinish(() -> !stored);
+                .setFinish(() -> raised || stored);
     }
 
-    public static Lambda raiseIntake() {
-        return new Lambda("raise-intake")
-                .setInit(Intake::raise)
-                .setFinish(() -> true);
-    }
-    public static Lambda dropIntake() {
-        return new Lambda("drop-intake")
-                .setInit(Intake::drop)
-                .setFinish(() -> true);
-    }
-    public static Lambda storeIntake() {
+    public static Lambda store() {
         return new Lambda("store-intake")
-                .setInit(Intake::store)
-                .setFinish(() -> true);
+                .setInit(() -> {
+                    stored = true;
+                    wrist.turnToAngle(raisePos);
+                })
+                .setFinish(() -> true)
+                .setEnd((interrupted) -> {wrist2.getController().pwmDisable();});
+    }
+
+    public static void disableWrist(){
+
     }
 
     public static Lambda setIntake(double pos) {

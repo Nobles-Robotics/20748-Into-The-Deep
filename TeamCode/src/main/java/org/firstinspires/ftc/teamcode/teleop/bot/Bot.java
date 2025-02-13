@@ -127,7 +127,7 @@ public class Bot {
                                 new Parallel(
                                         Arm.home(),
                                         Slides.runToPosition(home.slidePos),
-                                        Intake.storeIntake()
+                                        Intake.store()
                                 ),
                                 Gripper.open()
                         )
@@ -137,7 +137,7 @@ public class Bot {
                                 new Parallel(
                                         Arm.home(),
                                         Slides.runToPosition(intakeSpec.slidePos),
-                                        Intake.storeIntake()
+                                        Intake.store()
                                 ),
                                 Gripper.close()
                                 //Closing Gripper should happen after everything is all set
@@ -147,7 +147,7 @@ public class Bot {
                         new Sequential(
                             new Parallel(
                                     Arm.extend(),
-                                    Intake.dropIntake()
+                                    Intake.drop()
                             ),
                             Intake.spintake(intakeSam.intakeSpeed)
                         )
@@ -156,7 +156,7 @@ public class Bot {
                         new Sequential(
                                 new Parallel(
                                         Arm.extend(),
-                                        Intake.raiseIntake()
+                                        Intake.raise()
                                 ),
                                 Intake.spintake(outtakeSam.intakeSpeed)
                         )
@@ -164,7 +164,7 @@ public class Bot {
                 .withState(State.OUTTAKE_HIGH, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
-                                Intake.storeIntake(),
+                                Intake.store(),
                             new Race(
                                     Slides.runToPosition(outtakeHigh.slidePos),
                                     Gripper.close()
@@ -174,7 +174,7 @@ public class Bot {
                 .withState(State.OUTTAKE_LOW, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
-                                Intake.storeIntake(),
+                                Intake.store(),
                                 new Race(
                                         Slides.runToPosition(outtakeLow.slidePos),
                                         Gripper.close()
@@ -184,7 +184,7 @@ public class Bot {
                 .withState(State.SCORE_HIGH, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
-                                Intake.storeIntake(),
+                                Intake.store(),
                                 new Race(
                                         Slides.runToPosition(scoreHigh.slidePos),
                                         Gripper.close()
@@ -195,7 +195,7 @@ public class Bot {
                 .withState(State.SCORE_LOW, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
-                                Intake.storeIntake(),
+                                Intake.store(),
                                 new Race(
                                         Slides.runToPosition(scoreLow.slidePos),
                                         Gripper.close()
