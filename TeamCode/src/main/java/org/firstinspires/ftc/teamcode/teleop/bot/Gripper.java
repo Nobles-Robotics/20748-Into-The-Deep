@@ -107,9 +107,13 @@ public class Gripper implements Subsystem {
 
     public static void logTele(Bot.Logging level){
         switch (level) {
+            case NORMAL:
+                telemetry.addData("Current Gripper Location", getPositionGripperL());
+                telemetry.addData("Gripper Open", isGripperOpen);
+                break;
             case DISABLED:
                 break;
-            default:
+            case VERBOSE:
                 telemetry.addData("Current Gripper Location", getPositionGripperL());
                 telemetry.addData("Gripper Open", isGripperOpen);
         }
