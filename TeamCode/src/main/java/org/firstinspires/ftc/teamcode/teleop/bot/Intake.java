@@ -71,15 +71,10 @@ public class Intake implements Subsystem {
     }
 
 
-
-    private static void setPos(double pos) {
-        wrist.setPosition(pos);
-        if (Math.abs(pos - dropPos) < 0.1) {
-            raised = false;
-        } else if (Math.abs(pos - raisePos) < 0.1){
-            raised = true;
-        }
+    public static double getPositionWrist(){
+        return wrist.getAngle();
     }
+
 
     private static void spin(double power){
         spinner.setPower(power);
@@ -102,6 +97,7 @@ public class Intake implements Subsystem {
                 .setExecute(() -> wrist.turnToAngle(raisePos))
                 .setFinish(() -> !raised || stored);
     }
+
     public static Lambda drop() {
         return new Lambda("drop-intake")
                 .setInit(() -> {raised = false; stored = false; wrist2.getController().pwmEnable();})
@@ -119,25 +115,21 @@ public class Intake implements Subsystem {
                 .setEnd((interrupted) -> {wrist2.getController().pwmDisable();});
     }
 
-    public static void disableWrist(){
-
-    }
-
-    public static Lambda setIntake(double pos) {
-        return new  Lambda("set-intake")
-                .setInit(() -> Intake.setPos(pos));
-    }
-
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
                 .setInit(() -> wrist.rotateByAngle(angle))
                 .setFinish(() -> true);
     }
 
-    public static double getPositionWrist(){
-        return wrist.getAngle();
+    public static Lambda raiseCommand() {
+        return new Lambda("raise-command").setInit(Intake::raise).setFinish(() -> true);
     }
-
+    public static Lambda dropCommand() {
+        return new Lambda("raise-command").setInit(Intake::drop).setFinish(() -> true);
+    }
+    public static Lambda storeCommand() {
+        return new Lambda("raise-command").setInit(Intake::store).setFinish(() -> true);
+    }
     public static void logTele(){
         telemetry.addLine("Current Wrist Location" + getPositionWrist());
         telemetry.addLine("SpinTake Power" + spinner.getPower());

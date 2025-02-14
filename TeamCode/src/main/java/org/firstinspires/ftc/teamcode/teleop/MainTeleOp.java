@@ -31,6 +31,10 @@ public class MainTeleOp extends OpMode {
         jeff.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SPEC));
         jeff.leftBumper().onTrue(Bot.setState(Bot.State.HOME));
 
+        alex.leftStickButton().and(alex.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind()).onTrue(
+                Arm.setPower(0.75)
+        );
+
         alex.rightTrigger().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
                 Arm.setPower(0.75)
         );
