@@ -49,7 +49,7 @@ public class GripperTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Gripper.logTele();
+        Gripper.logTele(Bot.Logging.VERBOSE);
         telemetry.update();
 
     }

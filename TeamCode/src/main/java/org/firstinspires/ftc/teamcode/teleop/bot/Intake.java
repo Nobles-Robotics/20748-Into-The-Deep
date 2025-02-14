@@ -130,17 +130,33 @@ public class Intake implements Subsystem {
     public static Lambda storeCommand() {
         return new Lambda("raise-command").setInit(Intake::store).setFinish(() -> true);
     }
-    public static void logTele(){
-        telemetry.addLine("Current Wrist Location" + getPositionWrist());
-        telemetry.addLine("SpinTake Power" + spinner.getPower());
-        telemetry.addLine("Raised: " + raised);
-        telemetry.addLine("Stored: " + stored);
-        telemetry.addData("red", colorSensor.red());
-        telemetry.addData("blue", colorSensor.blue());
-        telemetry.addData("green", colorSensor.green());
+
+    public static void logTele(Bot.Logging level){
+        switch (level) {
+            case NORMAL:
+                telemetry.addData("Current Wrist Location", getPositionWrist());
+                telemetry.addData("SpinTake Power", spinner.getPower());
+                //TODO: Using a color sensor is known to affect performance namely loop times ~ this should be changed to only be active when the bot is actively intaking a sample
+                computeColor();
+                break;
+            case DISABLED:
+                break;
+            case VERBOSE:
+                telemetry.addData("Current Wrist Location", getPositionWrist());
+                telemetry.addData("SpinTake Power", spinner.getPower());
+                telemetry.addData("Raised: " , raised);
+                telemetry.addData("Stored: ", stored);
+                computeColor();
+
+        }
+    }
+
+    public static void computeColor(){
         double red = colorSensor.red();
         double green = colorSensor.green();
         double blue = colorSensor.blue();
+        telemetry.addLine("Red" + red + " | Blue" + blue + " | Green" + green);
+
         if (red>green*1.3 && red>blue*1.3){
             telemetry.addLine("Color: Red");
         } else if (blue>green*1.3 && blue>red*1.3){

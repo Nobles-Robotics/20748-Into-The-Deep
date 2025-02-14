@@ -66,7 +66,7 @@ public class SlidesTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        //Slides.logTele();
+        Slides.logTele(Bot.Logging.VERBOSE);
         telemetry.update();
 
     }

@@ -124,12 +124,6 @@ public class Arm implements Subsystem {
                 });
     }
 
-    public static void logTele() {
-        telemetry.addData("Arm Position", arm.getCurrentPosition());
-        telemetry.addData("Current Power", arm.getPower());
-        telemetry.addData("Touch Sensor", touch.isPressed());
-    }
-
     public static Lambda setPowerManual(double pow){
         return new Lambda("set-power-up")
                 .setInit(() -> {
@@ -169,5 +163,23 @@ public class Arm implements Subsystem {
         return new Lambda("reset-slides")
                 .setInit(Slides::reset)
                 .setFinish(() -> true);
+    }
+
+    public static void logTele(Bot.Logging level){
+        switch (level) {
+            case NORMAL:
+                telemetry.addLine("Arm: pid? "+ enablePID + " | SetPoint:" + controller.getSetPoint());
+                telemetry.addData("Position: ", arm.getCurrentPosition());
+                telemetry.addData("Touch Sensor", touch.isPressed());
+                break;
+            case DISABLED:
+                break;
+            case VERBOSE:
+                telemetry.addLine("Arm: pid? " + enablePID);
+                telemetry.addLine("Position: " + arm.getCurrentPosition() + " | Error: " + controller.getPositionError());
+                telemetry.addData("Current Power", arm.getPower());
+                telemetry.addLine("Current: " + arm.getCurrent(CurrentUnit.MILLIAMPS));
+                telemetry.addData("Touch Sensor", touch.isPressed());
+        }
     }
 }

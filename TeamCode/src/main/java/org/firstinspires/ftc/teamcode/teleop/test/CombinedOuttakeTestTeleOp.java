@@ -96,8 +96,8 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Slides.logTele();
-        Gripper.logTele();
+        Slides.logTele(Bot.Logging.VERBOSE);
+        Gripper.logTele(Bot.Logging.VERBOSE);
         telemetry.update();
         dashboardTelemetry.update();
     }

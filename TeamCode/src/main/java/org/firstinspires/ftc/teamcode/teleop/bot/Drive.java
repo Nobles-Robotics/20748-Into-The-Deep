@@ -210,4 +210,14 @@ public class Drive implements Subsystem {
                 })
                 .setFinish(() -> !follower.isBusy() || follower.isRobotStuck());
     }
+
+    public static void logTele(Bot.Logging level){
+        switch (level) {
+            case NORMAL:
+                break;
+            case DISABLED:
+                break;
+            case VERBOSE:
+        }
+    }
 }

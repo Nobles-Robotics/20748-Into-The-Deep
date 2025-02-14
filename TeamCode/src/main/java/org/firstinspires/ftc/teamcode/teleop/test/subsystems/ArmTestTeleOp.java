@@ -59,7 +59,7 @@ public class ArmTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Arm.logTele();
+        Arm.logTele(Bot.Logging.VERBOSE);
         telemetry.update();
 
     }

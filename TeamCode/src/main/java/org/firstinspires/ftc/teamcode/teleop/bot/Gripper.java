@@ -99,14 +99,19 @@ public class Gripper implements Subsystem {
         return gripperL.getAngle();
     }
 
-    public static void logTele(){
-        telemetry.addLine("Current Gripper Location" + getPositionGripperL());
-        telemetry.addData("Gripper Open", isGripperOpen);
-    }
-
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
                 .setInit(() -> gripperL.rotateByAngle(angle))
                 .setFinish(() -> true);
+    }
+
+    public static void logTele(Bot.Logging level){
+        switch (level) {
+            case DISABLED:
+                break;
+            default:
+                telemetry.addData("Current Gripper Location", getPositionGripperL());
+                telemetry.addData("Gripper Open", isGripperOpen);
+        }
     }
 }

@@ -68,6 +68,10 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        Arm.logTele(Bot.Logging.NORMAL);
+        Gripper.logTele(Bot.Logging.NORMAL);
+        Intake.logTele(Bot.Logging.NORMAL);
+        Slides.logTele(Bot.Logging.NORMAL);
         telemetry.update();
     }
 

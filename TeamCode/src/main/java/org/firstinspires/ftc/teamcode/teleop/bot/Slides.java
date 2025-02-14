@@ -241,23 +241,33 @@ public class Slides implements Subsystem {
                 });
     }
 
-    public static void logTele(){
-        telemetry.addLine("Slides: pid? " + enablePID);
-        telemetry.addLine("Position: " + getPos() + " | Error: " + controller.getPositionError());
-        telemetry.addLine("Up:" + slideE.getPower() + " | Down:" + slideR.getPower());
-        telemetry.addLine("Current: " + isOverCurrent(maxCurrentLimit) + " | Max: " + maxCurrentLimit);
-        telemetry.addLine("Slack: " + isOverCurrent(regressionCurrentLimit) + " | Max: " + regressionCurrentLimit);
-        telemetry.addLine("Up: " + slideE.getCurrent(CurrentUnit.MILLIAMPS) + " | Down: " + slideR.getCurrent(CurrentUnit.MILLIAMPS));
-        telemetry.addLine("Setpoint:" + controller.atSetPoint() + " | " + controller.getSetPoint());
-        if (slideE.getCurrent(CurrentUnit.MILLIAMPS) > currentE){
-            currentE = slideE.getCurrent(CurrentUnit.MILLIAMPS);
-        }
-        if (slideR.getCurrent(CurrentUnit.MILLIAMPS) > currentR){
-            currentR = slideR.getCurrent(CurrentUnit.MILLIAMPS);
-        }
-        telemetry.addLine("Max SlideE: " + currentE + " | Max SlideR: " + currentR);
 
-        dashboardTelemetry.addData("current position", slideE.getCurrentPosition());
-        dashboardTelemetry.addData("desired position", controller.getSetPoint());
+    public static void logTele(Bot.Logging level){
+        switch (level) {
+            case NORMAL:
+                telemetry.addLine("Slides: pid? "+ enablePID + " | SetPoint:" + controller.getSetPoint());
+                telemetry.addData("Position: ", getPos());
+                break;
+            case DISABLED:
+                break;
+            case VERBOSE:
+                telemetry.addLine("Slides: pid? " + enablePID);
+                telemetry.addLine("Position: " + getPos() + " | Error: " + controller.getPositionError());
+                telemetry.addLine("Up:" + slideE.getPower() + " | Down:" + slideR.getPower());
+                telemetry.addLine("Current: " + isOverCurrent(maxCurrentLimit) + " | Max: " + maxCurrentLimit);
+                telemetry.addLine("Slack: " + isOverCurrent(regressionCurrentLimit) + " | Max: " + regressionCurrentLimit);
+                telemetry.addLine("Up: " + slideE.getCurrent(CurrentUnit.MILLIAMPS) + " | Down: " + slideR.getCurrent(CurrentUnit.MILLIAMPS));
+                telemetry.addLine("Setpoint:" + controller.atSetPoint() + " | " + controller.getSetPoint());
+                if (slideE.getCurrent(CurrentUnit.MILLIAMPS) > currentE){
+                    currentE = slideE.getCurrent(CurrentUnit.MILLIAMPS);
+                }
+                if (slideR.getCurrent(CurrentUnit.MILLIAMPS) > currentR){
+                    currentR = slideR.getCurrent(CurrentUnit.MILLIAMPS);
+                }
+                telemetry.addLine("Max SlideE: " + currentE + " | Max SlideR: " + currentR);
+
+                dashboardTelemetry.addData("current position", slideE.getCurrentPosition());
+                dashboardTelemetry.addData("desired position", controller.getSetPoint());
+        }
     }
 }

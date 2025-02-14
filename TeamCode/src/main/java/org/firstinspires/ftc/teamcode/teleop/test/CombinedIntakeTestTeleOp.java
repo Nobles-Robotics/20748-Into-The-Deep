@@ -63,7 +63,7 @@ public class CombinedIntakeTestTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Intake.logTele();
+        Intake.logTele(Bot.Logging.VERBOSE);
         telemetry.update();
 
     }
