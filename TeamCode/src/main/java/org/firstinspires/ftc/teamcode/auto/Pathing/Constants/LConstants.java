@@ -35,7 +35,7 @@ public class LConstants {
         ThreeWheelIMUConstants.rightEncoderDirection = Encoder.REVERSE;
         ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.FORWARD;
         ThreeWheelIMUConstants.IMU_HardwareMapName = "imu";
-        ThreeWheelIMUConstants.IMU_Orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD);
+        ThreeWheelIMUConstants.IMU_Orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
     }
 }
 

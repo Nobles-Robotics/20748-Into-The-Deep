@@ -22,7 +22,6 @@ public class Paths {
     public static double intakeOffset4 = 2;
 
 
-
     public static void init() {
         Collections.addAll(plusFourSpec,
                 createPath( //preload
