@@ -8,6 +8,7 @@ import dev.frozenmilk.mercurial.bindings.BoundGamepad;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
+import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
 import org.firstinspires.ftc.teamcode.teleop.bot.Gripper;
 import org.firstinspires.ftc.teamcode.teleop.bot.Slides;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.util.Features.LoopTimes;
 @Mercurial.Attach
 @Slides.Attach
 @Gripper.Attach
-//@Drive.Attach
+@Drive.Attach
 @BulkReads.Attach
 @LoopTimes.Attach
 @TeleOp(name = "CombinedOuttakeTestTeleOp")

@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleop.test.subsystems;
 
 
+import com.pedropathing.follower.FollowerConstants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
+import dev.frozenmilk.mercurial.commands.Lambda;
 import org.firstinspires.ftc.teamcode.teleop.bot.Bot;
 import org.firstinspires.ftc.teamcode.teleop.bot.Drive;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
@@ -15,9 +18,14 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @TeleOp(name = "DriveTestTeleOp")
 public class DriveTestTeleOp extends OpMode {
     BoundGamepad test;
+    public static DcMotorEx fl, bl, fr, br;
 
     @Override
     public void init() {
+        fl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftFrontMotorName);
+        bl = hardwareMap.get(DcMotorEx.class, FollowerConstants.leftRearMotorName);
+        fr = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightFrontMotorName);
+        br = hardwareMap.get(DcMotorEx.class, FollowerConstants.rightRearMotorName);
         Bot.init();
         test = Mercurial.gamepad1();
 
@@ -40,6 +48,10 @@ public class DriveTestTeleOp extends OpMode {
         test.dpadRight().onTrue(
                 Drive.turnToCommand(-90)
         );
+
+        test.a().onTrue(
+                powertest()
+        );
     }
 
     @Override
@@ -60,7 +72,12 @@ public class DriveTestTeleOp extends OpMode {
 
     @Override
     public void stop() {
-        // the rest is as normal
+        // the r
+        //est is as normal
+    }
+    public static Lambda powertest() {
+        return new Lambda("follow-path-chain")
+                .setInit(() -> fl.setPower(1));
     }
 }
 
