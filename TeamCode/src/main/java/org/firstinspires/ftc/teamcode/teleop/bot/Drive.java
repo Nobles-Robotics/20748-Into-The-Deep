@@ -54,10 +54,9 @@ public class Drive implements Subsystem {
                 x * (isSlowed? slowSpeed : 1),
                 y * (isSlowed? slowSpeed : 1),
                 z * (isSlowed? slowSpeed : 1),
-                true
+                false
         );
         follower.update();
-        telemetry.addData("Chassis Vectors", "x: %f, y: %f, z: %f", x, y, z);
     }
 
     @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented

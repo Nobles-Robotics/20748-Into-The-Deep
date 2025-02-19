@@ -21,7 +21,7 @@ import java.lang.annotation.*;
 @Config
 public class Intake implements Subsystem {
     public static final Intake INSTANCE = new Intake();
-    public static double dropPos = 0;
+    public static double dropPos = 10;
     public static double raisePos = 355;
     public static double storePos = 0;
     public static SimpleServo wrist;
@@ -59,6 +59,10 @@ public class Intake implements Subsystem {
 
         wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 355);
         wrist2 = hMap.get(Servo.class, Names.wrist);
+        wrist2.getController().pwmDisable();
+        wrist2.getController().pwmEnable();
+        wrist2.setDirection(Servo.Direction.REVERSE);
+
 
         spinner = hMap.get(CRServo.class, Names.spinTake);
         colorSensor = hMap.get(ColorSensor.class, Names.color);
@@ -93,14 +97,14 @@ public class Intake implements Subsystem {
 
     public static Lambda raise() {
         return new Lambda("raise-intake")
-                .setInit(() -> {raised = true; stored = false; wrist2.getController().pwmEnable();})
+                .setInit(() -> {raised = true; stored = false;})
                 .setExecute(() -> wrist.turnToAngle(raisePos))
                 .setFinish(() -> !raised || stored);
     }
 
     public static Lambda drop() {
         return new Lambda("drop-intake")
-                .setInit(() -> {raised = false; stored = false; wrist2.getController().pwmEnable();})
+                .setInit(() -> {raised = false; stored = false;})
                 .setExecute(() -> wrist.turnToAngle(dropPos))
                 .setFinish(() -> raised || stored);
     }

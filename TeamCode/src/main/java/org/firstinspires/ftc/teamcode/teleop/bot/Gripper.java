@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
+import com.qualcomm.robotcore.hardware.Servo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -19,6 +20,7 @@ public class Gripper implements Subsystem {
     private Gripper() { }
     private static Telemetry telemetry;
     private static SimpleServo gripperL;
+    private static Servo gripperL2;
 
     public static boolean isGripperOpen = true;
 
@@ -46,7 +48,9 @@ public class Gripper implements Subsystem {
     public void postUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
         gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 355);
-        open();
+        gripperL2 = opMode.getOpMode().hardwareMap.get(Servo.class, Names.wrist);
+        gripperL2.getController().pwmDisable();
+        closeProxy();
     }
 
     @Override
@@ -64,23 +68,39 @@ public class Gripper implements Subsystem {
     @NonNull
     public static Lambda close() {
         return new Lambda("open")
-                .addRequirements(INSTANCE)
-                .setInit(() -> {
+                .setInterruptible(() -> true)
+                .setInit(() -> {isGripperOpen = false;})
+                .setExecute(() -> {
                     gripperL.turnToAngle(0);
-                    isGripperOpen = false;
                 })
-                .setFinish(() -> true);
+                .setFinish(() -> isGripperOpen);
     }
     @NonNull
     public static Lambda open() {
         return new Lambda("close")
-                .addRequirements(INSTANCE)
-                .setInit(() -> {
+                .setInterruptible(() -> true)
+                .setInit(() -> {isGripperOpen = true;})
+                .setExecute(() -> {
                     gripperL.turnToAngle(30);
-                    isGripperOpen = true;
                 })
+                .setFinish(() -> !isGripperOpen);
+    }
+
+    @NonNull
+    public static Lambda openProxy() {
+        return new Lambda("close")
+                .setInit(Gripper::open)
                 .setFinish(() -> true);
     }
+
+    @NonNull
+    public static Lambda closeProxy() {
+        return new Lambda("close")
+                .setInit(Gripper::close)
+                .setFinish(() -> true);
+    }
+
+
 
     @NonNull
     public static Lambda toggle() {

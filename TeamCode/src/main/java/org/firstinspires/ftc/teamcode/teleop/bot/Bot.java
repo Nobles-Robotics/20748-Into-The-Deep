@@ -4,7 +4,6 @@ import com.pedropathing.pathgen.PathBuilder;
 import dev.frozenmilk.dairy.core.FeatureRegistrar;
 import dev.frozenmilk.mercurial.commands.Lambda;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
-import dev.frozenmilk.mercurial.commands.groups.Race;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import dev.frozenmilk.mercurial.commands.util.StateMachine;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
@@ -131,20 +130,20 @@ public class Bot {
                 .withState(State.HOME, (state, name) -> Lambda.from(
                         new Sequential(
                                 new Parallel(
-                                        Arm.home(),
-                                        Slides.runToPosition(home.slidePos),
-                                        Intake.store()
+                                        //Arm.home(),
+                                        Slides.runToPosition(home.slidePos)
+                                        //Intake.store()
                                 ),
                                 Gripper.open()
                         )
                 ))
                 .withState(State.INTAKE_SPEC, (state, name) -> Lambda.from(
                         new Sequential(
-                                new Parallel(
-                                        Arm.home(),
+                                //new Parallel(
+                                        //Arm.home(),
                                         Slides.runToPosition(intakeSpec.slidePos),
-                                        Intake.storeCommand()
-                                ),
+                                        //Intake.storeCommand()
+                                //),
                                 Gripper.close()
                                 //Closing Gripper should happen after everything is all set
                         )
@@ -169,19 +168,19 @@ public class Bot {
                 ))
                 .withState(State.OUTTAKE_HIGH, (state, name) -> Lambda.from(
                         new Sequential(
-                                Arm.home(),
-                                Intake.storeCommand(),
-                            new Race(
-                                    Slides.runToPosition(outtakeHigh.slidePos),
-                                    Gripper.close()
-                            )
+                                //Arm.home(),
+                                //Intake.storeCommand(),
+                            //new Sequential(
+                                    Gripper.close(),
+                                    Slides.runToPosition(outtakeHigh.slidePos)
+                            //)
                         )
                 ))
                 .withState(State.OUTTAKE_LOW, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
                                 Intake.storeCommand(),
-                                new Race(
+                                new Sequential(
                                         Slides.runToPosition(outtakeLow.slidePos),
                                         Gripper.close()
                                 )
@@ -189,12 +188,10 @@ public class Bot {
                 ))
                 .withState(State.SCORE_HIGH, (state, name) -> Lambda.from(
                         new Sequential(
-                                Arm.home(),
-                                Intake.storeCommand(),
-                                new Race(
-                                        Slides.runToPosition(scoreHigh.slidePos),
-                                        Gripper.close()
-                                ),
+                                //Arm.home(),
+                                //Intake.storeCommand(),
+                                Slides.runToPosition(scoreHigh.slidePos),
+
                                 Gripper.open()
                         )
                 ))
@@ -202,7 +199,7 @@ public class Bot {
                         new Sequential(
                                 Arm.home(),
                                 Intake.storeCommand(),
-                                new Race(
+                                new Sequential(
                                         Slides.runToPosition(scoreLow.slidePos),
                                         Gripper.close()
                                 ),
