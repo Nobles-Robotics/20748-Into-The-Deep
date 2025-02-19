@@ -45,7 +45,6 @@ public class LoopTimes implements Feature {
 
         lastTime = currentTime;
         loops += 1;
-
     }
 
     @Override
