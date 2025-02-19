@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
-import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.teamcode.teleop.bot.*;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
@@ -27,8 +26,8 @@ public class MainTeleOp extends OpMode {
 
 
 
-        alex.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SAM));
-        alex.leftBumper().onTrue(Bot.setState(Bot.State.OUTTAKE_SAM));
+        //alex.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SAM));
+        //alex.leftBumper().onTrue(Bot.setState(Bot.State.OUTTAKE_SAM));
 
 //        jeff.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SPEC));
 //        jeff.leftBumper().onTrue(Bot.setState(Bot.State.HOME));
@@ -40,31 +39,24 @@ public class MainTeleOp extends OpMode {
                 Arm.setPower(-0.5)
         );
 
-        alex.rightTrigger().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
-                Drive.slow()
-        );
-        alex.leftTrigger().conditionalBindState().greaterThanEqualTo(0.5).bind().onTrue(
-                Drive.fast()
-        );
-
         alex.a().or(jeff.a()).onTrue(
                 //Bot.setState(Bot.State.INTAKE_SPEC)
-                new Parallel(
+                new Sequential(
                         Slides.runToPosition(Slides.wall),
-                        Gripper.close()
+                        Gripper.runToPosition(Gripper.closePos)
                 )
         );
 
         alex.b().or(jeff.b()).onTrue(
-                new Parallel(
+                new Sequential(
                         Slides.runToPosition(Slides.wall),
-                        Gripper.open()
+                        Gripper.runToPosition(Gripper.openPos)
                 )
         );
 
         alex.x().or(jeff.x()).onTrue(
-                new Parallel(
-                        Gripper.close(),
+                new Sequential(
+                        Gripper.runToPosition(Gripper.closePos),
                         Slides.runToPosition(Slides.highPos)
                 )
         );
@@ -72,18 +64,9 @@ public class MainTeleOp extends OpMode {
         alex.y().or(jeff.y()).onTrue(
                 new Sequential(
                         Slides.runToPosition(Slides.scoreHighPos),
-                        Gripper.open()
+                        Gripper.runToPosition(Gripper.openPos)
                 )
         );
-
-
-//        alex.x().or(jeff.x()).onTrue(
-//                Bot.setState(Bot.State.OUTTAKE_LOW)
-//        );
-//        alex.y().or(jeff.y()).onTrue(
-//                Bot.setState(Bot.State.SCORE_LOW)
-//        );
-
 
         jeff.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
                 Slides.setPowerUp(1)
@@ -106,6 +89,13 @@ public class MainTeleOp extends OpMode {
 
         jeff.dpadDown().onTrue(
                 Slides.resetCommand()
+        );
+
+        alex.leftBumper().onTrue(
+                Drive.slow()
+        );
+        alex.rightBumper().onTrue(
+                Drive.fast()
         );
     }
 

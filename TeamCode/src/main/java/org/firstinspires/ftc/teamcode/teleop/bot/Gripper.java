@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleop.bot;
 
 import androidx.annotation.NonNull;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
-import com.qualcomm.robotcore.hardware.Servo;
 import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
@@ -20,7 +19,9 @@ public class Gripper implements Subsystem {
     private Gripper() { }
     private static Telemetry telemetry;
     private static SimpleServo gripperL;
-    private static Servo gripperL2;
+    public static double gripperLocation = 0;
+    public static double closePos = 0;
+    public static double openPos = 0;
 
     public static boolean isGripperOpen = true;
 
@@ -48,9 +49,7 @@ public class Gripper implements Subsystem {
     public void postUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
         gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 355);
-        gripperL2 = opMode.getOpMode().hardwareMap.get(Servo.class, Names.wrist);
-        gripperL2.getController().pwmDisable();
-        closeProxy();
+        runGripper();
     }
 
     @Override
@@ -65,57 +64,17 @@ public class Gripper implements Subsystem {
     @Override
     public void cleanup(@NonNull Wrapper opMode) {}
 
-    @NonNull
-    public static Lambda close() {
-        return new Lambda("open")
-                .setInterruptible(() -> true)
-                .setInit(() -> {isGripperOpen = false;})
-                .setExecute(() -> {
-                    gripperL.turnToAngle(0);
-                })
-                .setFinish(() -> isGripperOpen);
-    }
-    @NonNull
-    public static Lambda open() {
-        return new Lambda("close")
-                .setInterruptible(() -> true)
-                .setInit(() -> {isGripperOpen = true;})
-                .setExecute(() -> {
-                    gripperL.turnToAngle(30);
-                })
-                .setFinish(() -> !isGripperOpen);
-    }
 
-    @NonNull
-    public static Lambda openProxy() {
-        return new Lambda("close")
-                .setInit(Gripper::open)
-                .setFinish(() -> true);
-    }
-
-    @NonNull
-    public static Lambda closeProxy() {
-        return new Lambda("close")
-                .setInit(Gripper::close)
-                .setFinish(() -> true);
-    }
-
-
-
-    @NonNull
-    public static Lambda toggle() {
-        return new Lambda("toggle")
+    public static Lambda runToPosition(double pos){
+        return new Lambda("set-target-pos")
+                .setInterruptible(true)
                 .setInit(() -> {
-                    if(isGripperOpen){
-                        close();
-                    } else {
-                        open();
-                    }
+                    gripperLocation = pos;
                 })
-                .setFinish(() -> true);
+                .setFinish(() -> (getPositionGripper() == gripperLocation));
     }
 
-    public static double getPositionGripperL(){
+    public static double getPositionGripper(){
         return gripperL.getAngle();
     }
 
@@ -125,16 +84,22 @@ public class Gripper implements Subsystem {
                 .setFinish(() -> true);
     }
 
+    public static Lambda runGripper() {
+        return new Lambda("outtake-pid")
+                .setExecute(() -> gripperL.turnToAngle(gripperLocation))
+                .setFinish(() -> false);
+    }
+
     public static void logTele(Bot.Logging level){
         switch (level) {
             case NORMAL:
-                telemetry.addData("Current Gripper Location", getPositionGripperL());
+                telemetry.addData("Current Gripper Location", getPositionGripper());
                 telemetry.addData("Gripper Open", isGripperOpen);
                 break;
             case DISABLED:
                 break;
             case VERBOSE:
-                telemetry.addData("Current Gripper Location", getPositionGripperL());
+                telemetry.addData("Current Gripper Location", getPositionGripper());
                 telemetry.addData("Gripper Open", isGripperOpen);
         }
     }

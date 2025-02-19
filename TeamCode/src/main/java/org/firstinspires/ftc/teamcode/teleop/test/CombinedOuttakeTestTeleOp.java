@@ -61,26 +61,22 @@ public class CombinedOuttakeTestTeleOp extends OpMode {
         );
         test2.x().onTrue(
                 new Sequential(
-                        Gripper.close(),
+                        Gripper.runToPosition(Gripper.closePos),
                         Slides.runToPosition(Slides.highPos)
                 )
         );
         test2.y().onTrue(
                 new Sequential(
                         Slides.runToPosition(Slides.scoreHighPos),
-                        Gripper.open()
+                        Gripper.runToPosition(Gripper.openPos)
                 )
         );
 
         test2.dpadUp().onTrue(
-                Gripper.close()
+                Gripper.runToPosition(Gripper.closePos)
         );
         test2.dpadDown().onTrue(
-                Gripper.open()
-        );
-
-        test2.dpadRight().onTrue(
-                Gripper.toggle()
+                Gripper.runToPosition(Gripper.openPos)
         );
 
     }

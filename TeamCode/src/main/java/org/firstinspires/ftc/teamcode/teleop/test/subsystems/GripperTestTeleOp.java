@@ -30,10 +30,10 @@ public class GripperTestTeleOp extends OpMode {
         );
 
         test.x().onTrue(
-                Gripper.close()
+                Gripper.runToPosition(Gripper.closePos)
         );
         test.y().onTrue(
-                Gripper.open()
+                Gripper.runToPosition(Gripper.openPos)
         );
     }
     @Override
