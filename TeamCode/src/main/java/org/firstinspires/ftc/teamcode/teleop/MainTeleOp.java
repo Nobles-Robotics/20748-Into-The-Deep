@@ -91,11 +91,34 @@ public class MainTeleOp extends OpMode {
                 Slides.resetCommand()
         );
 
-        alex.leftBumper().onTrue(
+        jeff.dpadLeft().onTrue(
+                Slides.setClimbOver(true)
+        );
+        jeff.dpadRight().onTrue(
+                Slides.setClimbOver(false)
+        );
+        jeff.dpadUp().onTrue(
+                Slides.climb()
+        );
+
+        alex.rightBumper().onTrue(
                 Drive.slow()
         );
-        alex.rightBumper().onTrue(
+        alex.rightBumper().onFalse(
                 Drive.fast()
+        );
+
+        alex.dpadUp().onTrue(
+                Drive.turnToCommand(0)
+        );
+        alex.dpadDown().onTrue(
+                Drive.turnToCommand(180)
+        );
+        alex.dpadLeft().onTrue(
+                Drive.turnToCommand(90)
+        );
+        alex.dpadRight().onTrue(
+                Drive.turnToCommand(-90)
         );
     }
 

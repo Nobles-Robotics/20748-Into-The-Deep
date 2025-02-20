@@ -83,6 +83,7 @@ public class Drive implements Subsystem {
         if (Bot.flavor == OpModeMeta.Flavor.AUTONOMOUS) {
             follower.setStartingPose(new Pose(9, 65, 0));
         } else {
+            follower.setStartingPose(new Pose(0, 0, 0));
             setDefaultCommand(drive(Mercurial.gamepad1()));
         }
 
@@ -96,6 +97,11 @@ public class Drive implements Subsystem {
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
         if (Bot.flavor.equals(OpModeMeta.Flavor.TELEOP)) follower.startTeleopDrive();
+//        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     @Override

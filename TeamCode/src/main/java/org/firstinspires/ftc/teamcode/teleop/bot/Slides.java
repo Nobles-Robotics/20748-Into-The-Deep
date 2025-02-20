@@ -94,9 +94,15 @@ public class Slides implements Subsystem {
 
     public static void setPower(double power){
         if (power > 0) {
+//            if (power > 0.5){
+//                power = 0.5;
+//            }
             setPowerE(power);
             //setPowerR(-power * 1.75, true);
         } else if (power < 0) {
+//            if (power < -0.5){
+//                power = -0.5;
+//            }
             setPowerE(power);
             //setPowerR(-power * 2, false);
         } else {
@@ -192,7 +198,6 @@ public class Slides implements Subsystem {
 
     public static Lambda climb(){
         return new Lambda("climb-slides")
-                //TODO: CLIMB LOGIC :sob:
                 .setInit(() -> {
                     enablePID = false;
                     slideR.setPower(-1);
@@ -200,6 +205,13 @@ public class Slides implements Subsystem {
                 .setFinish(() -> climbOver)
                 .setEnd((interrupted) -> slideR.setPower(0.4));
     }
+
+    public static Lambda setClimbOver(boolean over){
+        return new Lambda("remove-regressor-slack")
+                .setInit(() -> climbOver = over)
+                .setFinish(() -> true);
+    }
+
     public static Lambda removeSlack(){
         return new Lambda("remove-regressor-slack")
                 .setInit(() -> slideR.setPower(-1))

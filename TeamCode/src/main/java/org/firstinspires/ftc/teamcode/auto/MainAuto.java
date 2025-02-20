@@ -47,7 +47,7 @@ public class MainAuto extends OpMode {
                         Drive.push(outtakePower, outtakeDelay),
                         Bot.setState(Bot.State.SCORE_HIGH)
                 ),
-                Gripper.open(),
+                Gripper.runToPosition(Gripper.openPos),
 
                 // Pushing samples
                 new Parallel(
@@ -63,7 +63,7 @@ public class MainAuto extends OpMode {
 
                 // plus 1 intake
                 Drive.push(intakePower, intakeDelay),
-                Gripper.close(),
+                Gripper.runToPosition(Gripper.closePos),
 
                 // plus 1 outtake
                 new Parallel(
@@ -75,7 +75,7 @@ public class MainAuto extends OpMode {
                         Bot.setState(Bot.State.SCORE_HIGH)
                 ),
                 Drive.followPath(Paths.plusFourSpec.get(9)),
-                Gripper.open(),
+                Gripper.runToPosition(Gripper.openPos),
 
                 // plus 2 intake
                 new Parallel(
@@ -83,7 +83,7 @@ public class MainAuto extends OpMode {
                         Drive.followPath(Paths.plusFourSpec.get(10))
                 ),
                 Drive.push(intakePower, intakeDelay),
-                Gripper.close(),
+                Gripper.runToPosition(Gripper.closePos),
 
                 // plus 2 outtake
                 new Parallel(
@@ -95,7 +95,7 @@ public class MainAuto extends OpMode {
                         Bot.setState(Bot.State.SCORE_HIGH)
                 ),
                 Drive.followPath(Paths.plusFourSpec.get(12)),
-                Gripper.open(),
+                Gripper.runToPosition(Gripper.openPos),
 
                 // plus 3 intake
                 new Parallel(
@@ -103,7 +103,7 @@ public class MainAuto extends OpMode {
                         Drive.followPath(Paths.plusFourSpec.get(13))
                 ),
                 Drive.push(intakePower, intakeDelay),
-                Gripper.close(),
+                Gripper.runToPosition(Gripper.closePos),
 
                 // plus 3 outtake
                 new Parallel(
@@ -115,7 +115,7 @@ public class MainAuto extends OpMode {
                         Bot.setState(Bot.State.SCORE_HIGH)
                 ),
                 Drive.followPath(Paths.plusFourSpec.get(15)),
-                Gripper.open(),
+                Gripper.runToPosition(Gripper.openPos),
 
                 // plus 4 intake
                 new Parallel(
@@ -124,7 +124,7 @@ public class MainAuto extends OpMode {
                 ),
 
                 Drive.push(intakePower, intakeDelay),
-                Gripper.close(),
+                Gripper.runToPosition(Gripper.closePos),
 
                 // plus 4 outtake
                 new Parallel(
@@ -135,7 +135,7 @@ public class MainAuto extends OpMode {
                         Drive.push(outtakePower, outtakeDelay),
                         Bot.setState(Bot.State.SCORE_HIGH)
                 ),
-                Gripper.open(),
+                Gripper.runToPosition(Gripper.openPos),
 
                 // park
                 new Parallel(

@@ -21,7 +21,7 @@ public class Gripper implements Subsystem {
     private static SimpleServo gripperL;
     public static double gripperLocation = 0;
     public static double closePos = 0;
-    public static double openPos = 0;
+    public static double openPos = 30;
 
     public static boolean isGripperOpen = true;
 
@@ -46,9 +46,13 @@ public class Gripper implements Subsystem {
     }
 
     @Override
-    public void postUserInitHook(@NonNull Wrapper opMode) {
+    public void preUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
         gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 355);
+        setDefaultCommand(runGripper());
+    }
+    @Override
+    public void postUserInitHook(@NonNull Wrapper opMode) {
         runGripper();
     }
 
@@ -67,11 +71,10 @@ public class Gripper implements Subsystem {
 
     public static Lambda runToPosition(double pos){
         return new Lambda("set-target-pos")
-                .setInterruptible(true)
                 .setInit(() -> {
                     gripperLocation = pos;
                 })
-                .setFinish(() -> (getPositionGripper() == gripperLocation));
+                .setFinish(() -> true);
     }
 
     public static double getPositionGripper(){

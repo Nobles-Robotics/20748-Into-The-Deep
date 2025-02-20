@@ -50,6 +50,7 @@ public class CombinedIntakeTestTeleOp extends OpMode {
                 Intake.spintake(0)
         );
     }
+
     @Override
     public void init_loop() {
         // the rest is as normal
