@@ -64,6 +64,7 @@ public class Arm implements Subsystem {
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         controller.setTolerance(tolerance);
+        setDefaultCommand(runPID());
 
     }
 

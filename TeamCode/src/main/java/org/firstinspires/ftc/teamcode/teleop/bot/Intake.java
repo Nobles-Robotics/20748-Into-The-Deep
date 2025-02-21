@@ -24,6 +24,7 @@ public class Intake implements Subsystem {
     public static double dropPos = 10;
     public static double raisePos = 355;
     public static double storePos = 0;
+    public static double intakeLocation = 0;
     public static SimpleServo wrist;
     public static Servo wrist2;
     public static CRServo spinner;
@@ -67,11 +68,12 @@ public class Intake implements Subsystem {
         spinner = hMap.get(CRServo.class, Names.spinTake);
         colorSensor = hMap.get(ColorSensor.class, Names.color);
         telemetry = opMode.getOpMode().telemetry;
-
+        setDefaultCommand(runGripper());
     }
 
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode) {
+        runGripper();
     }
 
 
@@ -95,30 +97,19 @@ public class Intake implements Subsystem {
                 .setFinish(() -> true);
     }
 
-    public static Lambda raise() {
-        return new Lambda("raise-intake")
-                .setInit(() -> {raised = true; stored = false;})
-                .setExecute(() -> wrist.turnToAngle(raisePos))
-                .setFinish(() -> !raised || stored);
-    }
-
-    public static Lambda drop() {
-        return new Lambda("drop-intake")
-                .setInit(() -> {raised = false; stored = false;})
-                .setExecute(() -> wrist.turnToAngle(dropPos))
-                .setFinish(() -> raised || stored);
-    }
-
-    public static Lambda store() {
-        return new Lambda("store-intake")
+    public static Lambda runToPosition(double pos){
+        return new Lambda("set-target-pos")
                 .setInit(() -> {
-                    stored = true;
-                    wrist.turnToAngle(raisePos);
+                    intakeLocation = pos;
                 })
-                .setFinish(() -> true)
-                .setEnd((interrupted) -> {wrist2.getController().pwmDisable();});
+                .setFinish(() -> true);
     }
 
+    public static Lambda runGripper() {
+        return new Lambda("outtake-pid")
+                .setExecute(() -> wrist.turnToAngle(intakeLocation))
+                .setFinish(() -> false);
+    }
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
                 .setInit(() -> wrist.rotateByAngle(angle))
@@ -126,13 +117,10 @@ public class Intake implements Subsystem {
     }
 
     public static Lambda raiseCommand() {
-        return new Lambda("raise-command").setInit(Intake::raise).setFinish(() -> true);
+        return new Lambda("raise-command").setInit(() -> intakeLocation = 355).setFinish(() -> true);
     }
     public static Lambda dropCommand() {
-        return new Lambda("raise-command").setInit(Intake::drop).setFinish(() -> true);
-    }
-    public static Lambda storeCommand() {
-        return new Lambda("raise-command").setInit(Intake::store).setFinish(() -> true);
+        return new Lambda("raise-command").setInit(() -> intakeLocation = 0).setFinish(() -> true);
     }
 
     public static void logTele(Bot.Logging level){

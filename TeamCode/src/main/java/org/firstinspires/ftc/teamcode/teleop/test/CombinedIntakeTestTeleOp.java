@@ -32,14 +32,14 @@ public class CombinedIntakeTestTeleOp extends OpMode {
         );
 
         test2.x().onTrue(
-                Intake.raise()
+                Intake.raiseCommand()
         );
         test2.y().onTrue(
-                Intake.drop()
+                Intake.dropCommand()
         );
-        test2.b().onTrue(
-                Intake.store()
-        );
+//        test2.b().onTrue(
+//                Intake.store()
+//        );
         test2.dpadUp().onTrue(
                 Intake.spintake(1)
         );
