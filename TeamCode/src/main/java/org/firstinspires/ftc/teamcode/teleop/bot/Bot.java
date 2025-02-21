@@ -144,7 +144,7 @@ public class Bot {
                                         Slides.runToPosition(intakeSpec.slidePos),
                                         //Intake.storeCommand()
                                 //),
-                                Gripper.runToPosition(Gripper.closePos)
+                                Gripper.runToPosition(Gripper.openPos)
                                 //Closing Gripper should happen after everything is all set
                         )
                 ))
@@ -179,7 +179,7 @@ public class Bot {
                 .withState(State.OUTTAKE_LOW, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
-                                Intake.storeCommand(),
+                                //Intake.storeCommand(),
                                 new Sequential(
                                         Slides.runToPosition(outtakeLow.slidePos),
                                         Gripper.runToPosition(Gripper.closePos)
@@ -192,14 +192,14 @@ public class Bot {
                                 //Arm.home(),
                                 //Intake.storeCommand(),
                                 Slides.runToPosition(scoreHigh.slidePos),
-
                                 Gripper.runToPosition(Gripper.openPos)
+
                         )
                 ))
                 .withState(State.SCORE_LOW, (state, name) -> Lambda.from(
                         new Sequential(
                                 Arm.home(),
-                                Intake.storeCommand(),
+                                //Intake.storeCommand(),
                                 new Sequential(
                                         Slides.runToPosition(scoreLow.slidePos),
                                         Gripper.runToPosition(Gripper.closePos)

@@ -5,9 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.commands.groups.Parallel;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
+import dev.frozenmilk.mercurial.commands.util.Wait;
+import org.firstinspires.ftc.teamcode.auto.Pathing.Paths;
 import org.firstinspires.ftc.teamcode.teleop.bot.*;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
-import org.firstinspires.ftc.teamcode.auto.Pathing.Paths;
 
 @Mercurial.Attach
 @Drive.Attach
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.auto.Pathing.Paths;
 @Gripper.Attach
 @Arm.Attach
 @Intake.Attach
-@Autonomous(name = "MainAuto")
+@Autonomous
 public class MainAuto extends OpMode {
 
     public static long intakeDelay = 250;
@@ -27,8 +28,8 @@ public class MainAuto extends OpMode {
     @Override
     public void init() {
         Bot.init();
-
-        Bot.stateMachine.setState(Bot.State.INTAKE_SPEC);
+        Gripper.runToPosition(Gripper.closePos);
+        Slides.runToPosition(Slides.wall);
     }
 
     @Override
@@ -38,28 +39,28 @@ public class MainAuto extends OpMode {
     @Override
     public void start() {
         new Sequential(
+                Slides.runToPosition(Slides.highPos),
+
                 // Preload
                 new Parallel(
-                        Bot.setState(Bot.State.OUTTAKE_HIGH),
-                        Drive.followPath(Paths.plusFourSpec.get(0))
+                        Drive.followPath(Paths.fiveSpecs.get(0))
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
-                        Bot.setState(Bot.State.SCORE_HIGH)
+                        Slides.runToPosition(Slides.scoreHighPos)
                 ),
-                Gripper.runToPosition(Gripper.openPos),
 
                 // Pushing samples
                 new Parallel(
-                        Drive.followPath(Paths.plusFourSpec.get(1)),
-                        Bot.setState(Bot.State.INTAKE_SPEC)
+                        Drive.followPath(Paths.fiveSpecs.get(1)),
+                        new Sequential(
+                                Gripper.runToPosition(Gripper.openPos),
+                                new Wait(0.2),
+                                Slides.runToPosition(Slides.wall)
+                        )
                 ),
-                Drive.followPath(Paths.plusFourSpec.get(2)),
-                Drive.followPath(Paths.plusFourSpec.get(3)),
-                Drive.followPath(Paths.plusFourSpec.get(4)),
-                Drive.followPath(Paths.plusFourSpec.get(5)),
-                Drive.followPath(Paths.plusFourSpec.get(6)),
-                Drive.followPath(Paths.plusFourSpec.get(7)),
+                Drive.followPathChain(Paths.robotPush),
+                Drive.followPath(Paths.fiveSpecs.get(7), true),
 
                 // plus 1 intake
                 Drive.push(intakePower, intakeDelay),
@@ -67,60 +68,76 @@ public class MainAuto extends OpMode {
 
                 // plus 1 outtake
                 new Parallel(
-                        Bot.setState(Bot.State.OUTTAKE_HIGH),
-                        Drive.followPath(Paths.plusFourSpec.get(8))
+                        Drive.followPath(Paths.fiveSpecs.get(8)),
+                        Slides.runToPosition(Slides.highPos)
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
-                        Bot.setState(Bot.State.SCORE_HIGH)
+                        Slides.runToPosition(Slides.scoreHighPos)
                 ),
-                Drive.followPath(Paths.plusFourSpec.get(9)),
+//                Drive.followPath(Paths.fiveSpecs.get(9)),
                 Gripper.runToPosition(Gripper.openPos),
 
                 // plus 2 intake
                 new Parallel(
-                        Bot.setState(Bot.State.INTAKE_SPEC),
-                        Drive.followPath(Paths.plusFourSpec.get(10))
+                        Drive.followPath(Paths.fiveSpecs.get(10)),
+                        new Sequential(
+                                Gripper.runToPosition(Gripper.openPos),
+                                new Wait(0.2),
+                                Gripper.runToPosition(Gripper.closePos)
+                        )
                 ),
                 Drive.push(intakePower, intakeDelay),
                 Gripper.runToPosition(Gripper.closePos),
 
                 // plus 2 outtake
                 new Parallel(
-                        Bot.setState(Bot.State.OUTTAKE_HIGH),
-                        Drive.followPath(Paths.plusFourSpec.get(11))
+                        Drive.followPath(Paths.fiveSpecs.get(11)),
+                        Slides.runToPosition(Slides.highPos)
+
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
-                        Bot.setState(Bot.State.SCORE_HIGH)
+                        Slides.runToPosition(Slides.scoreHighPos)
+
                 ),
-                Drive.followPath(Paths.plusFourSpec.get(12)),
+//                Drive.followPath(Paths.fiveSpecs.get(12)),
                 Gripper.runToPosition(Gripper.openPos),
 
                 // plus 3 intake
                 new Parallel(
-                        Bot.setState(Bot.State.INTAKE_SPEC),
-                        Drive.followPath(Paths.plusFourSpec.get(13))
+                        Drive.followPath(Paths.fiveSpecs.get(13)),
+                        new Sequential(
+                                Gripper.runToPosition(Gripper.openPos),
+                                new Wait(0.2),
+                                Gripper.runToPosition(Gripper.closePos)
+                        )
                 ),
                 Drive.push(intakePower, intakeDelay),
                 Gripper.runToPosition(Gripper.closePos),
 
                 // plus 3 outtake
                 new Parallel(
-                        Bot.setState(Bot.State.OUTTAKE_HIGH),
-                        Drive.followPath(Paths.plusFourSpec.get(14))
+                        Drive.followPath(Paths.fiveSpecs.get(14)),
+                        Slides.runToPosition(Slides.highPos)
+
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
-                        Bot.setState(Bot.State.SCORE_HIGH)
+                        Slides.runToPosition(Slides.scoreHighPos)
+
                 ),
-                Drive.followPath(Paths.plusFourSpec.get(15)),
+//                Drive.followPath(Paths.fiveSpecs.get(15)),
                 Gripper.runToPosition(Gripper.openPos),
 
                 // plus 4 intake
                 new Parallel(
-                        Bot.setState(Bot.State.INTAKE_SPEC),
-                        Drive.followPath(Paths.plusFourSpec.get(16))
+                        Drive.followPath(Paths.fiveSpecs.get(16)),
+                        new Sequential(
+                                Gripper.runToPosition(Gripper.openPos),
+                                new Wait(0.2),
+                                Gripper.runToPosition(Gripper.closePos)
+                        )
                 ),
 
                 Drive.push(intakePower, intakeDelay),
@@ -128,19 +145,24 @@ public class MainAuto extends OpMode {
 
                 // plus 4 outtake
                 new Parallel(
-                        Bot.setState(Bot.State.OUTTAKE_HIGH),
-                        Drive.followPath(Paths.plusFourSpec.get(17))
+                        Drive.followPath(Paths.fiveSpecs.get(17)),
+                        Slides.runToPosition(Slides.highPos)
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
-                        Bot.setState(Bot.State.SCORE_HIGH)
+                        Slides.runToPosition(Slides.scoreHighPos)
+
                 ),
                 Gripper.runToPosition(Gripper.openPos),
 
                 // park
                 new Parallel(
-                        Bot.setState(Bot.State.INTAKE_SPEC),
-                        Drive.followPath(Paths.plusFourSpec.get(18))
+                        Drive.followPath(Paths.fiveSpecs.get(18)),
+                        new Sequential(
+                                Gripper.runToPosition(Gripper.openPos),
+                                new Wait(0.2),
+                                Slides.runToPosition(Slides.wall)
+                        )
                 )
         ).schedule();
     }
