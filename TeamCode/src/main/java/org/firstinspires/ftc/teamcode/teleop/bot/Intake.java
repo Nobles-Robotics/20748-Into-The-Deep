@@ -11,6 +11,7 @@ import dev.frozenmilk.dairy.core.dependency.Dependency;
 import dev.frozenmilk.dairy.core.dependency.annotation.SingleAnnotation;
 import dev.frozenmilk.dairy.core.wrapper.Wrapper;
 import dev.frozenmilk.mercurial.commands.Lambda;
+import dev.frozenmilk.mercurial.commands.util.Wait;
 import dev.frozenmilk.mercurial.subsystems.Subsystem;
 import kotlin.annotation.MustBeDocumented;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -35,11 +36,16 @@ public class Intake implements Subsystem {
     public static boolean raised;
     public static boolean stored;
     public static String color;
-    private Intake() {}
 
-    @Retention(RetentionPolicy.RUNTIME) @Target(ElementType.TYPE) @MustBeDocumented
+    private Intake() {
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @MustBeDocumented
     @Inherited
-    public @interface Attach { }
+    public @interface Attach {
+    }
 
     private Dependency<?> dependency = Subsystem.DEFAULT_DEPENDENCY.and(new SingleAnnotation<>(Attach.class));
 
@@ -60,44 +66,41 @@ public class Intake implements Subsystem {
 
         wrist = new SimpleServo(opMode.getOpMode().hardwareMap, Names.wrist, 0, 355);
         wrist2 = hMap.get(Servo.class, Names.wrist);
-        wrist2.getController().pwmDisable();
-        wrist2.getController().pwmEnable();
         wrist2.setDirection(Servo.Direction.REVERSE);
-
 
         spinner = hMap.get(CRServo.class, Names.spinTake);
         colorSensor = hMap.get(ColorSensor.class, Names.color);
         telemetry = opMode.getOpMode().telemetry;
-        setDefaultCommand(runGripper());
+        //setDefaultCommand(runGripper());
     }
 
     @Override
     public void postUserStartHook(@NonNull Wrapper opMode) {
-        runGripper();
+        //runGripper();
     }
 
 
-    public static double getPositionWrist(){
+    public static double getPositionWrist() {
         return wrist.getAngle();
     }
 
 
-    private static void spin(double power){
+    private static void spin(double power) {
         spinner.setPower(power);
     }
 
-    private static void stop(){
+    private static void stop() {
         spinner.setPower(0);
     }
 
-    public static Lambda spintake(double power){
+    public static Lambda spintake(double power) {
         return new Lambda("spintake")
                 .addRequirements(spinner)
                 .setExecute(() -> spin(power))
                 .setFinish(() -> true);
     }
 
-    public static Lambda runToPosition(double pos){
+    public static Lambda runToPosition(double pos) {
         return new Lambda("set-target-pos")
                 .setInit(() -> {
                     intakeLocation = pos;
@@ -110,20 +113,35 @@ public class Intake implements Subsystem {
                 .setExecute(() -> wrist.turnToAngle(intakeLocation))
                 .setFinish(() -> false);
     }
-    public static Lambda runManual(double angle){
+
+    public static Lambda runManual(double angle) {
         return new Lambda("set-power-up")
                 .setInit(() -> wrist.rotateByAngle(angle))
+                .setFinish(() -> true);
+    }
+
+    public static Lambda initNonsense() {
+        return new Lambda("set-power-up")
+                .setInit(() -> {
+                    intakeLocation=355;
+                    //wrist2.getController().pwmDisable();
+                    new Wait(1);
+                    wrist2.getController().setServoPosition(0, 355);
+                    //wrist2.getController().pwmEnable();
+                    intakeLocation=355;
+                })
                 .setFinish(() -> true);
     }
 
     public static Lambda raiseCommand() {
         return new Lambda("raise-command").setInit(() -> intakeLocation = 355).setFinish(() -> true);
     }
+
     public static Lambda dropCommand() {
         return new Lambda("raise-command").setInit(() -> intakeLocation = 0).setFinish(() -> true);
     }
 
-    public static void logTele(Bot.Logging level){
+    public static void logTele(Bot.Logging level) {
         switch (level) {
             case NORMAL:
                 telemetry.addData("Current Wrist Location", getPositionWrist());
@@ -136,22 +154,22 @@ public class Intake implements Subsystem {
             case VERBOSE:
                 telemetry.addData("Current Wrist Location", getPositionWrist());
                 telemetry.addData("SpinTake Power", spinner.getPower());
-                telemetry.addData("Raised: " , raised);
+                telemetry.addData("Raised: ", raised);
                 telemetry.addData("Stored: ", stored);
                 computeColor();
 
         }
     }
 
-    public static void computeColor(){
+    public static void computeColor() {
         double red = colorSensor.red();
         double green = colorSensor.green();
         double blue = colorSensor.blue();
         telemetry.addLine("Red" + red + " | Blue" + blue + " | Green" + green);
 
-        if (red>green*1.3 && red>blue*1.3){
+        if (red > green * 1.3 && red > blue * 1.3) {
             telemetry.addLine("Color: Red");
-        } else if (blue>green*1.3 && blue>red*1.3){
+        } else if (blue > green * 1.3 && blue > red * 1.3) {
             telemetry.addLine("Color: Blue");
         } else {
             telemetry.addLine("Nothing (or yellow :sob:)");

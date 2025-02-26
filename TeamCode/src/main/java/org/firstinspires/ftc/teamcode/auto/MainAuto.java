@@ -28,7 +28,7 @@ public class MainAuto extends OpMode {
     @Override
     public void init() {
         Bot.init();
-        Gripper.runToPosition(Gripper.closePos);
+        Gripper.close();
         Slides.runToPosition(Slides.wall);
     }
 
@@ -54,8 +54,7 @@ public class MainAuto extends OpMode {
                 new Parallel(
                         Drive.followPath(Paths.fiveSpecs.get(1)),
                         new Sequential(
-                                Gripper.runToPosition(Gripper.openPos),
-                                new Wait(0.2),
+                                Gripper.open(),
                                 Slides.runToPosition(Slides.wall)
                         )
                 ),
@@ -64,11 +63,14 @@ public class MainAuto extends OpMode {
 
                 // plus 1 intake
                 Drive.push(intakePower, intakeDelay),
-                Gripper.runToPosition(Gripper.closePos),
+                Gripper.close(),
 
                 // plus 1 outtake
                 new Parallel(
-                        Drive.followPath(Paths.fiveSpecs.get(8)),
+                        new Sequential(
+                                new Wait(0.3),
+                                Drive.followPath(Paths.fiveSpecs.get(8))
+                                ),
                         Slides.runToPosition(Slides.highPos)
                 ),
                 new Parallel(
@@ -76,25 +78,27 @@ public class MainAuto extends OpMode {
                         Slides.runToPosition(Slides.scoreHighPos)
                 ),
 //                Drive.followPath(Paths.fiveSpecs.get(9)),
-                Gripper.runToPosition(Gripper.openPos),
+                Gripper.open(),
 
                 // plus 2 intake
                 new Parallel(
                         Drive.followPath(Paths.fiveSpecs.get(10)),
                         new Sequential(
-                                Gripper.runToPosition(Gripper.openPos),
+                                Gripper.open(),
                                 new Wait(0.2),
-                                Gripper.runToPosition(Gripper.closePos)
+                                Gripper.close()
                         )
                 ),
                 Drive.push(intakePower, intakeDelay),
-                Gripper.runToPosition(Gripper.closePos),
+                Gripper.close(),
 
                 // plus 2 outtake
                 new Parallel(
-                        Drive.followPath(Paths.fiveSpecs.get(11)),
+                        new Sequential(
+                                new Wait(0.3),
+                                Drive.followPath(Paths.fiveSpecs.get(11))
+                        ),
                         Slides.runToPosition(Slides.highPos)
-
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
@@ -102,25 +106,27 @@ public class MainAuto extends OpMode {
 
                 ),
 //                Drive.followPath(Paths.fiveSpecs.get(12)),
-                Gripper.runToPosition(Gripper.openPos),
+                Gripper.open(),
 
                 // plus 3 intake
                 new Parallel(
                         Drive.followPath(Paths.fiveSpecs.get(13)),
                         new Sequential(
-                                Gripper.runToPosition(Gripper.openPos),
+                                Gripper.open(),
                                 new Wait(0.2),
-                                Gripper.runToPosition(Gripper.closePos)
+                                Gripper.close()
                         )
                 ),
                 Drive.push(intakePower, intakeDelay),
-                Gripper.runToPosition(Gripper.closePos),
+                Gripper.close(),
 
                 // plus 3 outtake
                 new Parallel(
-                        Drive.followPath(Paths.fiveSpecs.get(14)),
+                        new Sequential(
+                                new Wait(0.3),
+                                Drive.followPath(Paths.fiveSpecs.get(14))
+                        ),
                         Slides.runToPosition(Slides.highPos)
-
                 ),
                 new Parallel(
                         Drive.push(outtakePower, outtakeDelay),
@@ -128,24 +134,27 @@ public class MainAuto extends OpMode {
 
                 ),
 //                Drive.followPath(Paths.fiveSpecs.get(15)),
-                Gripper.runToPosition(Gripper.openPos),
+                Gripper.open(),
 
                 // plus 4 intake
                 new Parallel(
                         Drive.followPath(Paths.fiveSpecs.get(16)),
                         new Sequential(
-                                Gripper.runToPosition(Gripper.openPos),
+                                Gripper.open(),
                                 new Wait(0.2),
-                                Gripper.runToPosition(Gripper.closePos)
+                                Gripper.close()
                         )
                 ),
 
                 Drive.push(intakePower, intakeDelay),
-                Gripper.runToPosition(Gripper.closePos),
+                Gripper.close(),
 
                 // plus 4 outtake
                 new Parallel(
-                        Drive.followPath(Paths.fiveSpecs.get(17)),
+                        new Sequential(
+                                new Wait(0.3),
+                                Drive.followPath(Paths.fiveSpecs.get(17))
+                        ),
                         Slides.runToPosition(Slides.highPos)
                 ),
                 new Parallel(
@@ -153,13 +162,13 @@ public class MainAuto extends OpMode {
                         Slides.runToPosition(Slides.scoreHighPos)
 
                 ),
-                Gripper.runToPosition(Gripper.openPos),
+                Gripper.open(),
 
                 // park
                 new Parallel(
                         Drive.followPath(Paths.fiveSpecs.get(18)),
                         new Sequential(
-                                Gripper.runToPosition(Gripper.openPos),
+                                Gripper.open(),
                                 new Wait(0.2),
                                 Slides.runToPosition(Slides.wall)
                         )

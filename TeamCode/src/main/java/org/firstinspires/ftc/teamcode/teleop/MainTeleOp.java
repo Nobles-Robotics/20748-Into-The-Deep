@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 import dev.frozenmilk.mercurial.Mercurial;
 import dev.frozenmilk.mercurial.bindings.BoundGamepad;
 import dev.frozenmilk.mercurial.commands.groups.Sequential;
 import org.firstinspires.ftc.teamcode.teleop.bot.*;
 import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
+import org.firstinspires.ftc.teamcode.util.Names;
 
 @Mercurial.Attach
 @Drive.Attach
@@ -18,8 +20,11 @@ import org.firstinspires.ftc.teamcode.util.Features.BulkReads;
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
 
+    Servo wrist2;
     @Override
     public void init() {
+
+        wrist2 = hardwareMap.get(Servo.class, Names.wrist);
         Bot.init();
         BoundGamepad alex = Mercurial.gamepad1();
         BoundGamepad jeff = Mercurial.gamepad2();
@@ -43,20 +48,20 @@ public class MainTeleOp extends OpMode {
                 //Bot.setState(Bot.State.INTAKE_SPEC)
                 new Sequential(
                         Slides.runToPosition(Slides.wall),
-                        Gripper.runToPosition(Gripper.closePos)
+                        Gripper.close()
                 )
         );
 
         alex.b().or(jeff.b()).onTrue(
                 new Sequential(
                         Slides.runToPosition(Slides.wall),
-                        Gripper.runToPosition(Gripper.openPos)
+                        Gripper.open()
                 )
         );
 
         alex.x().or(jeff.x()).onTrue(
                 new Sequential(
-                        Gripper.runToPosition(Gripper.closePos),
+                        Gripper.close(),
                         Slides.runToPosition(Slides.highPos)
                 )
         );
@@ -64,7 +69,7 @@ public class MainTeleOp extends OpMode {
         alex.y().or(jeff.y()).onTrue(
                 new Sequential(
                         Slides.runToPosition(Slides.scoreHighPos),
-                        Gripper.runToPosition(Gripper.openPos)
+                        Gripper.open()
                 )
         );
 
@@ -120,6 +125,10 @@ public class MainTeleOp extends OpMode {
         alex.dpadRight().onTrue(
                 Drive.turnToCommand(-90)
         );
+        alex.back().onTrue(
+                Intake.initNonsense()
+        );
+        wrist2.setPosition(355);
     }
 
     @Override
@@ -140,6 +149,7 @@ public class MainTeleOp extends OpMode {
         Intake.logTele(Bot.Logging.NORMAL);
         Slides.logTele(Bot.Logging.NORMAL);
         telemetry.update();
+        wrist2.setPosition(355);
     }
 
     @Override

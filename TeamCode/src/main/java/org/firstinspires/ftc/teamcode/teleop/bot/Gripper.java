@@ -49,11 +49,11 @@ public class Gripper implements Subsystem {
     public void preUserInitHook(@NonNull Wrapper opMode) {
         telemetry = opMode.getOpMode().telemetry;
         gripperL = new SimpleServo(opMode.getOpMode().hardwareMap, Names.gripper, 0, 355);
-        setDefaultCommand(runGripper());
+        //setDefaultCommand(runGripper());
     }
     @Override
     public void postUserInitHook(@NonNull Wrapper opMode) {
-        runGripper();
+        //runGripper();
     }
 
     @Override
@@ -84,6 +84,18 @@ public class Gripper implements Subsystem {
     public static Lambda runManual(double angle){
         return new Lambda("set-power-up")
                 .setInit(() -> gripperL.rotateByAngle(angle))
+                .setFinish(() -> true);
+    }
+
+    public static Lambda close(){
+        return new Lambda("set-power-up")
+                .setInit(() -> gripperL.turnToAngle(0))
+                .setFinish(() -> true);
+    }
+
+    public static Lambda open(){
+        return new Lambda("set-power-up")
+                .setInit(() -> gripperL.rotateByAngle(30))
                 .setFinish(() -> true);
     }
 
