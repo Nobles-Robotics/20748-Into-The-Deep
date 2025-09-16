@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.util.Names;
 @Slides.Attach
 @BulkReads.Attach
 @Gripper.Attach
-@Arm.Attach
 @Intake.Attach
 @TeleOp(name = "MainTeleOp")
 public class MainTeleOp extends OpMode {
@@ -24,7 +23,6 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
 
-        wrist2 = hardwareMap.get(Servo.class, Names.wrist);
         Bot.init();
         BoundGamepad alex = Mercurial.gamepad1();
         BoundGamepad jeff = Mercurial.gamepad2();
@@ -37,41 +35,8 @@ public class MainTeleOp extends OpMode {
 //        jeff.rightBumper().onTrue(Bot.setState(Bot.State.INTAKE_SPEC));
 //        jeff.leftBumper().onTrue(Bot.setState(Bot.State.HOME));
 
-        alex.leftStickButton().and(alex.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind()).whileTrue(
-                Arm.setPower(0.5)
-        );
-        alex.leftStickButton().and(alex.leftStickY().conditionalBindState().lessThanEqualTo(-0.5).bind()).whileFalse(
-                Arm.setPower(-0.5)
-        );
 
-        alex.a().or(jeff.a()).onTrue(
-                //Bot.setState(Bot.State.INTAKE_SPEC)
-                new Sequential(
-                        Slides.runToPosition(Slides.wall),
-                        Gripper.close()
-                )
-        );
 
-        alex.b().or(jeff.b()).onTrue(
-                new Sequential(
-                        Slides.runToPosition(Slides.wall),
-                        Gripper.open()
-                )
-        );
-
-        alex.x().or(jeff.x()).onTrue(
-                new Sequential(
-                        Gripper.close(),
-                        Slides.runToPosition(Slides.highPos)
-                )
-        );
-
-        alex.y().or(jeff.y()).onTrue(
-                new Sequential(
-                        Slides.runToPosition(Slides.scoreHighPos),
-                        Gripper.open()
-                )
-        );
 
         jeff.leftStickY().conditionalBindState().greaterThanEqualTo(0.5).bind().whileTrue(
                 Slides.setPowerUp(1)
@@ -96,39 +61,12 @@ public class MainTeleOp extends OpMode {
                 Slides.resetCommand()
         );
 
-        jeff.dpadLeft().onTrue(
-                Slides.setClimbOver(true)
-        );
-        jeff.dpadRight().onTrue(
-                Slides.setClimbOver(false)
-        );
-        jeff.dpadUp().onTrue(
-                Slides.climb()
-        );
-
         alex.rightBumper().onTrue(
                 Drive.slow()
         );
         alex.rightBumper().onFalse(
                 Drive.fast()
         );
-
-        alex.dpadUp().onTrue(
-                Drive.turnToCommand(0)
-        );
-        alex.dpadDown().onTrue(
-                Drive.turnToCommand(180)
-        );
-        alex.dpadLeft().onTrue(
-                Drive.turnToCommand(90)
-        );
-        alex.dpadRight().onTrue(
-                Drive.turnToCommand(-90)
-        );
-        alex.back().onTrue(
-                Intake.initNonsense()
-        );
-        wrist2.setPosition(355);
     }
 
     @Override
@@ -144,12 +82,10 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        Arm.logTele(Bot.Logging.NORMAL);
         Gripper.logTele(Bot.Logging.NORMAL);
         Intake.logTele(Bot.Logging.NORMAL);
         Slides.logTele(Bot.Logging.NORMAL);
         telemetry.update();
-        wrist2.setPosition(355);
     }
 
     @Override
